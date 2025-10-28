@@ -1,0 +1,35 @@
+﻿{% extends "base.html" %}
+{% block title %}Consultar Resultados{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header text-center" style="background: linear-gradient(135deg, #1ABC9C, #16A085); color: white;">
+                    <h4><i class="fas fa-file-medical"></i> Consultar mis Resultados</h4>
+                    <p class="mb-0">Ingrese sus credenciales de acceso</p>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST" action="{{ url_for('main.consultar_resultado') }}">
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-id-card"></i> Cédula de Identidad (CI)</label>
+                            <input type="text" class="form-control form-control-lg" name="ci" required placeholder="Ingrese su CI">
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label"><i class="fas fa-key"></i> Código de Acceso</label>
+                            <input type="text" class="form-control form-control-lg" name="codigo" required placeholder="Ingrese su código" style="text-transform: uppercase;">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 btn-lg">
+                            <i class="fas fa-search"></i> Consultar Resultado
+                        </button>
+                    </form>
+                    <div class="alert alert-info mt-4">
+                        <i class="fas fa-info-circle"></i> <strong>¿No tienes tus credenciales?</strong><br>
+                        Solicítalas en el laboratorio o revisa el documento que te entregamos con tus datos de acceso.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

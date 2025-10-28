@@ -1,0 +1,61 @@
+﻿<!-- ============================================
+     CÓDIGO PARA ACTUALIZAR base.html
+     ============================================ -->
+
+<!-- 1. En la sección <head>, agregar DESPUÉS de los otros CSS: -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/laboratorio_perez.css') }}">
+<link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='img/logo_perez.jpg') }}">
+
+<!-- 2. En el navbar, REEMPLAZAR el <a class="navbar-brand"> con: -->
+<a class="navbar-brand" href="{{ url_for('index') }}">
+    <img src="{{ url_for('static', filename='img/logo_perez.jpg') }}" alt="Laboratorio Pérez">
+    Laboratorio Pérez
+</a>
+
+<!-- 3. ANTES de </body>, agregar este footer: -->
+<footer class="footer mt-auto">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <h5 class="text-white mb-3">Laboratorio Pérez</h5>
+                <p class="text-light">
+                    <i class="fas fa-map-marker-alt"></i> La Paz entre Matos y Hoyos 1137<br>
+                    Potosí, Bolivia
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-white mb-3">Contacto</h5>
+                <p class="text-light">
+                    <i class="fas fa-phone"></i> 67619188<br>
+                    <i class="fab fa-whatsapp"></i> +591 67619188<br>
+                    <i class="fas fa-envelope"></i> laboratorios.perez@gmail.com
+                </p>
+            </div>
+            <div class="col-md-4">
+                <h5 class="text-white mb-3">Síguenos</h5>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/LaboratoriosPerez" target="_blank" title="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://wa.me/59167619188" target="_blank" title="WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="mailto:laboratorios.perez@gmail.com" title="Email">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+                <p class="text-light mt-3">
+                    <small>Rango de precios: $$$</small>
+                </p>
+            </div>
+        </div>
+        <hr class="bg-light">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="text-light mb-0">
+                    &copy; 2025 Laboratorio Pérez - Potosí, Bolivia. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>

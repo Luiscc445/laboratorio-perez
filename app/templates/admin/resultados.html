@@ -1,0 +1,155 @@
+﻿{% extends "base_admin.html" %}
+{% block title %}Gestión de Resultados{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-file-medical" style="color:#F39C12"></i> Gestión de Resultados</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+                <i class="fas fa-plus"></i> Nuevo Resultado
+            </button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><i class="fas fa-list"></i> Lista de Resultados ({{ resultados|length }})</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nº Orden</th>
+                            <th>Paciente</th>
+                            <th>CI</th>
+                            <th>Código</th>
+                            <th>Fecha</th>
+                            <th>Archivo</th>
+                            <th class="text-center">Resultado</th>
+                            <th class="text-center">Credenciales</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in resultados %}
+                        <tr>
+                            <td><b>{{ r.numero_orden }}</b></td>
+                            <td>{{ r.paciente_nombre }}</td>
+                            <td>{{ r.paciente_ci }}</td>
+                            <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
+                            <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
+                            <td>
+                                {% if r.archivo_pdf %}
+                                <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
+                                {% else %}
+                                <span class="badge bg-secondary">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                {% if r.archivo_pdf %}
+                                <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success">
+                                    <i class="fas fa-download"></i>
+                                </a>
+                                {% else %}
+                                <span class="text-muted">-</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-center">
+                                <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
+                                    <i class="fas fa-file-pdf"></i>
+                                </a>
+                                <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
+                                    <i class="fas fa-file-word"></i>
+                                
+                                </a>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay resultados</p></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modalNuevo" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header modal-naranja">
+                <h5><i class="fas fa-plus"></i> Registrar Nuevo Resultado</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    {% if pacientes %}
+                    <div class="mb-4">
+                        <label class="form-label"><i class="fas fa-user-check"></i> Seleccionar Paciente <span class="text-danger">*</span></label>
+                        <select class="form-select" name="paciente_id" id="selectPaciente" required onchange="cargarDatosPaciente()">
+                            <option value="">-- Seleccione un paciente --</option>
+                            {% for p in pacientes %}
+                            <option value="{{ p.id }}" data-nombre="{{ p.nombre }}" data-ci="{{ p.ci }}">{{ p.nombre }} - CI: {{ p.ci }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-user"></i> Nombre</label>
+                            <input type="text" class="form-control" id="pacienteNombre" readonly style="background-color: #f0f0f0;">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-id-card"></i> CI</label>
+                            <input type="text" class="form-control" id="pacienteCI" readonly style="background-color: #f0f0f0;">
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-hashtag"></i> Número de Orden <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" name="numero_orden" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label"><i class="fas fa-calendar"></i> Fecha de Muestra <span class="text-danger">*</span></label>
+                            <input type="date" class="form-control" name="fecha_muestra" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-file-pdf"></i> Archivo PDF <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" name="archivo_pdf" accept=".pdf" required>
+                    </div>
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i> No hay pacientes. <a href="{{ url_for('main.admin_pacientes') }}">Registra uno primero</a>.
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    {% if pacientes %}
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+function cargarDatosPaciente() {
+    const select = document.getElementById('selectPaciente');
+    const option = select.options[select.selectedIndex];
+    if (option.value) {
+        document.getElementById('pacienteNombre').value = option.getAttribute('data-nombre');
+        document.getElementById('pacienteCI').value = option.getAttribute('data-ci');
+    } else {
+        document.getElementById('pacienteNombre').value = '';
+        document.getElementById('pacienteCI').value = '';
+    }
+}
+</script>
+{% endblock %}
+
+
+
+
+
+
+

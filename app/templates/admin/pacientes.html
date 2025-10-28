@@ -1,0 +1,197 @@
+﻿{% extends "base_admin.html" %}
+{% block title %}Gestión de Pacientes{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h2><i class="fas fa-users" style="color:#1ABC9C"></i> Gestión de Pacientes</h2>
+        </div>
+        <div class="col-md-4 text-end">
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+                <i class="fas fa-plus"></i> Nuevo Paciente
+            </button>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-header"><i class="fas fa-list"></i> Lista de Pacientes ({{ pacientes|length }})</div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr><th>ID</th><th>Nombre Completo</th><th>CI</th><th>Teléfono</th><th>Email</th><th>Fecha Registro</th><th>Acciones</th></tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pacientes %}
+                        <tr>
+                            <td><b>{{ p.id }}</b></td>
+                            <td>{{ p.nombre }}</td>
+                            <td>{{ p.ci }}</td>
+                            <td>{{ p.telefono or '-' }}</td>
+                            <td>{{ p.email or '-' }}</td>
+                            <td>{{ p.fecha_registro.strftime('%d/%m/%Y') }}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info" onclick="verPaciente({{ p.id }})" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="editarPaciente({{ p.id }}, '{{ p.nombre }}', '{{ p.ci }}', '{{ p.telefono or '' }}', '{{ p.email or '' }}')" title="Editar">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay pacientes</p></td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NUEVO -->
+<div class="modal fade" id="modalNuevo" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5><i class="fas fa-user-plus"></i> Registrar Nuevo Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-user"></i> Nombre Completo</label>
+                        <input type="text" class="form-control" name="nombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-id-card"></i> CI</label>
+                        <input type="text" class="form-control" name="ci" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-phone"></i> Teléfono</label>
+                        <input type="text" class="form-control" name="telefono">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" class="form-control" name="email">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL VER DETALLES -->
+<div class="modal fade" id="modalVer" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white;">
+                <h5><i class="fas fa-info-circle"></i> Información del Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card border-0 shadow-sm mb-3">
+                    <div class="card-body">
+                        <div class="row mb-3">
+                            <div class="col-4"><strong><i class="fas fa-hashtag text-primary"></i> ID:</strong></div>
+                            <div class="col-8" id="verID">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong><i class="fas fa-user text-success"></i> Nombre:</strong></div>
+                            <div class="col-8" id="verNombre">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong><i class="fas fa-id-card text-warning"></i> CI:</strong></div>
+                            <div class="col-8" id="verCI">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong><i class="fas fa-phone text-info"></i> Teléfono:</strong></div>
+                            <div class="col-8" id="verTelefono">-</div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4"><strong><i class="fas fa-envelope text-danger"></i> Email:</strong></div>
+                            <div class="col-8" id="verEmail">-</div>
+                        </div>
+                        <div class="row">
+                            <div class="col-4"><strong><i class="fas fa-calendar text-secondary"></i> Registro:</strong></div>
+                            <div class="col-8" id="verFecha">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #F39C12, #E67E22); color: white;">
+                <h5><i class="fas fa-edit"></i> Editar Paciente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditar">
+                <div class="modal-body">
+                    <input type="hidden" name="paciente_id" id="editID">
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-user"></i> Nombre Completo</label>
+                        <input type="text" class="form-control" name="nombre" id="editNombre" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-id-card"></i> CI</label>
+                        <input type="text" class="form-control" name="ci" id="editCI" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-phone"></i> Teléfono</label>
+                        <input type="text" class="form-control" name="telefono" id="editTelefono">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" class="form-control" name="email" id="editEmail">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function verPaciente(id) {
+    fetch(`/paciente/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('verID').textContent = data.id;
+            document.getElementById('verNombre').textContent = data.nombre;
+            document.getElementById('verCI').textContent = data.ci;
+            document.getElementById('verTelefono').textContent = data.telefono;
+            document.getElementById('verEmail').textContent = data.email;
+            document.getElementById('verFecha').textContent = data.fecha_registro;
+            new bootstrap.Modal(document.getElementById('modalVer')).show();
+        });
+}
+
+function editarPaciente(id, nombre, ci, telefono, email) {
+    document.getElementById('editID').value = id;
+    document.getElementById('editNombre').value = nombre;
+    document.getElementById('editCI').value = ci;
+    document.getElementById('editTelefono').value = telefono;
+    document.getElementById('editEmail').value = email;
+    document.getElementById('formEditar').action = `/paciente/editar/${id}`;
+    new bootstrap.Modal(document.getElementById('modalEditar')).show();
+}
+</script>
+{% endblock %}
+
+
+

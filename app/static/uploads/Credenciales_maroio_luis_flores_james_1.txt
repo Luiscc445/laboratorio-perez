@@ -1,0 +1,40 @@
+
+╔════════════════════════════════════════════════════════╗
+║        LABORATORIO CLÍNICO PÉREZ - POTOSÍ             ║
+║           CREDENCIALES DE ACCESO A RESULTADOS         ║
+╚════════════════════════════════════════════════════════╝
+
+INFORMACIÓN DEL PACIENTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Nombre Completo: maroio luis flores james
+Cédula de Identidad (CI): 4931845
+Número de Orden: 1
+
+CREDENCIALES DE ACCESO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CI: 4931845
+CÓDIGO DE ACCESO: CJ4LAKG3
+
+INSTRUCCIONES PARA VER SUS RESULTADOS:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Ingrese a: http://localhost:5000
+2. Click en "Ver mis Resultados"
+3. Ingrese su CI y el código de acceso
+4. Podrá ver y descargar su resultado en PDF
+
+NOTA IMPORTANTE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Guarde este documento en un lugar seguro.
+El código de acceso es personal e intransferible.
+
+Fecha de Emisión: 27/10/2025 16:31
+
+═══════════════════════════════════════════════════════════
+Laboratorio Clínico Pérez
+Potosí, Bolivia
+Teléfono: (591) 2-XXXXXXX
+Email: info@laboratorioperez.com
+═══════════════════════════════════════════════════════════

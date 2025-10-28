@@ -1,0 +1,63 @@
+﻿@app.route('/resultados/descargar/<int:resultado_id>')
+@login_required
+def descargar(resultado_id):
+    """Descarga un PDF de resultado - VERSIÓN ROBUSTA"""
+    import os
+    from pathlib import Path
+    
+    try:
+        resultado = Resultado.query.get_or_404(resultado_id)
+        
+        # Verificar permisos
+        if not current_user.is_admin and hasattr(resultado, 'medico_id') and resultado.medico_id != current_user.id:
+            flash('No tienes permiso para descargar este resultado.', 'error')
+            return redirect(url_for('index'))
+        
+        # Construir ruta completa del archivo
+        archivo_pdf = resultado.archivo_pdf
+        
+        # Si la ruta es absoluta, usarla directamente
+        if os.path.isabs(archivo_pdf):
+            ruta_completa = Path(archivo_pdf)
+        else:
+            # Si es relativa, construir desde la raíz del proyecto
+            base_dir = Path(__file__).parent.parent.absolute()
+            ruta_completa = base_dir / archivo_pdf
+        
+        # Verificar que el archivo existe
+        if not ruta_completa.exists():
+            error_msg = f'El archivo PDF no existe: {resultado.numero_orden}'
+            flash(error_msg, 'error')
+            app.logger.error(f'Archivo no encontrado: {ruta_completa}')
+            app.logger.error(f'Ruta original: {archivo_pdf}')
+            app.logger.error(f'Base dir: {Path(__file__).parent.parent.absolute()}')
+            
+            # Mostrar información de debug para admin
+            if current_user.is_admin:
+                flash(f'Ruta buscada: {ruta_completa}', 'warning')
+            
+            return redirect(url_for('admin_resultados' if current_user.is_admin else 'index'))
+        
+        # Generar nombre de descarga
+        try:
+            from werkzeug.utils import secure_filename
+            nombre_paciente = resultado.paciente_nombre if hasattr(resultado, 'paciente_nombre') else 'Resultado'
+            download_name = f"{resultado.numero_orden}_{nombre_paciente}.pdf"
+            download_name = secure_filename(download_name)
+        except:
+            download_name = f"{resultado.numero_orden}.pdf"
+        
+        # Enviar archivo
+        return send_file(
+            str(ruta_completa),
+            as_attachment=True,
+            download_name=download_name,
+            mimetype='application/pdf'
+        )
+        
+    except Exception as e:
+        error_msg = f'Error al descargar: {str(e)}'
+        flash(error_msg, 'error')
+        app.logger.error(f'Error en descarga: {e}')
+        app.logger.exception(e)
+        return redirect(url_for('admin_resultados' if current_user.is_admin else 'index'))

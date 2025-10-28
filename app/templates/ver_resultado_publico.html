@@ -1,0 +1,51 @@
+﻿{% extends "base.html" %}
+{% block title %}Mi Resultado{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header text-center" style="background: linear-gradient(135deg, #1ABC9C, #16A085); color: white;">
+            <h3><i class="fas fa-user-circle"></i> Información del Paciente</h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-user text-success"></i> Nombre Completo:</h5>
+                    <p class="lead">{{ resultado.paciente_nombre }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5><i class="fas fa-id-card text-primary"></i> CI:</h5>
+                    <p class="lead">{{ resultado.paciente_ci }}</p>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h5><i class="fas fa-hashtag text-warning"></i> Nº de Orden:</h5>
+                    <p class="lead">{{ resultado.numero_orden }}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5><i class="fas fa-calendar text-info"></i> Fecha de Muestra:</h5>
+                    <p class="lead">{{ resultado.fecha_muestra.strftime('%d/%m/%Y') if resultado.fecha_muestra else '-' }}</p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <h4 class="mb-4"><i class="fas fa-file-pdf text-danger"></i> Resultado de Laboratorio</h4>
+                {% if resultado.archivo_pdf %}
+                <a href="{{ url_for('static', filename='uploads/' + resultado.archivo_pdf) }}" class="btn btn-success btn-lg" download>
+                    <i class="fas fa-download"></i> Descargar Resultado en PDF
+                </a>
+                {% else %}
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> No hay archivo PDF disponible
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-4">
+        <a href="{{ url_for('main.portal_resultados') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver
+        </a>
+    </div>
+</div>
+{% endblock %}

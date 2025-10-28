@@ -1,0 +1,59 @@
+﻿{% extends 'layouts/base.html' %}
+
+{% block title %}Mis Resultados{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card shadow mb-4">
+        <div class="card-body">
+            <h4><i class="bi bi-person-circle"></i> Información del Paciente</h4>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> {{ paciente.nombre_completo }}</p>
+                    <p><strong>CI:</strong> {{ paciente.ci }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Código de Acceso:</strong> <span class="badge bg-primary">{{ paciente.codigo_acceso }}</span></p>
+                    <p><strong>Email:</strong> {{ paciente.email or 'No registrado' }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="mb-4"><i class="bi bi-file-earmark-medical"></i> Historial de Resultados</h3>
+    
+    {% if resultados %}
+    <div class="row g-3">
+        {% for resultado in resultados %}
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header {% if resultado.estado == 'completado' %}bg-success{% elif resultado.estado == 'pendiente' %}bg-warning{% else %}bg-secondary{% endif %} text-white">
+                    <h6 class="mb-0">{{ resultado.prueba.nombre }}</h6>
+                </div>
+                <div class="card-body">
+                    <p class="mb-1"><strong>Orden:</strong> {{ resultado.numero_orden }}</p>
+                    <p class="mb-1"><strong>Fecha Muestra:</strong> {{ resultado.fecha_muestra.strftime('%d/%m/%Y') }}</p>
+                    <p class="mb-1"><strong>Estado:</strong> 
+                        <span class="badge {% if resultado.estado == 'completado' %}bg-success{% elif resultado.estado == 'pendiente' %}bg-warning{% else %}bg-secondary{% endif %}">
+                            {{ resultado.estado.upper() }}
+                        </span>
+                    </p>
+                    {% if resultado.estado == 'completado' and resultado.archivo_pdf %}
+                    <hr>
+                    <a href="{{ url_for('resultados.descargar', resultado_id=resultado.id) }}" class="btn btn-primary w-100">
+                        <i class="bi bi-download"></i> Descargar PDF
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-inbox"></i> No tienes resultados registrados todavía
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

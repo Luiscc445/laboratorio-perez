@@ -1,0 +1,81 @@
+﻿{% extends "base_admin.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">
+        <i class="fas fa-chart-line" style="color:#1ABC9C"></i> Dashboard Administrativo
+    </h2>
+    <p class="text-muted mb-4">Laboratorio Pérez - Potosí, Bolivia</p>
+    
+    <div class="row mb-4">
+        <div class="col-md-4 mb-3">
+            <div class="stat-card stat-card-verde">
+                <i class="fas fa-users"></i>
+                <h3>{{ total_pacientes }}</h3>
+                <p>Pacientes Registrados</p>
+                <a href="{{ url_for('main.admin_pacientes') }}" class="btn btn-light btn-sm mt-2">
+                    <i class="fas fa-arrow-right"></i> Ver Pacientes
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card stat-card-naranja">
+                <i class="fas fa-file-medical"></i>
+                <h3>{{ total_resultados }}</h3>
+                <p>Resultados Almacenados</p>
+                <a href="{{ url_for('main.admin_resultados') }}" class="btn btn-light btn-sm mt-2">
+                    <i class="fas fa-arrow-right"></i> Ver Resultados
+                </a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="stat-card stat-card-azul">
+                <i class="fas fa-vial"></i>
+                <h3>{{ total_pruebas }}</h3>
+                <p>Pruebas Disponibles</p>
+                <a href="{{ url_for('main.admin_pruebas') }}" class="btn btn-light btn-sm mt-2">
+                    <i class="fas fa-arrow-right"></i> Ver Pruebas
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-th-large"></i> Accesos Rápidos
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('main.admin_pacientes') }}" class="btn btn-lg btn-primary w-100">
+                                <i class="fas fa-user-plus fa-2x mb-2"></i>
+                                <br>Nuevo Paciente
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('main.admin_resultados') }}" class="btn btn-lg btn-warning w-100">
+                                <i class="fas fa-file-upload fa-2x mb-2"></i>
+                                <br>Subir Resultado
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('main.admin_pruebas') }}" class="btn btn-lg btn-info w-100">
+                                <i class="fas fa-flask fa-2x mb-2"></i>
+                                <br>Nueva Prueba
+                            </a>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <a href="{{ url_for('main.index') }}" class="btn btn-lg btn-success w-100" target="_blank">
+                                <i class="fas fa-globe fa-2x mb-2"></i>
+                                <br>Ver Sitio Público
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

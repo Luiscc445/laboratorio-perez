@@ -1,0 +1,302 @@
+﻿{% extends "base.html" %}
+{% block title %}Inicio - Laboratorio Pérez{% endblock %}
+{% block content %}
+<style>
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.hero-section-modern {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    background: url("{{ url_for('static', filename='img/cerro.jpg') }}");
+    background-size: 50% auto;
+    background-position: right center;
+    background-repeat: no-repeat;
+    background-color: #F5F7FA;
+    padding: 0;
+    margin: 0;
+}
+
+.hero-content-left {
+    max-width: 600px;
+    padding: 80px 60px;
+    text-align: left;
+}
+
+.logo-hero {
+    width: 180px;
+    height: auto;
+    margin-bottom: 30px;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.1));
+}
+
+.hero-content-left h1 {
+    color: #1ABC9C;
+    font-size: 3.2rem;
+    font-weight: bold;
+    margin-bottom: 25px;
+    line-height: 1.2;
+}
+
+.hero-content-left p {
+    color: #2C3E50;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+}
+
+.hero-content-left .location {
+    color: #F39C12;
+    font-weight: bold;
+    font-size: 1.4rem;
+    margin-bottom: 40px;
+    display: block;
+}
+
+.btn-hero-modern {
+    background: linear-gradient(135deg, #F39C12, #E67E22);
+    color: white;
+    padding: 20px 60px;
+    font-size: 1.4rem;
+    border-radius: 50px;
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(243, 156, 18, 0.4);
+    font-weight: bold;
+}
+
+.btn-hero-modern:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 40px rgba(243, 156, 18, 0.6);
+    color: white;
+    background: linear-gradient(135deg, #E67E22, #D35400);
+}
+
+.footer-modern {
+    background: linear-gradient(135deg, #2C3E50, #34495E);
+    color: white;
+    padding: 50px 0 20px 0;
+    margin: 0;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 40px;
+    margin-bottom: 40px;
+}
+
+.footer-section h4 {
+    color: #1ABC9C;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.footer-section p, .footer-section a {
+    color: #ECF0F1;
+    text-decoration: none;
+    margin: 10px 0;
+    display: block;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.footer-section i {
+    color: #F39C12;
+    margin-right: 10px;
+    width: 20px;
+}
+
+.footer-section a:hover {
+    color: #1ABC9C;
+    padding-left: 5px;
+    transition: all 0.3s ease;
+}
+
+.social-footer {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.social-simple {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    margin: 0 8px;
+    transition: all 0.3s ease;
+}
+
+.social-simple:hover {
+    transform: translateY(-5px) scale(1.1);
+}
+
+.social-icon:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(26, 188, 156, 0.4);
+}
+
+.social-icon.facebook:hover { background: #1877F2; color: white; }
+.social-icon.whatsapp:hover { background: #25D366; color: white; }
+.social-icon.email:hover { background: #EA4335; color: white; }
+.social-icon.phone:hover { background: #F39C12; color: white; }
+
+.footer-bottom {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 30px;
+    text-align: center;
+    color: #BDC3C7;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 992px) {
+    .hero-section-modern {
+        background: linear-gradient(rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.95)), 
+                    url("{{ url_for('static', filename='img/cerro.jpg') }}");
+        background-size: cover;
+        background-position: center;
+    }
+    .hero-content-left {
+        text-align: center;
+        padding: 40px 30px;
+    }
+    .hero-content-left h1 {
+        font-size: 2.2rem;
+    }
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<section class="hero-section-modern">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="hero-content-left">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo Laboratorio Pérez" class="logo-hero">
+                    <h1>Laboratorio Clínico Pérez</h1>
+                    <p>Exámenes de Laboratorio con la más Alta Calidad y Precisión</p>
+                    <span class="location"><i class="fas fa-map-marker-alt"></i> Potosí, Bolivia</span>
+                    <a href="{{ url_for('auth.login') }}" class="btn-hero-modern">
+                        <i class="fas fa-sign-in-alt"></i> Acceder al Sistema
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="services-section">
+    <div class="container">
+        <h2 class="text-center mb-5" style="color: #16A085; font-weight: bold;">
+            <i class="fas fa-flask"></i> Nuestros Servicios
+        </h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-vial" style="color: #1ABC9C;"></i>
+                    <h3>Análisis Clínicos</h3>
+                    <p>Química sanguínea, hematología, inmunología y más. Resultados precisos y confiables.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-heartbeat" style="color: #F39C12;"></i>
+                    <h3>Perfil Completo</h3>
+                    <p>Perfiles lipídicos, hormonales, metabólicos y cardíacos con tecnología de última generación.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-bacteria" style="color: #3498DB;"></i>
+                    <h3>Microbiología</h3>
+                    <p>Cultivos, antibiogramas y pruebas especializadas con personal altamente calificado.</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row mt-4">
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-user-md" style="color: #E74C3C;"></i>
+                    <h3>Atención Personalizada</h3>
+                    <p>Personal capacitado y amable para brindarle el mejor servicio y atención.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-clock" style="color: #9B59B6;"></i>
+                    <h3>Resultados Rápidos</h3>
+                    <p>Entrega ágil de resultados con sistema de consulta online disponible 24/7.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="service-card">
+                    <i class="fas fa-certificate" style="color: #16A085;"></i>
+                    <h3>Calidad Certificada</h3>
+                    <p>Laboratorio acreditado con los más altos estándares de calidad internacional.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer class="footer-modern">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4><i class="fas fa-clinic-medical"></i> Laboratorio Pérez</h4>
+                <p>Laboratorio de análisis clínicos especializados con más de 10 años de experiencia.</p>
+                <p><i class="fas fa-star"></i> Calidad certificada</p>
+                <p><i class="fas fa-award"></i> Rango de precios: $$</p>
+            </div>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-map-marked-alt"></i> Ubicación</h4>
+                <p><i class="fas fa-map-marker-alt"></i> La Paz entre Matos y Hoyos 1137</p>
+                <p><i class="fas fa-city"></i> Potosí, Bolivia</p>
+                <p><i class="fas fa-clock"></i> <strong>Abierto Ahora</strong></p>
+                <p><i class="far fa-calendar"></i> Lunes - Sábado</p>
+                <p><i class="far fa-clock"></i> 8:00 AM - 6:00 PM</p>
+            </div>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-phone-alt"></i> Contacto</h4>
+                <a href="tel:+59167619188"><i class="fas fa-phone"></i> 67619188</a>
+                <a href="https://wa.me/59167619188" target="_blank"><i class="fab fa-whatsapp"></i> +591 67619188</a>
+                <a href="mailto:laboratorios.perez@gmail.com"><i class="fas fa-envelope"></i> laboratorios.perez@gmail.com</a>
+            </div>
+
+            <div class="footer-section">
+                <h4><i class="fas fa-share-alt"></i> Redes Sociales</h4>
+                <a href="https://www.facebook.com/laboratorios.perez" target="_blank"><i class="fab fa-facebook" style="color: #F39C12;"></i> Facebook</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2025 Laboratorio Clínico Pérez. Todos los derechos reservados.</p>
+            <p>Desarrollado con <i class="fas fa-heart" style="color: #E74C3C;"></i> en Potosí, Bolivia</p>
+        </div>
+    </div>
+</footer>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,130 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row mb-4 fade-in-up">
+        <div class="col-12">
+            <h2>
+                <i class="fas fa-chart-line text-success"></i>
+                Dashboard - Laboratorio Pérez
+            </h2>
+            <p class="text-muted">Potosí, Bolivia | La Paz entre Matos y Hoyos 1137</p>
+        </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="row mb-4">
+        <div class="col-md-3 mb-3 fade-in-up" style="animation-delay: 0.1s">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Total Pacientes</h6>
+                            <h3 class="mb-0">{{ stats.total_pacientes or 0 }}</h3>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3 fade-in-up" style="animation-delay: 0.2s">
+            <div class="card stat-card naranja">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Resultados Hoy</h6>
+                            <h3 class="mb-0">{{ stats.resultados_hoy or 0 }}</h3>
+                        </div>
+                        <div style="color: #F39C12;">
+                            <i class="fas fa-flask fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3 fade-in-up" style="animation-delay: 0.3s">
+            <div class="card stat-card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Pruebas Activas</h6>
+                            <h3 class="mb-0">{{ stats.pruebas_activas or 0 }}</h3>
+                        </div>
+                        <div class="text-success">
+                            <i class="fas fa-vial fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3 fade-in-up" style="animation-delay: 0.4s">
+            <div class="card stat-card naranja">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="text-muted mb-2">Este Mes</h6>
+                            <h3 class="mb-0">{{ stats.resultados_mes or 0 }}</h3>
+                        </div>
+                        <div style="color: #F39C12;">
+                            <i class="fas fa-calendar-alt fa-2x"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información del laboratorio -->
+    <div class="row">
+        <div class="col-md-8 mb-4 fade-in-up" style="animation-delay: 0.5s">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-info-circle"></i> Información del Laboratorio
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-3">Ubicación</h6>
+                            <p><i class="fas fa-map-marker-alt text-success"></i> La Paz entre Matos y Hoyos 1137</p>
+                            <p><i class="fas fa-city text-success"></i> Potosí, Bolivia</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-success mb-3">Contacto</h6>
+                            <p><i class="fas fa-phone text-success"></i> 67619188</p>
+                            <p><i class="fab fa-whatsapp text-success"></i> +591 67619188</p>
+                            <p><i class="fas fa-envelope text-success"></i> laboratorios.perez@gmail.com</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4 fade-in-up" style="animation-delay: 0.6s">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-share-alt"></i> Redes Sociales
+                </div>
+                <div class="card-body text-center">
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/LaboratoriosPerez" target="_blank" title="Facebook" class="d-block mb-3">
+                            <i class="fab fa-facebook-f"></i> Síguenos en Facebook
+                        </a>
+                        <a href="https://wa.me/59167619188" target="_blank" title="WhatsApp" class="d-block mb-3">
+                            <i class="fab fa-whatsapp"></i> Contáctanos por WhatsApp
+                        </a>
+                    </div>
+                    <hr>
+                    <p class="text-muted mb-0">
+                        <small>Rango de precios: $$$</small>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

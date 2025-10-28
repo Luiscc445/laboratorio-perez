@@ -1,0 +1,92 @@
+﻿{% extends 'layouts/base.html' %}
+
+{% block title %}Carrito de Cotización{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-cart"></i> Carrito de Cotización</h2>
+    
+    {% if carrito %}
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Código</th>
+                                <th>Prueba</th>
+                                <th>Cantidad</th>
+                                <th>Precio Unit.</th>
+                                <th>Subtotal</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in carrito %}
+                            <tr>
+                                <td>{{ item.codigo }}</td>
+                                <td>{{ item.nombre }}</td>
+                                <td>{{ item.cantidad }}</td>
+                                <td>Bs. {{ "%.2f"|format(item.precio) }}</td>
+                                <td>Bs. {{ "%.2f"|format(item.precio * item.cantidad) }}</td>
+                                <td>
+                                    <a href="{{ url_for('catalogo.eliminar_carrito', prueba_id=item.id) }}" class="btn btn-sm btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" class="text-end">Total:</th>
+                                <th colspan="2" class="text-primary">Bs. {{ "%.2f"|format(total) }}</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-lg-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Solicitar Cotización</h5>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{{ url_for('catalogo.solicitar_cotizacion') }}">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre Completo *</label>
+                            <input type="text" class="form-control" name="nombre" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" name="email">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono *</label>
+                            <input type="tel" class="form-control" name="telefono" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-send"></i> Solicitar Cotización
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="alert alert-info text-center">
+        <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+        <h4 class="mt-3">Tu carrito está vacío</h4>
+        <p>Explora nuestro catálogo y agrega pruebas</p>
+        <a href="{{ url_for('catalogo.lista') }}" class="btn btn-primary">
+            <i class="bi bi-list-check"></i> Ver Catálogo
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,408 @@
+﻿/* ============================================
+   LABORATORIO PÉREZ - ESTILOS PRINCIPALES
+   ============================================ */
+
+:root {
+    --color-verde: #1ABC9C;
+    --color-verde-oscuro: #16A085;
+    --color-naranja: #F39C12;
+    --color-naranja-oscuro: #E67E22;
+    --color-azul: #3498DB;
+    --color-gris: #95A5A6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    min-height: 100vh;
+}
+
+/* ============================================
+   NAVBAR SUPERIOR
+   ============================================ */
+.navbar-custom {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    padding: 1rem 0;
+}
+
+.navbar-custom .navbar-brand {
+    color: white !important;
+    font-weight: bold;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.navbar-custom .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+    margin: 0 10px;
+    padding: 8px 20px !important;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .nav-link:hover,
+.navbar-custom .nav-link.active {
+    background: rgba(255,255,255,0.2);
+    color: white !important;
+}
+
+.navbar-custom .btn-logout {
+    background: var(--color-naranja);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.navbar-custom .btn-logout:hover {
+    background: var(--color-naranja-oscuro);
+    transform: translateY(-2px);
+}
+
+/* ============================================
+   PÁGINA PRINCIPAL (PRESENTACIÓN)
+   ============================================ */
+.hero-section {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    color: white;
+    padding: 100px 0;
+    text-align: center;
+    margin-top: -16px;
+}
+
+.hero-section h1 {
+    font-size: 3.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.hero-section p {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+}
+
+.hero-section .btn-hero {
+    background: var(--color-naranja);
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+}
+
+.hero-section .btn-hero:hover {
+    background: var(--color-naranja-oscuro);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+}
+
+.services-section {
+    padding: 80px 0;
+}
+
+.service-card {
+    background: white;
+    border-radius: 15px;
+    padding: 40px 30px;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.service-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.service-card i {
+    font-size: 4rem;
+    margin-bottom: 20px;
+}
+
+.service-card h3 {
+    color: var(--color-verde-oscuro);
+    margin-bottom: 15px;
+}
+
+.contact-section {
+    background: linear-gradient(135deg, #2C3E50, #34495E);
+    color: white;
+    padding: 60px 0;
+    text-align: center;
+}
+
+.contact-section h2 {
+    margin-bottom: 30px;
+}
+
+.contact-info {
+    display: flex;
+    justify-content: center;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.contact-item i {
+    font-size: 2rem;
+    color: var(--color-naranja);
+}
+
+/* ============================================
+   CONTENEDOR PRINCIPAL
+   ============================================ */
+.main-container {
+    padding: 30px 0;
+}
+
+/* ============================================
+   TARJETAS (CARDS)
+   ============================================ */
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    overflow: hidden;
+}
+
+.card:hover {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    color: white;
+    font-weight: bold;
+    padding: 15px 20px;
+}
+
+/* ============================================
+   DASHBOARD - TARJETAS DE ESTADÍSTICAS
+   ============================================ */
+.stat-card {
+    border-radius: 15px;
+    padding: 25px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+}
+
+.stat-card i {
+    font-size: 3.5rem;
+    margin-bottom: 15px;
+    opacity: 0.9;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.stat-card p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.stat-card-verde {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+}
+
+.stat-card-naranja {
+    background: linear-gradient(135deg, var(--color-naranja), var(--color-naranja-oscuro));
+}
+
+.stat-card-azul {
+    background: linear-gradient(135deg, #3498DB, #2980B9);
+}
+
+/* ============================================
+   TABLAS
+   ============================================ */
+.table {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.table thead {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    color: white;
+}
+
+.table tbody tr {
+    transition: all 0.2s ease;
+}
+
+.table tbody tr:hover {
+    background: rgba(26, 188, 156, 0.1);
+    transform: scale(1.01);
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+.btn {
+    border-radius: 25px;
+    padding: 10px 25px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    box-shadow: 0 4px 10px rgba(26, 188, 156, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #27AE60, #229954);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, var(--color-naranja), var(--color-naranja-oscuro));
+}
+
+.btn-info {
+    background: linear-gradient(135deg, #3498DB, #2980B9);
+}
+
+/* ============================================
+   MODALES
+   ============================================ */
+.modal-content {
+    border-radius: 15px;
+    border: none;
+    overflow: hidden;
+}
+
+.modal-header {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    color: white;
+}
+
+.modal-header.modal-naranja {
+    background: linear-gradient(135deg, var(--color-naranja), var(--color-naranja-oscuro));
+}
+
+/* ============================================
+   FORMULARIOS
+   ============================================ */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    padding: 12px;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--color-verde);
+    box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+}
+
+.form-label {
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 8px;
+}
+
+/* ============================================
+   LOGIN
+   ============================================ */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+}
+
+.login-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    width: 100%;
+    max-width: 450px;
+}
+
+.login-header {
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+.login-header i {
+    font-size: 4rem;
+    margin-bottom: 15px;
+}
+
+/* ============================================
+   BADGES
+   ============================================ */
+.badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* ============================================
+   ALERTAS
+   ============================================ */
+.alert {
+    border-radius: 10px;
+    border: none;
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    
+    .service-card {
+        margin-bottom: 20px;
+    }
+    
+    .contact-info {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

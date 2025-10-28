@@ -1,0 +1,64 @@
+﻿{% extends 'layouts/base.html' %}
+
+{% block title %}Catálogo de Pruebas{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4"><i class="bi bi-list-check"></i> Catálogo de Pruebas</h2>
+    
+    <!-- Filtros -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <form method="GET" class="input-group">
+                <input type="text" class="form-control" name="q" placeholder="Buscar prueba..." value="{{ request.args.get('q', '') }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class="bi bi-search"></i> Buscar
+                </button>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <select class="form-select" onchange="location.href='{{ url_for('catalogo.lista') }}?categoria='+this.value">
+                <option value="">Todas las categorías</option>
+                {% for cat in categorias %}
+                <option value="{{ cat.id }}" {% if categoria_seleccionada == cat.id %}selected{% endif %}>
+                    {{ cat.icono }} {{ cat.nombre }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <!-- Lista de Pruebas -->
+    <div class="row g-4">
+        {% for prueba in pruebas %}
+        <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h6 class="mb-0">{{ prueba.categoria.icono }} {{ prueba.nombre }}</h6>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted small mb-2">Código: {{ prueba.codigo }}</p>
+                    <p class="card-text">{{ prueba.descripcion[:100] }}...</p>
+                    <ul class="list-unstyled small">
+                        <li><i class="bi bi-clock"></i> {{ prueba.tiempo_entrega }}</li>
+                        <li><i class="bi bi-droplet"></i> {{ prueba.muestra_requerida }}</li>
+                    </ul>
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                        <h4 class="text-primary mb-0">Bs. {{ "%.2f"|format(prueba.precio) }}</h4>
+                        <a href="{{ url_for('catalogo.agregar_carrito', prueba_id=prueba.id) }}" class="btn btn-sm btn-primary">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="alert alert-info text-center">
+                <i class="bi bi-info-circle"></i> No se encontraron pruebas
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
