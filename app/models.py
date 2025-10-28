@@ -29,7 +29,7 @@ class Paciente(db.Model):
     telefono = db.Column(db.String(20))
     email = db.Column(db.String(120))
     fecha_registro = db.Column(db.DateTime, default=datetime.utcnow)
-    resultados = db.relationship('Resultado', backref='paciente', lazy=True)
+    resultados = db.relationship('Resultado', backref='paciente', lazy=True, cascade='all, delete-orphan')
 
 class Resultado(db.Model):
     __tablename__ = 'resultados'

@@ -36,6 +36,9 @@
                                 <button class="btn btn-sm btn-warning" onclick="editarPaciente({{ p.id }}, '{{ p.nombre }}', '{{ p.ci }}', '{{ p.telefono or '' }}', '{{ p.email or '' }}')" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
+                                <button class="btn btn-sm btn-danger" onclick="confirmarEliminar({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
                             </td>
                         </tr>
                         {% else %}
@@ -166,6 +169,44 @@
     </div>
 </div>
 
+<!-- MODAL ELIMINAR -->
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #E74C3C, #C0392B); color: white;">
+                <h5><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEliminar">
+                <div class="modal-body">
+                    <div class="alert alert-danger mb-3">
+                        <i class="fas fa-exclamation-circle"></i> <strong>¡ADVERTENCIA!</strong><br>
+                        Esta acción es <strong>IRREVERSIBLE</strong> y eliminará:
+                    </div>
+                    <ul class="mb-3">
+                        <li><i class="fas fa-user text-danger"></i> El paciente: <strong id="eliminarNombre"></strong></li>
+                        <li><i class="fas fa-file-pdf text-danger"></i> Todos sus resultados y archivos PDF asociados</li>
+                        <li><i class="fas fa-database text-danger"></i> Todos los registros de la base de datos</li>
+                    </ul>
+                    <div class="card border-warning bg-light">
+                        <div class="card-body">
+                            <p class="mb-0"><i class="fas fa-info-circle text-warning"></i> <strong>¿Está seguro de continuar?</strong></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Sí, Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
 function verPaciente(id) {
     fetch(`/paciente/${id}`)
@@ -189,6 +230,12 @@ function editarPaciente(id, nombre, ci, telefono, email) {
     document.getElementById('editEmail').value = email;
     document.getElementById('formEditar').action = `/paciente/editar/${id}`;
     new bootstrap.Modal(document.getElementById('modalEditar')).show();
+}
+
+function confirmarEliminar(id, nombre) {
+    document.getElementById('eliminarNombre').textContent = nombre;
+    document.getElementById('formEliminar').action = `/paciente/eliminar/${id}`;
+    new bootstrap.Modal(document.getElementById('modalEliminar')).show();
 }
 </script>
 {% endblock %}

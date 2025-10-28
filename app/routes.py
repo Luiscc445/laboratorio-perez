@@ -97,17 +97,51 @@ def editar_paciente(paciente_id):
         paciente.ci = request.form['ci']
         paciente.telefono = request.form.get('telefono')
         paciente.email = request.form.get('email')
-        
+
         resultados = Resultado.query.filter_by(paciente_id=paciente_id).all()
         for resultado in resultados:
             resultado.paciente_nombre = paciente.nombre
             resultado.paciente_ci = paciente.ci
-        
+
         db.session.commit()
         flash('Paciente y sus resultados actualizados exitosamente', 'success')
     except Exception as e:
         db.session.rollback()
         flash(f'Error: {str(e)}', 'danger')
+    return redirect(url_for('main.admin_pacientes'))
+
+@main.route('/paciente/eliminar/<int:paciente_id>', methods=['POST'])
+@login_required
+def eliminar_paciente(paciente_id):
+    try:
+        paciente = Paciente.query.get_or_404(paciente_id)
+        nombre_paciente = paciente.nombre
+
+        # Obtener todos los resultados del paciente
+        resultados = Resultado.query.filter_by(paciente_id=paciente_id).all()
+
+        # Eliminar archivos PDF físicos
+        archivos_eliminados = 0
+        for resultado in resultados:
+            if resultado.archivo_pdf:
+                try:
+                    pdf_path = os.path.join('app/static/uploads', resultado.archivo_pdf)
+                    if os.path.exists(pdf_path):
+                        os.remove(pdf_path)
+                        archivos_eliminados += 1
+                except Exception as e:
+                    print(f"Error eliminando archivo {resultado.archivo_pdf}: {e}")
+
+        # SQLAlchemy eliminará automáticamente los resultados gracias a cascade='all, delete-orphan'
+        db.session.delete(paciente)
+        db.session.commit()
+
+        flash(f'Paciente "{nombre_paciente}" eliminado exitosamente junto con {len(resultados)} resultado(s) y {archivos_eliminados} archivo(s) PDF', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar paciente: {str(e)}', 'danger')
+        print(f"Error: {e}")
+
     return redirect(url_for('main.admin_pacientes'))
 
 @main.route('/resultados', methods=['GET', 'POST'])
@@ -352,34 +386,6 @@ def descargar(resultado_id):
     flash('No hay archivo PDF disponible', 'warning')
     return redirect(url_for('main.admin_resultados'))
 
-@login_required
-def eliminar(id):
-    resultado = Resultado.query.get_or_404(id)
-    
-    # Eliminar archivo PDF si existe
-    if resultado.archivo_pdf:
-        try:
-            import os
-            pdf_path = os.path.join(current_app.config['UPLOAD_FOLDER'], resultado.archivo_pdf)
-            if os.path.exists(pdf_path):
-                os.remove(pdf_path)
-        except Exception as e:
-            print(f"Error eliminando PDF: {e}")
-    
-    try:
-        db.session.delete(resultado)
-        db.session.commit()
-        flash('✅ Resultado eliminado exitosamente', 'success')
-    except Exception as e:
-        db.session.rollback()
-        flash('❌ Error al eliminar resultado', 'danger')
-        print(f"Error: {e}")
-    
-    return redirect(url_for('resultados.listar'))
-
-
-    
-    return redirect(url_for('listar_resultados'))
 
 
 
