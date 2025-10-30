@@ -400,6 +400,80 @@ def admin_pruebas():
     pruebas = Prueba.query.order_by(Prueba.nombre).all()
     return render_template('admin/pruebas.html', pruebas=pruebas)
 
+@main.route('/prueba/<int:prueba_id>')
+@login_required
+def ver_prueba(prueba_id):
+    prueba = Prueba.query.get_or_404(prueba_id)
+    return jsonify({
+        'id': prueba.id,
+        'nombre': prueba.nombre,
+        'categoria': prueba.categoria,
+        'descripcion': prueba.descripcion,
+        'precio': float(prueba.precio),
+        'imagen': prueba.imagen
+    })
+
+@main.route('/prueba/editar/<int:prueba_id>', methods=['POST'])
+@login_required
+def editar_prueba(prueba_id):
+    try:
+        prueba = Prueba.query.get_or_404(prueba_id)
+        prueba.nombre = request.form['nombre']
+        prueba.categoria = request.form.get('categoria')
+        prueba.descripcion = request.form.get('descripcion')
+        prueba.precio = float(request.form.get('precio', 0))
+
+        # Manejar nueva imagen si se subió
+        if 'imagen' in request.files:
+            imagen = request.files['imagen']
+            if imagen and imagen.filename:
+                # Eliminar imagen anterior si existe
+                if prueba.imagen:
+                    old_path = os.path.join('app/static/uploads/pruebas', prueba.imagen)
+                    if os.path.exists(old_path):
+                        os.remove(old_path)
+
+                # Guardar nueva imagen
+                from werkzeug.utils import secure_filename
+                import time
+                filename = secure_filename(imagen.filename)
+                imagen_filename = f"{int(time.time())}_{filename}"
+                upload_folder = os.path.join('app/static/uploads/pruebas')
+                os.makedirs(upload_folder, exist_ok=True)
+                imagen.save(os.path.join(upload_folder, imagen_filename))
+                prueba.imagen = imagen_filename
+
+        db.session.commit()
+        flash('Prueba actualizada exitosamente', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error: {str(e)}', 'danger')
+    return redirect(url_for('main.admin_pruebas'))
+
+@main.route('/prueba/eliminar/<int:prueba_id>', methods=['POST'])
+@login_required
+def eliminar_prueba(prueba_id):
+    try:
+        prueba = Prueba.query.get_or_404(prueba_id)
+        nombre_prueba = prueba.nombre
+
+        # Eliminar imagen si existe
+        if prueba.imagen:
+            try:
+                imagen_path = os.path.join('app/static/uploads/pruebas', prueba.imagen)
+                if os.path.exists(imagen_path):
+                    os.remove(imagen_path)
+            except Exception as e:
+                print(f"Error eliminando imagen {prueba.imagen}: {e}")
+
+        db.session.delete(prueba)
+        db.session.commit()
+        flash(f'Prueba "{nombre_prueba}" eliminada exitosamente', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error al eliminar prueba: {str(e)}', 'danger')
+    return redirect(url_for('main.admin_pruebas'))
+
 @main.route('/descargar/<int:resultado_id>')
 @login_required
 def descargar(resultado_id):

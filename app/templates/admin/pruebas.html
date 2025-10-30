@@ -53,11 +53,14 @@
                             </td>
                             <td><b>Bs. {{ "%.2f"|format(p.precio) }}</b></td>
                             <td>
-                                <button class="btn btn-sm btn-warning" title="Editar">
+                                <button class="btn btn-sm btn-info" onclick="verPrueba({{ p.id }})" title="Ver detalles">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-warning" onclick="editarPrueba({{ p.id }})" title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-info" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
+                                <button class="btn btn-sm btn-danger" onclick="confirmarEliminarPrueba({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
                         </tr>
@@ -131,5 +134,221 @@
         </div>
     </div>
 </div>
+
+<!-- MODAL VER DETALLES -->
+<div class="modal fade" id="modalVer" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white;">
+                <h5><i class="fas fa-info-circle"></i> Detalles de la Prueba</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <div id="verImagenContainer" style="width: 100%; height: 200px; background: #E8F5F1; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 15px;">
+                            <i class="fas fa-flask fa-3x" style="color: #1ABC9C;"></i>
+                        </div>
+                        <img id="verImagen" src="" alt="Imagen de la prueba" style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px; display: none; margin-bottom: 15px;">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-4"><strong><i class="fas fa-hashtag text-primary"></i> ID:</strong></div>
+                                    <div class="col-8" id="verID">-</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4"><strong><i class="fas fa-flask text-success"></i> Nombre:</strong></div>
+                                    <div class="col-8" id="verNombre">-</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4"><strong><i class="fas fa-tag text-warning"></i> Categoría:</strong></div>
+                                    <div class="col-8"><span class="badge" style="background:#1ABC9C" id="verCategoria">-</span></div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-4"><strong><i class="fas fa-coins text-info"></i> Precio:</strong></div>
+                                    <div class="col-8" id="verPrecio">-</div>
+                                </div>
+                                <div class="row mb-3">
+                                    <div class="col-12"><strong><i class="fas fa-align-left text-secondary"></i> Descripción:</strong></div>
+                                    <div class="col-12 mt-2" id="verDescripcion" style="background: #F8F9FA; padding: 15px; border-radius: 8px;">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #F39C12, #E67E22); color: white;">
+                <h5><i class="fas fa-edit"></i> Editar Prueba</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEditar" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <input type="hidden" name="prueba_id" id="editID">
+
+                    <!-- Preview imagen actual -->
+                    <div class="text-center mb-3" id="editImagenPreview" style="display: none;">
+                        <label class="form-label"><i class="fas fa-image"></i> Imagen Actual</label>
+                        <div>
+                            <img id="editImagenActual" src="" alt="Imagen actual" style="max-width: 200px; height: 150px; object-fit: cover; border-radius: 10px; border: 2px solid #E8F5F1;">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-flask"></i> Nombre de la Prueba</label>
+                                <input type="text" class="form-control" name="nombre" id="editNombre" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-tags"></i> Categoría</label>
+                                <input type="text" class="form-control" name="categoria" id="editCategoria">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-align-left"></i> Descripción</label>
+                        <textarea class="form-control" name="descripcion" id="editDescripcion" rows="3"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-money-bill"></i> Precio (Bolivianos)</label>
+                                <input type="number" class="form-control" name="precio" id="editPrecio" step="0.01" min="0">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-image"></i> Nueva Imagen (Opcional)</label>
+                                <input type="file" class="form-control" name="imagen" accept="image/*">
+                                <small class="text-muted">Dejar vacío para mantener la imagen actual</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><i class="fas fa-times"></i> Cancelar</button>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ELIMINAR -->
+<div class="modal fade" id="modalEliminarPrueba" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #E74C3C, #C0392B); color: white;">
+                <h5><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" id="formEliminarPrueba">
+                <div class="modal-body">
+                    <div class="alert alert-danger mb-3">
+                        <i class="fas fa-exclamation-circle"></i> <strong>¡ADVERTENCIA!</strong><br>
+                        Esta acción es <strong>IRREVERSIBLE</strong>.
+                    </div>
+                    <p>¿Está seguro de eliminar la prueba:</p>
+                    <h5 class="text-center text-danger"><strong id="eliminarPruebaNombre"></strong></h5>
+                    <div class="card border-warning bg-light mt-3">
+                        <div class="card-body">
+                            <p class="mb-0"><i class="fas fa-info-circle text-warning"></i> Se eliminará permanentemente del sistema.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fas fa-trash-alt"></i> Sí, Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Ver detalles de prueba
+function verPrueba(id) {
+    fetch(`/prueba/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('verID').textContent = data.id;
+            document.getElementById('verNombre').textContent = data.nombre;
+            document.getElementById('verCategoria').textContent = data.categoria || 'General';
+            document.getElementById('verPrecio').textContent = 'Bs. ' + parseFloat(data.precio).toFixed(2);
+            document.getElementById('verDescripcion').textContent = data.descripcion || 'Sin descripción';
+
+            // Mostrar imagen si existe
+            if (data.imagen) {
+                document.getElementById('verImagen').src = '/static/uploads/pruebas/' + data.imagen;
+                document.getElementById('verImagen').style.display = 'block';
+                document.getElementById('verImagenContainer').style.display = 'none';
+            } else {
+                document.getElementById('verImagen').style.display = 'none';
+                document.getElementById('verImagenContainer').style.display = 'flex';
+            }
+
+            new bootstrap.Modal(document.getElementById('modalVer')).show();
+        })
+        .catch(error => {
+            alert('Error al cargar los datos de la prueba');
+            console.error('Error:', error);
+        });
+}
+
+// Editar prueba
+function editarPrueba(id) {
+    fetch(`/prueba/${id}`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('editID').value = data.id;
+            document.getElementById('editNombre').value = data.nombre;
+            document.getElementById('editCategoria').value = data.categoria || '';
+            document.getElementById('editDescripcion').value = data.descripcion || '';
+            document.getElementById('editPrecio').value = data.precio;
+
+            // Mostrar preview de imagen actual si existe
+            if (data.imagen) {
+                document.getElementById('editImagenActual').src = '/static/uploads/pruebas/' + data.imagen;
+                document.getElementById('editImagenPreview').style.display = 'block';
+            } else {
+                document.getElementById('editImagenPreview').style.display = 'none';
+            }
+
+            document.getElementById('formEditar').action = `/prueba/editar/${id}`;
+            new bootstrap.Modal(document.getElementById('modalEditar')).show();
+        })
+        .catch(error => {
+            alert('Error al cargar los datos de la prueba');
+            console.error('Error:', error);
+        });
+}
+
+// Confirmar eliminar prueba
+function confirmarEliminarPrueba(id, nombre) {
+    document.getElementById('eliminarPruebaNombre').textContent = nombre;
+    document.getElementById('formEliminarPrueba').action = `/prueba/eliminar/${id}`;
+    new bootstrap.Modal(document.getElementById('modalEliminarPrueba')).show();
+}
+</script>
+
 {% endblock %}
 
