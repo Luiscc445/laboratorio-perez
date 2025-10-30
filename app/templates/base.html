@@ -38,6 +38,11 @@
                             <i class="fas fa-file-medical"></i> Ver mis Resultados
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'main.catalogo_pruebas' %}active{% endif %}" href="{{ url_for('main.catalogo_pruebas') }}">
+                            <i class="fas fa-microscope"></i> Pruebas Disponibles
+                        </a>
+                    </li>
                 </ul>
             </div>
         </div>

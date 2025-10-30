@@ -247,49 +247,6 @@ body {
     </div>
 </section>
 
-<!-- Sección de Accesos Rápidos -->
-<section style="background: linear-gradient(135deg, #ECF0F1, #BDC3C7); padding: 60px 0;">
-    <div class="container">
-        <h2 class="text-center mb-5" style="color: #2C3E50; font-weight: bold;">
-            <i class="fas fa-rocket"></i> Accesos Rápidos
-        </h2>
-        <div class="row justify-content-center">
-            <div class="col-md-5 mb-4">
-                <div style="background: white; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s ease;"
-                     onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(52,152,219,0.3)'"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.1)'">
-                    <i class="fas fa-file-medical" style="font-size: 60px; color: #3498DB; margin-bottom: 20px;"></i>
-                    <h3 style="color: #2C3E50; margin-bottom: 15px;">Ver mis Resultados</h3>
-                    <p style="color: #7F8C8D; margin-bottom: 30px;">Consulta tus resultados de laboratorio de forma rápida y segura</p>
-                    <a href="{{ url_for('main.portal_resultados') }}"
-                       class="btn btn-lg"
-                       style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white; border: none; border-radius: 12px; padding: 15px 40px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s ease;"
-                       onmouseover="this.style.transform='scale(1.05)'"
-                       onmouseout="this.style.transform='scale(1)'">
-                        <i class="fas fa-search"></i> Consultar Resultados
-                    </a>
-                </div>
-            </div>
-            <div class="col-md-5 mb-4">
-                <div style="background: white; border-radius: 20px; padding: 40px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1); transition: all 0.3s ease;"
-                     onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 20px 40px rgba(26,188,156,0.3)'"
-                     onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(0,0,0,0.1)'">
-                    <i class="fas fa-microscope" style="font-size: 60px; color: #1ABC9C; margin-bottom: 20px;"></i>
-                    <h3 style="color: #2C3E50; margin-bottom: 15px;">Catálogo de Pruebas</h3>
-                    <p style="color: #7F8C8D; margin-bottom: 30px;">Descubre todas las pruebas disponibles y cotiza por WhatsApp</p>
-                    <a href="{{ url_for('main.catalogo_pruebas') }}"
-                       class="btn btn-lg"
-                       style="background: linear-gradient(135deg, #1ABC9C, #16A085); color: white; border: none; border-radius: 12px; padding: 15px 40px; font-weight: 600; text-decoration: none; display: inline-block; transition: all 0.3s ease;"
-                       onmouseover="this.style.transform='scale(1.05)'"
-                       onmouseout="this.style.transform='scale(1)'">
-                        <i class="fas fa-flask"></i> Ver Pruebas
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-
 <footer class="footer-modern">
     <div class="container">
         <div class="footer-content">
