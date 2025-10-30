@@ -23,10 +23,10 @@
                     <thead>
                         <tr>
                             <th>ID</th>
+                            <th>Imagen</th>
                             <th>Nombre de la Prueba</th>
                             <th>Categoría</th>
                             <th>Precio (Bs.)</th>
-                            <th>Fecha Registro</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -34,6 +34,17 @@
                         {% for p in pruebas %}
                         <tr>
                             <td><b>{{ p.id }}</b></td>
+                            <td>
+                                {% if p.imagen %}
+                                <img src="{{ url_for('static', filename='uploads/pruebas/' + p.imagen) }}"
+                                     alt="{{ p.nombre }}"
+                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                {% else %}
+                                <div style="width: 50px; height: 50px; background: #E8F5F1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-flask" style="color: #1ABC9C;"></i>
+                                </div>
+                                {% endif %}
+                            </td>
                             <td>{{ p.nombre }}</td>
                             <td>
                                 <span class="badge" style="background:#1ABC9C">
@@ -41,7 +52,6 @@
                                 </span>
                             </td>
                             <td><b>Bs. {{ "%.2f"|format(p.precio) }}</b></td>
-                            <td>{{ p.fecha_creacion.strftime('%d/%m/%Y') }}</td>
                             <td>
                                 <button class="btn btn-sm btn-warning" title="Editar">
                                     <i class="fas fa-edit"></i>
@@ -67,25 +77,46 @@
 </div>
 
 <div class="modal fade" id="modalNuevo" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5><i class="fas fa-vial"></i> Registrar Nueva Prueba</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
-            <form method="POST">
+            <form method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-flask"></i> Nombre de la Prueba</label>
-                        <input type="text" class="form-control" name="nombre" required placeholder="Ej: Hemograma Completo">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-flask"></i> Nombre de la Prueba</label>
+                                <input type="text" class="form-control" name="nombre" required placeholder="Ej: Hemograma Completo">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-tags"></i> Categoría</label>
+                                <input type="text" class="form-control" name="categoria" placeholder="Ej: Hematología">
+                            </div>
+                        </div>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-tags"></i> Categoría</label>
-                        <input type="text" class="form-control" name="categoria" placeholder="Ej: Hematología">
+                        <label class="form-label"><i class="fas fa-align-left"></i> Descripción</label>
+                        <textarea class="form-control" name="descripcion" rows="3" placeholder="Descripción breve de la prueba"></textarea>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label"><i class="fas fa-money-bill"></i> Precio (Bolivianos)</label>
-                        <input type="number" class="form-control" name="precio" step="0.01" min="0" placeholder="0.00">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-money-bill"></i> Precio (Bolivianos)</label>
+                                <input type="number" class="form-control" name="precio" step="0.01" min="0" placeholder="0.00">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label"><i class="fas fa-image"></i> Imagen de la Prueba</label>
+                                <input type="file" class="form-control" name="imagen" accept="image/*">
+                                <small class="text-muted">Formatos: JPG, PNG, WebP (Max 2MB)</small>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">

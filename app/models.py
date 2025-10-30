@@ -48,5 +48,7 @@ class Prueba(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(200), nullable=False)
     categoria = db.Column(db.String(100))
+    descripcion = db.Column(db.Text)
     precio = db.Column(db.Float, default=0.0)
+    imagen = db.Column(db.String(200))
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)

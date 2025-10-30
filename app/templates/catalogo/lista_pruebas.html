@@ -1,64 +1,184 @@
-﻿{% extends 'layouts/base.html' %}
-
-{% block title %}Catálogo de Pruebas{% endblock %}
-
+{% extends "base.html" %}
+{% block title %}Catálogo de Pruebas - Laboratorio Pérez{% endblock %}
 {% block content %}
-<div class="container mt-4">
-    <h2 class="mb-4"><i class="bi bi-list-check"></i> Catálogo de Pruebas</h2>
-    
-    <!-- Filtros -->
-    <div class="row mb-4">
-        <div class="col-md-6">
-            <form method="GET" class="input-group">
-                <input type="text" class="form-control" name="q" placeholder="Buscar prueba..." value="{{ request.args.get('q', '') }}">
-                <button class="btn btn-primary" type="submit">
-                    <i class="bi bi-search"></i> Buscar
-                </button>
-            </form>
-        </div>
-        <div class="col-md-6">
-            <select class="form-select" onchange="location.href='{{ url_for('catalogo.lista') }}?categoria='+this.value">
-                <option value="">Todas las categorías</option>
-                {% for cat in categorias %}
-                <option value="{{ cat.id }}" {% if categoria_seleccionada == cat.id %}selected{% endif %}>
-                    {{ cat.icono }} {{ cat.nombre }}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-    </div>
 
-    <!-- Lista de Pruebas -->
+<style>
+    .prueba-card {
+        border: none;
+        border-radius: 15px;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        height: 100%;
+    }
+
+    .prueba-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 30px rgba(26, 188, 156, 0.3);
+    }
+
+    .prueba-img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .prueba-img-placeholder {
+        height: 200px;
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 60px;
+    }
+
+    .prueba-categoria {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.95);
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #1ABC9C;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .prueba-body {
+        padding: 20px;
+    }
+
+    .prueba-titulo {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2C3E50;
+        margin-bottom: 10px;
+        min-height: 50px;
+    }
+
+    .prueba-descripcion {
+        color: #7F8C8D;
+        font-size: 14px;
+        line-height: 1.6;
+        min-height: 60px;
+    }
+
+    .prueba-precio {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1ABC9C;
+        margin: 15px 0;
+    }
+
+    .btn-whatsapp {
+        background: linear-gradient(135deg, #25D366, #128C7E);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 600;
+        width: 100%;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+    }
+
+    .btn-whatsapp:hover {
+        background: linear-gradient(135deg, #128C7E, #075E54);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        color: white;
+    }
+
+    .btn-whatsapp i {
+        font-size: 18px;
+        margin-right: 8px;
+    }
+
+    .catalogo-header {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        color: white;
+        padding: 60px 0;
+        margin-bottom: 50px;
+        border-radius: 0 0 50px 50px;
+    }
+
+    .catalogo-header h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .catalogo-header p {
+        font-size: 18px;
+        opacity: 0.9;
+    }
+</style>
+
+<div class="catalogo-header">
+    <div class="container text-center">
+        <h1><i class="fas fa-microscope"></i> Catálogo de Pruebas</h1>
+        <p>Laboratorio Clínico Pérez - Potosí, Bolivia</p>
+        <p>Descubre nuestras pruebas de laboratorio disponibles</p>
+    </div>
+</div>
+
+<div class="container mb-5">
+    {% if pruebas %}
     <div class="row g-4">
         {% for prueba in pruebas %}
-        <div class="col-md-6 col-lg-4">
-            <div class="card h-100 shadow-sm">
-                <div class="card-header bg-primary text-white">
-                    <h6 class="mb-0">{{ prueba.categoria.icono }} {{ prueba.nombre }}</h6>
+        <div class="col-md-6 col-lg-3">
+            <div class="prueba-card">
+                <div style="position: relative;">
+                    {% if prueba.imagen %}
+                        <img src="{{ url_for('static', filename='uploads/pruebas/' + prueba.imagen) }}"
+                             alt="{{ prueba.nombre }}"
+                             class="prueba-img">
+                    {% else %}
+                        <div class="prueba-img-placeholder">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                    {% endif %}
+                    <span class="prueba-categoria">
+                        <i class="fas fa-tag"></i> {{ prueba.categoria or 'General' }}
+                    </span>
                 </div>
-                <div class="card-body">
-                    <p class="text-muted small mb-2">Código: {{ prueba.codigo }}</p>
-                    <p class="card-text">{{ prueba.descripcion[:100] }}...</p>
-                    <ul class="list-unstyled small">
-                        <li><i class="bi bi-clock"></i> {{ prueba.tiempo_entrega }}</li>
-                        <li><i class="bi bi-droplet"></i> {{ prueba.muestra_requerida }}</li>
-                    </ul>
-                    <div class="d-flex justify-content-between align-items-center mt-3">
-                        <h4 class="text-primary mb-0">Bs. {{ "%.2f"|format(prueba.precio) }}</h4>
-                        <a href="{{ url_for('catalogo.agregar_carrito', prueba_id=prueba.id) }}" class="btn btn-sm btn-primary">
-                            <i class="bi bi-cart-plus"></i> Agregar
-                        </a>
+
+                <div class="prueba-body">
+                    <h5 class="prueba-titulo">{{ prueba.nombre }}</h5>
+
+                    <p class="prueba-descripcion">
+                        {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional.' }}
+                    </p>
+
+                    <div class="prueba-precio">
+                        <i class="fas fa-coins"></i> Bs. {{ "%.2f"|format(prueba.precio) }}
                     </div>
+
+                    <a href="https://wa.me/59167619188?text=Hola%2C%20estoy%20interesado%20en%20la%20prueba%20*{{ prueba.nombre|urlencode }}*%20%F0%9F%94%AC%0A%0A%C2%BFPodr%C3%ADan%20proporcionarme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                       target="_blank"
+                       class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+                    </a>
                 </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12">
-            <div class="alert alert-info text-center">
-                <i class="bi bi-info-circle"></i> No se encontraron pruebas
             </div>
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-inbox fa-5x mb-4" style="color: #BDC3C7;"></i>
+        <h3 style="color: #95A5A6;">No hay pruebas disponibles</h3>
+        <p class="text-muted">Pronto agregaremos más pruebas de laboratorio</p>
+    </div>
+    {% endif %}
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('main.index') }}" class="btn btn-lg" style="background: #3498DB; color: white; border-radius: 10px; padding: 15px 40px;">
+            <i class="fas fa-home"></i> Volver al Inicio
+        </a>
+    </div>
 </div>
+
 {% endblock %}

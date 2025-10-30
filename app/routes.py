@@ -31,6 +31,11 @@ def index():
 def portal_resultados():
     return render_template('portal_resultados.html')
 
+@main.route('/catalogo-pruebas')
+def catalogo_pruebas():
+    pruebas = Prueba.query.order_by(Prueba.categoria, Prueba.nombre).all()
+    return render_template('catalogo/lista_pruebas.html', pruebas=pruebas)
+
 @main.route('/consultar-resultado', methods=['POST'])
 def consultar_resultado():
     ci = request.form.get('ci')
@@ -363,10 +368,28 @@ def descargar_credenciales_word(resultado_id):
 def admin_pruebas():
     if request.method == 'POST':
         try:
+            # Manejar imagen si se subió
+            imagen_filename = None
+            if 'imagen' in request.files:
+                imagen = request.files['imagen']
+                if imagen and imagen.filename:
+                    # Crear carpeta si no existe
+                    upload_folder = os.path.join('app/static/uploads/pruebas')
+                    os.makedirs(upload_folder, exist_ok=True)
+
+                    # Guardar imagen con nombre seguro
+                    from werkzeug.utils import secure_filename
+                    import time
+                    filename = secure_filename(imagen.filename)
+                    imagen_filename = f"{int(time.time())}_{filename}"
+                    imagen.save(os.path.join(upload_folder, imagen_filename))
+
             prueba = Prueba(
                 nombre=request.form['nombre'],
                 categoria=request.form.get('categoria'),
-                precio=float(request.form.get('precio', 0))
+                descripcion=request.form.get('descripcion'),
+                precio=float(request.form.get('precio', 0)),
+                imagen=imagen_filename
             )
             db.session.add(prueba)
             db.session.commit()
