@@ -21,10 +21,17 @@
     box-sizing: border-box;
 }
 
+html {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 /* ============================================
@@ -50,6 +57,7 @@ body {
     top: 0;
     z-index: 1000;
     animation: navSlideDown 0.5s ease-out;
+    margin: 0 !important; /* Sin margen arriba */
 }
 
 .navbar-custom::before {
@@ -355,7 +363,7 @@ body {
    CONTENEDOR PRINCIPAL
    ============================================ */
 .main-container {
-    padding: 30px 0;
+    padding: 0 0 30px 0; /* Solo padding abajo, NO arriba */
 }
 
 /* ============================================
