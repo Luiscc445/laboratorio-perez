@@ -42,7 +42,7 @@ body {
 }
 
 .navbar-custom {
-    background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
+    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     padding: 1rem 0;
     backdrop-filter: blur(10px);
