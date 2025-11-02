@@ -15,23 +15,31 @@
     --accent-blue: #00B4D8;
 }
 
+/* ============================================
+   RESET COMPLETO - ELIMINA ESPACIOS BLANCOS
+   ============================================ */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-html {
+html,
+body {
     margin: 0 !important;
     padding: 0 !important;
+    height: 100%;
 }
 
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
     min-height: 100vh;
-    margin: 0 !important;
-    padding: 0 !important;
+}
+
+/* Sobrescribir estilos de Bootstrap que pueden causar espacios */
+.navbar {
+    margin-bottom: 0 !important;
 }
 
 /* ============================================
@@ -57,7 +65,7 @@ body {
     top: 0;
     z-index: 1000;
     animation: navSlideDown 0.5s ease-out;
-    margin: 0 !important; /* Sin margen arriba */
+    margin: 0;
 }
 
 .navbar-custom::before {
@@ -363,7 +371,8 @@ body {
    CONTENEDOR PRINCIPAL
    ============================================ */
 .main-container {
-    padding: 0 0 30px 0; /* Solo padding abajo, NO arriba */
+    padding: 0;
+    /* Cada página individual manejará su propio padding */
 }
 
 /* ============================================
