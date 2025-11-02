@@ -14,7 +14,6 @@
             padding: 0 !important;
         }
     </style>
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
 </head>
 <body style="margin: 0; padding: 0;">
     <nav class="navbar navbar-expand-lg navbar-custom" style="margin: 0;">
@@ -53,8 +52,9 @@
         </div>
     </nav>
 
-    <div class="{% if request.endpoint != 'main.index' %}main-container{% endif %}" style="margin: 0; padding: 0;">
-        {% if request.endpoint != 'main.index' %}
+    <div class="{% if request.endpoint not in ['main.index', 'main.portal_resultados', 'main.catalogo_pruebas'] %}main-container{% endif %}" style="margin: 0; padding: 0;">
+        
+        {% if request.endpoint not in ['main.index', 'main.portal_resultados', 'main.catalogo_pruebas'] %}
         <div class="container">
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
@@ -72,8 +72,7 @@
         {% block content %}{% endblock %}
     </div>
 
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-
-

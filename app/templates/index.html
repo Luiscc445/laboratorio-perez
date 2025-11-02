@@ -310,142 +310,148 @@ body {
     line-height: 1.8;
 }
 
-/* ========== FOOTER MODERNO ========== */
-.footer-modern {
-    background: linear-gradient(135deg, var(--dark-gray) 0%, #1A252F 100%);
+/* ========== FOOTER - DISEÑO INSPIRADO EN WESLEY ========== */
+.footer-inspirado {
+    background-color: #111111;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 60px 0 0;
+}
+
+/* Títulos de sección (NAVEGACIÓN, CONTACTO, etc.) */
+.footer-inspirado h5 {
     color: var(--white);
-    padding: 80px 0 30px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 25px;
+    position: relative;
+    padding-left: 15px;
+    text-transform: uppercase;
+}
+
+/* Línea de acento naranja */
+.footer-inspirado h5::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 20px;
+    width: 5px;
+    background-color: var(--primary-orange);
+}
+
+/* Col 1: Logo y Texto */
+.footer-logo-main {
+    width: 180px;
+    margin-bottom: 20px;
+}
+
+.footer-about-text {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+/* Col 2: Navegación con '+' */
+.footer-nav-links {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-nav-links li a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    margin-bottom: 12px;
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.footer-nav-links li a:hover {
+    color: var(--primary-orange);
+    padding-left: 5px;
+}
+
+.footer-nav-links li a::before {
+    content: '+';
+    color: var(--primary-orange);
+    margin-right: 10px;
+    font-weight: 700;
+}
+
+/* Col 3: Lista de Contacto con iconos */
+.footer-contact-list {
+    list-style: none;
+    padding-left: 0;
+}
+
+.footer-contact-list li {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    font-size: 0.95rem;
+}
+
+.footer-contact-list i {
+    color: var(--primary-orange);
+    font-size: 1.1rem;
+    width: 25px;
+    margin-top: 4px;
+}
+
+/* Estilo para enlaces de contacto cliqueables */
+.footer-contact-link {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+.footer-contact-link:hover {
+    color: var(--primary-orange);
+    text-decoration: underline;
+}
+
+
+/* Col 4: Imagen del Cerro */
+.footer-cerro-img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover; /* "zoom" */
+    border-radius: 8px;
+    object-position: center 20%; /* <--- AJUSTADO AL 20% */
+    border: 3px solid var(--primary-orange);
+}
+
+/* Barra de Copyright inferior */
+.footer-copyright {
+    background-color: #000;
+    padding: 20px 0;
+    margin-top: 40px;
     position: relative;
 }
 
-.footer-modern::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 5px;
-    background: linear-gradient(90deg, var(--primary-green), var(--primary-orange), var(--primary-green));
-}
-
-.footer-grid-modern {
-    display: grid;
-    grid-template-columns: 2fr 1.5fr 1.5fr;
-    gap: 60px;
-    margin-bottom: 60px;
-}
-
-.footer-column-modern h4 {
-    font-size: 1.5rem;
-    font-weight: 800;
-    margin-bottom: 30px;
-    color: var(--white);
-}
-
-.footer-about {
-    font-size: 1.05rem;
-    line-height: 1.9;
-    color: rgba(255, 255, 255, 0.75);
-    margin-bottom: 30px;
-}
-
-.footer-social-modern {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.social-link-modern {
-    color: rgba(255, 255, 255, 0.8);
-    text-decoration: none;
-    transition: all 0.3s ease;
-    font-size: 1.5rem;
-    display: inline-block;
-}
-
-.social-link-modern.facebook {
-    color: #1877F2;
-}
-
-.social-link-modern.whatsapp {
-    color: #25D366;
-}
-
-.social-link-modern.email {
-    color: var(--primary-orange);
-}
-
-.social-link-modern:hover {
-    transform: translateY(-5px) scale(1.2);
-    filter: drop-shadow(0 8px 20px currentColor);
-}
-
-.footer-column-modern p,
-.footer-column-modern a {
-    color: rgba(255, 255, 255, 0.75);
-    text-decoration: none;
-    display: block;
-    margin-bottom: 15px;
-    font-size: 1rem;
-    line-height: 1.8;
-    transition: all 0.3s ease;
-}
-
-.footer-column-modern a:hover {
-    color: var(--primary-green);
-    padding-left: 8px;
-}
-
-.footer-column-modern i {
-    color: var(--primary-orange);
-    margin-right: 15px;
-    width: 25px;
-    font-size: 1.1rem;
-}
-
-.footer-map-modern {
-    margin-top: 25px;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.4);
-    border: 3px solid rgba(26, 188, 156, 0.3);
-}
-
-.footer-map-modern iframe {
-    width: 100%;
-    height: 250px;
-    border: 0;
-    display: block;
-}
-
-.btn-location-modern {
-    display: inline-flex;
-    align-items: center;
-    gap: 12px;
-    background: linear-gradient(135deg, var(--primary-orange), var(--dark-orange));
-    color: var(--white);
-    padding: 15px 30px;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 700;
-    margin-top: 20px;
-    transition: all 0.3s ease;
-    font-size: 1.05rem;
-}
-
-.btn-location-modern:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(243, 156, 18, 0.5);
-    color: var(--white);
-}
-
-.footer-bottom-modern {
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    padding-top: 30px;
+.footer-copyright p {
+    margin-bottom: 0;
     text-align: center;
     color: rgba(255, 255, 255, 0.5);
-    font-size: 0.95rem;
+    font-size: 0.9rem;
 }
+
+.footer-copyright-logo {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 30px;
+    height: 30px;
+    opacity: 0.4;
+    filter: invert(1);
+}
+
+
+/* Ocultar el footer-modern anterior */
+.footer-modern {
+    display: none;
+}
+
 
 /* ========== RESPONSIVE ========== */
 @media (max-width: 992px) {
@@ -455,11 +461,6 @@ body {
 
     .section-title-modern h2 {
         font-size: 2.5rem;
-    }
-
-    .footer-grid-modern {
-        grid-template-columns: 1fr;
-        gap: 50px;
     }
 }
 
@@ -487,10 +488,18 @@ body {
     .service-icon-modern i {
         font-size: 35px;
     }
+    
+    .footer-copyright p {
+        text-align: center;
+        padding-right: 0;
+    }
+    
+    .footer-copyright-logo {
+        display: none; /* Ocultar el logo en móvil */
+    }
 }
 </style>
 
-<!-- HERO SECTION -->
 <section class="hero-modern">
     <div class="container">
         <div class="hero-content-center">
@@ -526,7 +535,6 @@ body {
     </div>
 </section>
 
-<!-- SERVICIOS SECTION -->
 <section class="services-modern">
     <div class="container">
         <div class="section-title-modern">
@@ -599,55 +607,85 @@ body {
     </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="footer-modern">
+<footer class="footer-inspirado">
     <div class="container">
-        <div class="footer-grid-modern">
-            <div class="footer-column-modern">
-                <h4>Laboratorio Clínico Pérez</h4>
-                <p class="footer-about">
-                    Más de 10 años brindando servicios de análisis clínicos especializados con la más alta calidad y precisión. Tecnología de punta al servicio de tu salud.
+        <div class="row">
+
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo Laboratorio Pérez" class="footer-logo-main">
+                <p class="footer-about-text">
+                    Más de 10 años brindando servicios de análisis clínicos especializados con la más alta calidad y precisión.
                 </p>
-                <h4>Redes Sociales</h4>
-                <div class="footer-social-modern">
-                    <a href="https://www.facebook.com/laboratorios.perez" target="_blank" class="social-link-modern facebook">
+                <h5 class="mt-4">REDES SOCIALES</h5>
+                <ul class="footer-contact-list">
+                    <li>
                         <i class="fab fa-facebook-f"></i>
-                    </a>
-                </div>
+                        <div>
+                            <a href="https://www.facebook.com/laboratorios.perez" target="_blank" class="footer-contact-link">
+                                Laboratorios Pérez
+                            </a>
+                        </div>
+                    </li>
+                </ul>
             </div>
 
-            <div class="footer-column-modern">
-                <h4>Contacto</h4>
-                <p><i class="fas fa-phone"></i> 67619188</p>
-                <a href="https://wa.me/59167619188" target="_blank"><i class="fab fa-whatsapp"></i> +591 67619188</a>
-                <a href="mailto:laboratorios.perez@gmail.com"><i class="fas fa-envelope"></i> laboratorios.perez@gmail.com</a>
-                <p><i class="fas fa-clock"></i> Lunes - Sábado</p>
-                <p><i class="far fa-clock"></i> 8:00 AM - 6:00 PM</p>
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <h5>NAVEGACIÓN</h5>
+                <ul class="footer-nav-links">
+                    <li><a href="{{ url_for('main.index') }}">Inicio</a></li>
+                    <li><a href="{{ url_for('main.portal_resultados') }}">Ver Resultados</a></li>
+                    <li><a href="{{ url_for('main.catalogo_pruebas') }}">Pruebas Disponibles</a></li>
+                </ul>
             </div>
 
-            <div class="footer-column-modern">
-                <h4>Ubicación</h4>
-                <p><i class="fas fa-map-marker-alt"></i> La Paz entre Matos y Hoyos 1137</p>
-                <p><i class="fas fa-city"></i> Potosí, Bolivia</p>
-
-                <div class="footer-map-modern">
-                    <iframe
-                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d475.0!2d-65.750749111176!3d-19.588398057678!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTnCsDM1JzE4LjIiUyA2NcKwNDUnMDIuNyJX!5e0!3m2!1ses!2sbo!4v1234567890"
-                        loading="lazy"
-                        allowfullscreen=""
-                        referrerpolicy="no-referrer-when-downgrade">
-                    </iframe>
-                </div>
-
-                <a href="https://www.google.com/maps/dir/?api=1&destination=-19.588398057678,-65.750749111176" target="_blank" class="btn-location-modern">
-                    <i class="fas fa-directions"></i>
-                    Cómo llegar
-                </a>
+            <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+                <h5>CONTACTO</h5>
+                <ul class="footer-contact-list">
+                    <li>
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <strong>Teléfono:</strong> 67619188
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fab fa-whatsapp"></i>
+                        <div>
+                            <strong>WhatsApp:</strong>
+                            <a href="https://wa.me/59167619188" target="_blank" class="footer-contact-link">+591 67619188</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <strong>Email:</strong>
+                            <a href="mailto:laboratorios.perez@gmail.com" class="footer-contact-link">laboratorios.perez@gmail.com</a>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <strong>Dirección:</strong> La Paz entre Matos y Hoyos 1137, Potosí, Bolivia
+                        </div>
+                    </li>
+                </ul>
             </div>
+
+            <div class="col-lg-3 col-md-6">
+                <h5>POTOSÍ</h5>
+                <img src="{{ url_for('static', filename='img/cerro.jpg') }}" alt="Cerro Rico de Potosí" class="footer-cerro-img">
+            </div>
+
         </div>
+    </div>
 
-        <div class="footer-bottom-modern">
-            <p>&copy; 2025 Laboratorio Clínico Pérez. Todos los derechos reservados.</p>
+    <div class="footer-copyright">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <p>&copy; 2025 Laboratorio Clínico Pérez. Todos los derechos reservados.</p>
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo" class="footer-copyright-logo">
+                </div>
+            </div>
         </div>
     </div>
 </footer>
