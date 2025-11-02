@@ -334,23 +334,23 @@
             <div class="chart-card">
                 <h4>
                     <i class="fas fa-flask"></i>
-                    Top 5 Pruebas
+                    Últimas Pruebas
                 </h4>
                 {% if top_pruebas %}
                 <ul class="top-pruebas-list">
-                    {% for prueba, total in top_pruebas %}
+                    {% for prueba, precio in top_pruebas %}
                     <li>
                         <span class="prueba-nombre">
                             <i class="fas fa-vial"></i>
                             {{ prueba }}
                         </span>
-                        <span class="prueba-count">{{ total }}</span>
+                        <span class="prueba-count">Bs. {{ "%.2f"|format(precio) }}</span>
                     </li>
                     {% endfor %}
                 </ul>
                 {% else %}
                 <p class="text-muted text-center py-4">
-                    <i class="fas fa-info-circle"></i> No hay datos disponibles
+                    <i class="fas fa-info-circle"></i> No hay pruebas disponibles
                 </p>
                 {% endif %}
             </div>

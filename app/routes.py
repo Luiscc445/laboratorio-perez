@@ -71,11 +71,11 @@ def dashboard():
         func.count(Resultado.id).label('total')
     ).filter(Resultado.fecha_muestra >= fecha_inicio).group_by('mes').all()
 
-    # Top 5 pruebas más solicitadas
+    # Top 5 pruebas más recientes del catálogo
     top_pruebas = db.session.query(
         Prueba.nombre,
-        func.count(Resultado.id).label('total')
-    ).join(Resultado, Resultado.prueba_id == Prueba.id).group_by(Prueba.nombre).order_by(func.count(Resultado.id).desc()).limit(5).all()
+        Prueba.precio
+    ).order_by(Prueba.fecha_creacion.desc()).limit(5).all()
 
     # Estadísticas adicionales
     pacientes_este_mes = Paciente.query.filter(
