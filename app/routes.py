@@ -67,9 +67,9 @@ def dashboard():
 
     # Resultados por mes en los últimos 6 meses
     resultados_por_mes = db.session.query(
-        extract('month', Resultado.fecha_registro).label('mes'),
+        extract('month', Resultado.fecha_muestra).label('mes'),
         func.count(Resultado.id).label('total')
-    ).filter(Resultado.fecha_registro >= fecha_inicio).group_by('mes').all()
+    ).filter(Resultado.fecha_muestra >= fecha_inicio).group_by('mes').all()
 
     # Top 5 pruebas más solicitadas
     top_pruebas = db.session.query(
@@ -84,8 +84,8 @@ def dashboard():
     ).count()
 
     resultados_este_mes = Resultado.query.filter(
-        extract('month', Resultado.fecha_registro) == datetime.now().month,
-        extract('year', Resultado.fecha_registro) == datetime.now().year
+        extract('month', Resultado.fecha_muestra) == datetime.now().month,
+        extract('year', Resultado.fecha_muestra) == datetime.now().year
     ).count()
 
     # Preparar datos para gráficos
