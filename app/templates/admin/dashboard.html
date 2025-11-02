@@ -1,81 +1,629 @@
-﻿{% extends "base_admin.html" %}
+{% extends "base_admin.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
+<style>
+    /* Estilos modernos para el dashboard */
+    .dashboard-header {
+        background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 40px rgba(26, 188, 156, 0.3);
+    }
+
+    .dashboard-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .dashboard-header p {
+        font-size: 1.1rem;
+        opacity: 0.95;
+        margin: 0;
+    }
+
+    /* Tarjetas de estadísticas mejoradas */
+    .stat-card-modern {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 3px solid transparent;
+        position: relative;
+        overflow: hidden;
+        height: 100%;
+    }
+
+    .stat-card-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 5px;
+        background: linear-gradient(135deg, var(--color), var(--color-dark));
+    }
+
+    .stat-card-modern.verde {
+        --color: #1ABC9C;
+        --color-dark: #16A085;
+    }
+
+    .stat-card-modern.naranja {
+        --color: #F39C12;
+        --color-dark: #E67E22;
+    }
+
+    .stat-card-modern.azul {
+        --color: #3498DB;
+        --color-dark: #2980B9;
+    }
+
+    .stat-card-modern.morado {
+        --color: #9B59B6;
+        --color-dark: #8E44AD;
+    }
+
+    .stat-card-modern:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        border-color: var(--color);
+    }
+
+    .stat-card-icon {
+        width: 70px;
+        height: 70px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, var(--color), var(--color-dark));
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stat-card-icon i {
+        font-size: 35px;
+        color: white;
+    }
+
+    .stat-card-modern h3 {
+        font-size: 2.8rem;
+        font-weight: 800;
+        color: #2C3E50;
+        margin: 15px 0;
+    }
+
+    .stat-card-modern p {
+        color: #7F8C8D;
+        font-size: 1rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 15px;
+    }
+
+    .stat-badge {
+        display: inline-block;
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        background: rgba(26, 188, 156, 0.1);
+        color: #16A085;
+    }
+
+    /* Tarjetas de gráficos */
+    .chart-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        margin-bottom: 30px;
+        transition: all 0.3s ease;
+    }
+
+    .chart-card:hover {
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+    }
+
+    .chart-card h4 {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2C3E50;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .chart-card h4 i {
+        color: #1ABC9C;
+        font-size: 1.6rem;
+    }
+
+    /* Botones de acción rápida */
+    .action-buttons {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .action-btn {
+        background: white;
+        border-radius: 15px;
+        padding: 25px;
+        text-decoration: none;
+        color: #2C3E50;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        border: 3px solid transparent;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 40px rgba(26, 188, 156, 0.2);
+        border-color: #1ABC9C;
+        color: #1ABC9C;
+    }
+
+    .action-btn i {
+        font-size: 3rem;
+        color: #1ABC9C;
+        transition: all 0.3s ease;
+    }
+
+    .action-btn:hover i {
+        transform: scale(1.15);
+    }
+
+    .action-btn span {
+        font-weight: 700;
+        font-size: 1.05rem;
+    }
+
+    /* Tabla de top pruebas */
+    .top-pruebas-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .top-pruebas-list li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px;
+        background: #F8F9FA;
+        border-radius: 10px;
+        margin-bottom: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .top-pruebas-list li:hover {
+        background: rgba(26, 188, 156, 0.1);
+        transform: translateX(10px);
+    }
+
+    .prueba-nombre {
+        font-weight: 600;
+        color: #2C3E50;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .prueba-nombre i {
+        color: #1ABC9C;
+    }
+
+    .prueba-count {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.95rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+        .dashboard-header h1 {
+            font-size: 1.8rem;
+        }
+
+        .stat-card-modern h3 {
+            font-size: 2rem;
+        }
+
+        .action-buttons {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
 <div class="container-fluid">
-    <h2 class="mb-4">
-        <i class="fas fa-chart-line" style="color:#1ABC9C"></i> Dashboard Administrativo
-    </h2>
-    <p class="text-muted mb-4">Laboratorio Pérez - Potosí, Bolivia</p>
-    
+    <!-- Header del Dashboard -->
+    <div class="dashboard-header">
+        <h1>
+            <i class="fas fa-chart-line"></i>
+            Dashboard Administrativo
+        </h1>
+        <p><i class="fas fa-map-marker-alt"></i> Laboratorio Pérez - Potosí, Bolivia</p>
+    </div>
+
+    <!-- Tarjetas de Estadísticas -->
     <div class="row mb-4">
-        <div class="col-md-4 mb-3">
-            <div class="stat-card stat-card-verde">
-                <i class="fas fa-users"></i>
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stat-card-modern verde">
+                <div class="stat-card-icon">
+                    <i class="fas fa-users"></i>
+                </div>
                 <h3>{{ total_pacientes }}</h3>
-                <p>Pacientes Registrados</p>
-                <a href="{{ url_for('main.admin_pacientes') }}" class="btn btn-light btn-sm mt-2">
-                    <i class="fas fa-arrow-right"></i> Ver Pacientes
-                </a>
+                <p>Total Pacientes</p>
+                <span class="stat-badge">
+                    <i class="fas fa-plus-circle"></i> {{ pacientes_este_mes }} este mes
+                </span>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="stat-card stat-card-naranja">
-                <i class="fas fa-file-medical"></i>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stat-card-modern naranja">
+                <div class="stat-card-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
                 <h3>{{ total_resultados }}</h3>
-                <p>Resultados Almacenados</p>
-                <a href="{{ url_for('main.admin_resultados') }}" class="btn btn-light btn-sm mt-2">
-                    <i class="fas fa-arrow-right"></i> Ver Resultados
-                </a>
+                <p>Total Resultados</p>
+                <span class="stat-badge">
+                    <i class="fas fa-plus-circle"></i> {{ resultados_este_mes }} este mes
+                </span>
             </div>
         </div>
-        <div class="col-md-4 mb-3">
-            <div class="stat-card stat-card-azul">
-                <i class="fas fa-vial"></i>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stat-card-modern azul">
+                <div class="stat-card-icon">
+                    <i class="fas fa-vial"></i>
+                </div>
                 <h3>{{ total_pruebas }}</h3>
                 <p>Pruebas Disponibles</p>
-                <a href="{{ url_for('main.admin_pruebas') }}" class="btn btn-light btn-sm mt-2">
-                    <i class="fas fa-arrow-right"></i> Ver Pruebas
-                </a>
+                <span class="stat-badge">
+                    <i class="fas fa-check-circle"></i> Activas
+                </span>
+            </div>
+        </div>
+
+        <div class="col-lg-3 col-md-6 mb-4">
+            <div class="stat-card-modern morado">
+                <div class="stat-card-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>{{ pacientes_este_mes + resultados_este_mes }}</h3>
+                <p>Actividad del Mes</p>
+                <span class="stat-badge">
+                    <i class="fas fa-trending-up"></i> Total
+                </span>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <i class="fas fa-th-large"></i> Accesos Rápidos
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('main.admin_pacientes') }}" class="btn btn-lg btn-primary w-100">
-                                <i class="fas fa-user-plus fa-2x mb-2"></i>
-                                <br>Nuevo Paciente
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('main.admin_resultados') }}" class="btn btn-lg btn-warning w-100">
-                                <i class="fas fa-file-upload fa-2x mb-2"></i>
-                                <br>Subir Resultado
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('main.admin_pruebas') }}" class="btn btn-lg btn-info w-100">
-                                <i class="fas fa-flask fa-2x mb-2"></i>
-                                <br>Nueva Prueba
-                            </a>
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <a href="{{ url_for('main.index') }}" class="btn btn-lg btn-success w-100" target="_blank">
-                                <i class="fas fa-globe fa-2x mb-2"></i>
-                                <br>Ver Sitio Público
-                            </a>
-                        </div>
-                    </div>
-                </div>
+    <!-- Gráficos -->
+    <div class="row mb-4">
+        <div class="col-lg-8 mb-4">
+            <div class="chart-card">
+                <h4>
+                    <i class="fas fa-chart-area"></i>
+                    Tendencia de Pacientes y Resultados
+                </h4>
+                <canvas id="trendChart" style="max-height: 350px;"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-4">
+            <div class="chart-card">
+                <h4>
+                    <i class="fas fa-flask"></i>
+                    Top 5 Pruebas
+                </h4>
+                {% if top_pruebas %}
+                <ul class="top-pruebas-list">
+                    {% for prueba, total in top_pruebas %}
+                    <li>
+                        <span class="prueba-nombre">
+                            <i class="fas fa-vial"></i>
+                            {{ prueba }}
+                        </span>
+                        <span class="prueba-count">{{ total }}</span>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% else %}
+                <p class="text-muted text-center py-4">
+                    <i class="fas fa-info-circle"></i> No hay datos disponibles
+                </p>
+                {% endif %}
             </div>
         </div>
     </div>
+
+    <!-- Gráfico de Distribución -->
+    <div class="row mb-4">
+        <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+                <h4>
+                    <i class="fas fa-chart-pie"></i>
+                    Distribución General
+                </h4>
+                <canvas id="distributionChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+
+        <div class="col-lg-6 mb-4">
+            <div class="chart-card">
+                <h4>
+                    <i class="fas fa-chart-bar"></i>
+                    Comparación Mensual
+                </h4>
+                <canvas id="comparisonChart" style="max-height: 300px;"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="chart-card">
+        <h4>
+            <i class="fas fa-bolt"></i>
+            Acciones Rápidas
+        </h4>
+        <div class="action-buttons">
+            <a href="{{ url_for('main.admin_pacientes') }}" class="action-btn">
+                <i class="fas fa-users"></i>
+                <span>Gestionar Pacientes</span>
+            </a>
+            <a href="{{ url_for('main.admin_resultados') }}" class="action-btn">
+                <i class="fas fa-file-upload"></i>
+                <span>Subir Resultado</span>
+            </a>
+            <a href="{{ url_for('main.admin_pruebas') }}" class="action-btn">
+                <i class="fas fa-flask"></i>
+                <span>Gestionar Pruebas</span>
+            </a>
+            <a href="{{ url_for('main.index') }}" class="action-btn" target="_blank">
+                <i class="fas fa-globe"></i>
+                <span>Ver Sitio Público</span>
+            </a>
+        </div>
+    </div>
 </div>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+    // Configuración global de Chart.js
+    Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+    Chart.defaults.color = '#7F8C8D';
+
+    // Datos del servidor
+    const ultimos_meses = {{ ultimos_meses | tojson }};
+    const pacientes_data = {{ pacientes_data | tojson }};
+    const resultados_data = {{ resultados_data | tojson }};
+
+    // Gráfico de Tendencia (Línea)
+    const trendCtx = document.getElementById('trendChart').getContext('2d');
+    new Chart(trendCtx, {
+        type: 'line',
+        data: {
+            labels: ultimos_meses,
+            datasets: [
+                {
+                    label: 'Pacientes',
+                    data: pacientes_data,
+                    borderColor: '#1ABC9C',
+                    backgroundColor: 'rgba(26, 188, 156, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#1ABC9C',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                },
+                {
+                    label: 'Resultados',
+                    data: resultados_data,
+                    borderColor: '#F39C12',
+                    backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 6,
+                    pointHoverRadius: 8,
+                    pointBackgroundColor: '#F39C12',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(44, 62, 80, 0.95)',
+                    padding: 15,
+                    cornerRadius: 10,
+                    titleFont: {
+                        size: 14,
+                        weight: 'bold'
+                    },
+                    bodyFont: {
+                        size: 13
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0,
+                        font: {
+                            size: 12
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 12,
+                            weight: '600'
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de Distribución (Dona)
+    const distributionCtx = document.getElementById('distributionChart').getContext('2d');
+    new Chart(distributionCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pacientes', 'Resultados', 'Pruebas'],
+            datasets: [{
+                data: [{{ total_pacientes }}, {{ total_resultados }}, {{ total_pruebas }}],
+                backgroundColor: [
+                    'rgba(26, 188, 156, 0.8)',
+                    'rgba(243, 156, 18, 0.8)',
+                    'rgba(52, 152, 219, 0.8)'
+                ],
+                borderColor: [
+                    '#1ABC9C',
+                    '#F39C12',
+                    '#3498DB'
+                ],
+                borderWidth: 3,
+                hoverOffset: 15
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(44, 62, 80, 0.95)',
+                    padding: 15,
+                    cornerRadius: 10
+                }
+            }
+        }
+    });
+
+    // Gráfico de Comparación (Barras)
+    const comparisonCtx = document.getElementById('comparisonChart').getContext('2d');
+    new Chart(comparisonCtx, {
+        type: 'bar',
+        data: {
+            labels: ultimos_meses,
+            datasets: [
+                {
+                    label: 'Pacientes',
+                    data: pacientes_data,
+                    backgroundColor: 'rgba(26, 188, 156, 0.8)',
+                    borderColor: '#1ABC9C',
+                    borderWidth: 2,
+                    borderRadius: 8
+                },
+                {
+                    label: 'Resultados',
+                    data: resultados_data,
+                    backgroundColor: 'rgba(243, 156, 18, 0.8)',
+                    borderColor: '#F39C12',
+                    borderWidth: 2,
+                    borderRadius: 8
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 13,
+                            weight: '600'
+                        }
+                    }
+                },
+                tooltip: {
+                    backgroundColor: 'rgba(44, 62, 80, 0.95)',
+                    padding: 15,
+                    cornerRadius: 10
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    },
+                    grid: {
+                        color: 'rgba(0, 0, 0, 0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            }
+        }
+    });
+</script>
 {% endblock %}

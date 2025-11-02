@@ -3,7 +3,8 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import Paciente, Resultado, Prueba
 from werkzeug.utils import secure_filename
-from datetime import datetime
+from datetime import datetime, timedelta
+from sqlalchemy import func, extract
 import os
 import random
 import string
@@ -52,13 +53,77 @@ def consultar_resultado():
 @main.route('/dashboard')
 @login_required
 def dashboard():
+    # Estadísticas básicas
     total_pacientes = Paciente.query.count()
     total_resultados = Resultado.query.count()
     total_pruebas = Prueba.query.count()
-    return render_template('admin/dashboard.html', 
+
+    # Pacientes registrados en los últimos 6 meses
+    fecha_inicio = datetime.now() - timedelta(days=180)
+    pacientes_por_mes = db.session.query(
+        extract('month', Paciente.fecha_registro).label('mes'),
+        func.count(Paciente.id).label('total')
+    ).filter(Paciente.fecha_registro >= fecha_inicio).group_by('mes').all()
+
+    # Resultados por mes en los últimos 6 meses
+    resultados_por_mes = db.session.query(
+        extract('month', Resultado.fecha_registro).label('mes'),
+        func.count(Resultado.id).label('total')
+    ).filter(Resultado.fecha_registro >= fecha_inicio).group_by('mes').all()
+
+    # Top 5 pruebas más solicitadas
+    top_pruebas = db.session.query(
+        Prueba.nombre,
+        func.count(Resultado.id).label('total')
+    ).join(Resultado, Resultado.prueba_id == Prueba.id).group_by(Prueba.nombre).order_by(func.count(Resultado.id).desc()).limit(5).all()
+
+    # Estadísticas adicionales
+    pacientes_este_mes = Paciente.query.filter(
+        extract('month', Paciente.fecha_registro) == datetime.now().month,
+        extract('year', Paciente.fecha_registro) == datetime.now().year
+    ).count()
+
+    resultados_este_mes = Resultado.query.filter(
+        extract('month', Resultado.fecha_registro) == datetime.now().month,
+        extract('year', Resultado.fecha_registro) == datetime.now().year
+    ).count()
+
+    # Preparar datos para gráficos
+    meses_nombres = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic']
+    mes_actual = datetime.now().month
+
+    # Últimos 6 meses
+    ultimos_meses = []
+    for i in range(5, -1, -1):
+        mes_idx = (mes_actual - i - 1) % 12
+        ultimos_meses.append(meses_nombres[mes_idx])
+
+    # Crear arrays de datos para gráficos
+    pacientes_data = [0] * 6
+    resultados_data = [0] * 6
+
+    for mes, total in pacientes_por_mes:
+        mes_idx = int(mes)
+        pos = 5 - ((mes_actual - mes_idx) % 12)
+        if 0 <= pos < 6:
+            pacientes_data[pos] = total
+
+    for mes, total in resultados_por_mes:
+        mes_idx = int(mes)
+        pos = 5 - ((mes_actual - mes_idx) % 12)
+        if 0 <= pos < 6:
+            resultados_data[pos] = total
+
+    return render_template('admin/dashboard.html',
                          total_pacientes=total_pacientes,
                          total_resultados=total_resultados,
-                         total_pruebas=total_pruebas)
+                         total_pruebas=total_pruebas,
+                         pacientes_este_mes=pacientes_este_mes,
+                         resultados_este_mes=resultados_este_mes,
+                         ultimos_meses=ultimos_meses,
+                         pacientes_data=pacientes_data,
+                         resultados_data=resultados_data,
+                         top_pruebas=top_pruebas)
 
 @main.route('/pacientes', methods=['GET', 'POST'])
 @login_required
