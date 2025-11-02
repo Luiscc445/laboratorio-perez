@@ -61,23 +61,22 @@ body {
 /* ========== HERO SECTION MODERNO ========== */
 .hero-modern {
     min-height: 100vh;
-    background: linear-gradient(135deg, var(--light-bg) 0%, #E8F5F1 100%);
+    background: url("{{ url_for('static', filename='img/cerro.jpg') }}") center top/cover no-repeat;
     display: flex;
     align-items: center;
     position: relative;
     overflow: hidden;
-    padding: 80px 0;
+    padding: 60px 0;
 }
 
 .hero-modern::before {
     content: '';
     position: absolute;
     top: 0;
+    left: 0;
     right: 0;
-    width: 45%;
-    height: 100%;
-    background: url("{{ url_for('static', filename='img/cerro.jpg') }}") center/cover no-repeat;
-    opacity: 0.15;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(248, 249, 250, 0.75) 0%, rgba(232, 245, 241, 0.85) 40%, rgba(232, 245, 241, 0.95) 100%);
     animation: fadeInUp 1.5s ease-out;
 }
 
@@ -86,17 +85,25 @@ body {
     position: relative;
     z-index: 2;
     animation: fadeInUp 1s ease-out;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .logo-circular {
-    width: 180px;
-    height: 180px;
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
     object-fit: cover;
-    margin: 0 auto 40px;
-    box-shadow: 0 20px 60px rgba(26, 188, 156, 0.3);
-    border: 6px solid var(--white);
+    margin: 0 auto 60px;
+    box-shadow: 0 20px 60px rgba(26, 188, 156, 0.4);
+    border: 8px solid var(--white);
     animation: scaleIn 1s ease-out 0.3s both, floatAnimation 3s ease-in-out 1.5s infinite;
+}
+
+.hero-content-info {
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .hero-badge-modern {
@@ -344,40 +351,33 @@ body {
 
 .footer-social-modern {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     flex-wrap: wrap;
 }
 
 .social-link-modern {
-    width: 55px;
-    height: 55px;
-    border-radius: 15px;
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--white);
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
     transition: all 0.3s ease;
-    font-size: 1.4rem;
+    font-size: 2.2rem;
+    display: inline-block;
 }
 
-.social-link-modern.facebook:hover {
-    background: #1877F2;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(24, 119, 242, 0.5);
+.social-link-modern.facebook {
+    color: #1877F2;
 }
 
-.social-link-modern.whatsapp:hover {
-    background: #25D366;
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
+.social-link-modern.whatsapp {
+    color: #25D366;
 }
 
-.social-link-modern.email:hover {
-    background: var(--primary-orange);
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(243, 156, 18, 0.5);
+.social-link-modern.email {
+    color: var(--primary-orange);
+}
+
+.social-link-modern:hover {
+    transform: translateY(-5px) scale(1.2);
+    filter: drop-shadow(0 8px 20px currentColor);
 }
 
 .footer-column-modern p,
@@ -496,29 +496,31 @@ body {
         <div class="hero-content-center">
             <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo Laboratorio Pérez" class="logo-circular">
 
-            <div class="hero-badge-modern">
-                <i class="fas fa-award"></i>
-                Más de 10 años de experiencia
-            </div>
+            <div class="hero-content-info">
+                <div class="hero-badge-modern">
+                    <i class="fas fa-award"></i>
+                    Más de 10 años de experiencia
+                </div>
 
-            <h1>Laboratorio Clínico <span>Pérez</span></h1>
+                <h1>Laboratorio Clínico <span>Pérez</span></h1>
 
-            <p>Exámenes de laboratorio con la más alta calidad y precisión. Tecnología de punta y resultados confiables para cuidar tu salud.</p>
+                <p>Exámenes de laboratorio con la más alta calidad y precisión. Tecnología de punta y resultados confiables para cuidar tu salud.</p>
 
-            <div class="hero-location-badge">
-                <i class="fas fa-map-marker-alt"></i>
-                Potosí, Bolivia
-            </div>
+                <div class="hero-location-badge">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Potosí, Bolivia
+                </div>
 
-            <div class="hero-buttons-modern">
-                <a href="{{ url_for('auth.login') }}" class="btn-hero-primary">
-                    <i class="fas fa-sign-in-alt"></i>
-                    Acceder al Sistema
-                </a>
-                <a href="{{ url_for('main.catalogo_pruebas') }}" class="btn-hero-secondary">
-                    <i class="fas fa-microscope"></i>
-                    Ver Pruebas Disponibles
-                </a>
+                <div class="hero-buttons-modern">
+                    <a href="{{ url_for('auth.login') }}" class="btn-hero-primary">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Acceder al Sistema
+                    </a>
+                    <a href="{{ url_for('main.catalogo_pruebas') }}" class="btn-hero-secondary">
+                        <i class="fas fa-microscope"></i>
+                        Ver Pruebas Disponibles
+                    </a>
+                </div>
             </div>
         </div>
     </div>
