@@ -9,6 +9,10 @@
     --color-naranja-oscuro: #E67E22;
     --color-azul: #3498DB;
     --color-gris: #95A5A6;
+    /* Nuevos colores para público */
+    --primary-blue: #0066CC;
+    --dark-blue: #004C99;
+    --accent-blue: #00B4D8;
 }
 
 * {
@@ -38,7 +42,7 @@ body {
 }
 
 .navbar-custom {
-    background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+    background: linear-gradient(135deg, var(--primary-blue), var(--dark-blue));
     box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     padding: 1rem 0;
     backdrop-filter: blur(10px);

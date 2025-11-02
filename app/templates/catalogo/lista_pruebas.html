@@ -3,271 +3,327 @@
 {% block content %}
 
 <style>
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+:root {
+    --primary-blue: #0066CC;
+    --dark-blue: #004C99;
+    --light-blue: #E8F4FF;
+    --accent-blue: #00B4D8;
+    --dark-gray: #1A252F;
+    --text-gray: #4A5568;
+    --white: #FFFFFF;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ========== HEADER DEL CATÁLOGO ========== */
+.catalogo-header-pro {
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--dark-blue) 100%);
+    color: var(--white);
+    padding: 100px 0 80px;
+    margin-bottom: 60px;
+    position: relative;
+    overflow: hidden;
+}
+
+.catalogo-header-pro::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.1), transparent 60%);
+    pointer-events: none;
+}
+
+.catalogo-header-pro .container {
+    position: relative;
+    z-index: 1;
+}
+
+.catalogo-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    padding: 8px 20px;
+    border-radius: 30px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-bottom: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideDown 0.8s ease-out;
+}
+
+.catalogo-header-pro h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 20px;
+    letter-spacing: -1px;
+    animation: slideDown 0.8s ease-out 0.2s both;
+}
+
+.catalogo-header-pro p {
+    font-size: 1.2rem;
+    opacity: 0.95;
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.7;
+    animation: slideDown 0.8s ease-out 0.4s both;
+}
+
+/* ========== TARJETAS DE PRUEBAS ========== */
+.prueba-card-pro {
+    background: var(--white);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    height: 100%;
+    border: 2px solid #F0F4F8;
+    animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.prueba-card-pro:nth-child(1) { animation-delay: 0.1s; }
+.prueba-card-pro:nth-child(2) { animation-delay: 0.2s; }
+.prueba-card-pro:nth-child(3) { animation-delay: 0.3s; }
+.prueba-card-pro:nth-child(4) { animation-delay: 0.4s; }
+.prueba-card-pro:nth-child(5) { animation-delay: 0.5s; }
+.prueba-card-pro:nth-child(6) { animation-delay: 0.6s; }
+.prueba-card-pro:nth-child(7) { animation-delay: 0.7s; }
+.prueba-card-pro:nth-child(8) { animation-delay: 0.8s; }
+
+.prueba-card-pro:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(0, 102, 204, 0.15);
+    border-color: var(--light-blue);
+}
+
+.prueba-img-container {
+    position: relative;
+    height: 220px;
+    overflow: hidden;
+}
+
+.prueba-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: all 0.5s ease;
+}
+
+.prueba-card-pro:hover .prueba-img {
+    transform: scale(1.1);
+}
+
+.prueba-img-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-blue), var(--accent-blue));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--white);
+    font-size: 70px;
+    transition: all 0.5s ease;
+}
+
+.prueba-card-pro:hover .prueba-img-placeholder {
+    background: linear-gradient(135deg, var(--accent-blue), var(--primary-blue));
+}
+
+.prueba-card-pro:hover .prueba-img-placeholder i {
+    transform: scale(1.2) rotate(15deg);
+}
+
+.prueba-categoria {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--white);
+    padding: 8px 18px;
+    border-radius: 25px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.prueba-card-pro:hover .prueba-categoria {
+    background: var(--primary-blue);
+    color: var(--white);
+    transform: scale(1.05);
+}
+
+.prueba-body-pro {
+    padding: 30px 25px;
+}
+
+.prueba-titulo {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--dark-gray);
+    margin-bottom: 12px;
+    min-height: 50px;
+    line-height: 1.3;
+    transition: all 0.3s ease;
+}
+
+.prueba-card-pro:hover .prueba-titulo {
+    color: var(--primary-blue);
+}
+
+.prueba-descripcion {
+    color: var(--text-gray);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    min-height: 60px;
+    margin-bottom: 20px;
+}
+
+.prueba-precio {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--primary-blue);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.prueba-precio i {
+    font-size: 1.5rem;
+    color: var(--accent-blue);
+}
+
+.btn-whatsapp-pro {
+    background: linear-gradient(135deg, #25D366, #128C7E);
+    color: var(--white);
+    border: none;
+    border-radius: 12px;
+    padding: 15px 25px;
+    font-weight: 700;
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
+    text-decoration: none;
+    font-size: 1rem;
+}
+
+.btn-whatsapp-pro:hover {
+    background: linear-gradient(135deg, #128C7E, #075E54);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(37, 211, 102, 0.4);
+    color: var(--white);
+}
+
+.btn-whatsapp-pro i {
+    font-size: 1.3rem;
+}
+
+/* ========== EMPTY STATE ========== */
+.empty-state {
+    text-align: center;
+    padding: 100px 20px;
+}
+
+.empty-state i {
+    font-size: 5rem;
+    color: #CBD5E0;
+    margin-bottom: 30px;
+}
+
+.empty-state h3 {
+    font-size: 1.8rem;
+    color: var(--text-gray);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: var(--text-gray);
+    opacity: 0.7;
+    font-size: 1.1rem;
+}
+
+/* ========== BOTÓN VOLVER ========== */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--primary-blue);
+    color: var(--white);
+    padding: 15px 40px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 20px rgba(0, 102, 204, 0.2);
+}
+
+.btn-back:hover {
+    background: var(--dark-blue);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 102, 204, 0.3);
+    color: var(--white);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .catalogo-header-pro h1 {
+        font-size: 2.5rem;
     }
 
-    @keyframes slideInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-50px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-
-    .prueba-card {
-        border: none;
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        height: 100%;
-        background: white;
-        position: relative;
-        animation: fadeInUp 0.6s ease-out backwards;
-    }
-
-    .prueba-card:nth-child(1) { animation-delay: 0.1s; }
-    .prueba-card:nth-child(2) { animation-delay: 0.2s; }
-    .prueba-card:nth-child(3) { animation-delay: 0.3s; }
-    .prueba-card:nth-child(4) { animation-delay: 0.4s; }
-    .prueba-card:nth-child(5) { animation-delay: 0.5s; }
-    .prueba-card:nth-child(6) { animation-delay: 0.6s; }
-
-    .prueba-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(26, 188, 156, 0.2), transparent);
-        transition: left 0.7s;
-        z-index: 1;
-    }
-
-    .prueba-card:hover::before {
-        left: 100%;
-    }
-
-    .prueba-card:hover {
-        transform: translateY(-15px) scale(1.02);
-        box-shadow: 0 25px 50px rgba(26, 188, 156, 0.3);
-        border: 2px solid rgba(26, 188, 156, 0.3);
-    }
-
-    .prueba-img {
-        height: 200px;
-        object-fit: cover;
-        width: 100%;
-        transition: all 0.5s ease;
-    }
-
-    .prueba-card:hover .prueba-img {
-        transform: scale(1.1);
-        filter: brightness(1.1);
-    }
-
-    .prueba-img-placeholder {
-        height: 200px;
-        background: linear-gradient(135deg, #1ABC9C, #16A085);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 60px;
-        transition: all 0.5s ease;
-    }
-
-    .prueba-card:hover .prueba-img-placeholder {
-        background: linear-gradient(135deg, #16A085, #1ABC9C);
-        transform: scale(1.1);
-    }
-
-    .prueba-card:hover .prueba-img-placeholder i {
-        animation: pulse 0.6s ease-in-out;
-        transform: rotate(360deg);
-    }
-
-    .prueba-categoria {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 255, 255, 0.95);
-        padding: 5px 15px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #1ABC9C;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        z-index: 2;
-        transition: all 0.3s ease;
-    }
-
-    .prueba-card:hover .prueba-categoria {
-        background: #1ABC9C;
-        color: white;
-        transform: scale(1.1);
-    }
-
-    .prueba-body {
-        padding: 20px;
-        position: relative;
-        z-index: 2;
+    .catalogo-header-pro p {
+        font-size: 1rem;
     }
 
     .prueba-titulo {
-        font-size: 20px;
-        font-weight: 700;
-        color: #2C3E50;
-        margin-bottom: 10px;
-        min-height: 50px;
-        transition: all 0.3s ease;
-    }
-
-    .prueba-card:hover .prueba-titulo {
-        color: #1ABC9C;
-        transform: translateX(5px);
-    }
-
-    .prueba-descripcion {
-        color: #7F8C8D;
-        font-size: 14px;
-        line-height: 1.6;
-        min-height: 60px;
-        transition: all 0.3s ease;
-    }
-
-    .prueba-card:hover .prueba-descripcion {
-        color: #2C3E50;
+        font-size: 1.1rem;
     }
 
     .prueba-precio {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1ABC9C;
-        margin: 15px 0;
-        transition: all 0.3s ease;
+        font-size: 1.7rem;
     }
-
-    .prueba-card:hover .prueba-precio {
-        transform: scale(1.1);
-        text-shadow: 0 3px 10px rgba(26, 188, 156, 0.3);
-    }
-
-    .btn-whatsapp {
-        background: linear-gradient(135deg, #25D366, #128C7E);
-        color: white;
-        border: none;
-        border-radius: 15px;
-        padding: 14px 20px;
-        font-weight: 600;
-        width: 100%;
-        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        box-shadow: 0 5px 20px rgba(37, 211, 102, 0.3);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .btn-whatsapp::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.6s, height 0.6s;
-    }
-
-    .btn-whatsapp:hover::before {
-        width: 300px;
-        height: 300px;
-    }
-
-    .btn-whatsapp:hover {
-        background: linear-gradient(135deg, #128C7E, #075E54);
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 10px 30px rgba(37, 211, 102, 0.5);
-        color: white;
-    }
-
-    .btn-whatsapp i {
-        font-size: 18px;
-        margin-right: 8px;
-        transition: all 0.3s ease;
-    }
-
-    .btn-whatsapp:hover i {
-        transform: scale(1.2) rotate(15deg);
-    }
-
-    .catalogo-header {
-        background: linear-gradient(135deg, #1ABC9C, #16A085);
-        color: white;
-        padding: 80px 0;
-        margin-bottom: 50px;
-        border-radius: 0 0 50px 50px;
-        position: relative;
-        overflow: hidden;
-        animation: slideInDown 0.8s ease-out;
-    }
-
-    .catalogo-header::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent 70%);
-        animation: pulse 4s ease-in-out infinite;
-    }
-
-    .catalogo-header h1 {
-        font-size: 48px;
-        font-weight: 700;
-        margin-bottom: 15px;
-        text-shadow: 0 3px 10px rgba(0,0,0,0.2);
-        position: relative;
-        z-index: 1;
-    }
-
-    .catalogo-header p {
-        font-size: 18px;
-        opacity: 0.95;
-        position: relative;
-        z-index: 1;
-    }
+}
 </style>
 
-<div class="catalogo-header">
+<div class="catalogo-header-pro">
     <div class="container text-center">
-        <h1><i class="fas fa-microscope"></i> Catálogo de Pruebas</h1>
-        <p>Laboratorio Clínico Pérez - Potosí, Bolivia</p>
-        <p>Descubre nuestras pruebas de laboratorio disponibles</p>
+        <div class="catalogo-badge">
+            <i class="fas fa-microscope"></i>
+            Laboratorio Clínico Pérez
+        </div>
+        <h1>Catálogo de Pruebas</h1>
+        <p>Descubre nuestro catálogo completo de pruebas de laboratorio. Tecnología avanzada y resultados precisos.</p>
     </div>
 </div>
 
@@ -276,8 +332,8 @@
     <div class="row g-4">
         {% for prueba in pruebas %}
         <div class="col-md-6 col-lg-3">
-            <div class="prueba-card">
-                <div style="position: relative;">
+            <div class="prueba-card-pro">
+                <div class="prueba-img-container">
                     {% if prueba.imagen %}
                         <img src="{{ url_for('static', filename='uploads/pruebas/' + prueba.imagen) }}"
                              alt="{{ prueba.nombre }}"
@@ -288,25 +344,27 @@
                         </div>
                     {% endif %}
                     <span class="prueba-categoria">
-                        <i class="fas fa-tag"></i> {{ prueba.categoria or 'General' }}
+                        {{ prueba.categoria or 'General' }}
                     </span>
                 </div>
 
-                <div class="prueba-body">
+                <div class="prueba-body-pro">
                     <h5 class="prueba-titulo">{{ prueba.nombre }}</h5>
 
                     <p class="prueba-descripcion">
-                        {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional.' }}
+                        {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional con tecnología avanzada.' }}
                     </p>
 
                     <div class="prueba-precio">
-                        <i class="fas fa-coins"></i> Bs. {{ "%.2f"|format(prueba.precio) }}
+                        <i class="fas fa-coins"></i>
+                        Bs. {{ "%.2f"|format(prueba.precio) }}
                     </div>
 
                     <a href="https://wa.me/59167619188?text=Hola%2C%20estoy%20interesado%20en%20la%20prueba%20*{{ prueba.nombre|urlencode }}*%20%F0%9F%94%AC%0A%0A%C2%BFPodr%C3%ADan%20proporcionarme%20m%C3%A1s%20informaci%C3%B3n%3F"
                        target="_blank"
-                       class="btn btn-whatsapp">
-                        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+                       class="btn-whatsapp-pro">
+                        <i class="fab fa-whatsapp"></i>
+                        Cotizar por WhatsApp
                     </a>
                 </div>
             </div>
@@ -314,16 +372,17 @@
         {% endfor %}
     </div>
     {% else %}
-    <div class="text-center py-5">
-        <i class="fas fa-inbox fa-5x mb-4" style="color: #BDC3C7;"></i>
-        <h3 style="color: #95A5A6;">No hay pruebas disponibles</h3>
-        <p class="text-muted">Pronto agregaremos más pruebas de laboratorio</p>
+    <div class="empty-state">
+        <i class="fas fa-inbox"></i>
+        <h3>No hay pruebas disponibles</h3>
+        <p>Pronto agregaremos más pruebas de laboratorio a nuestro catálogo</p>
     </div>
     {% endif %}
 
     <div class="text-center mt-5">
-        <a href="{{ url_for('main.index') }}" class="btn btn-lg" style="background: #3498DB; color: white; border-radius: 10px; padding: 15px 40px;">
-            <i class="fas fa-home"></i> Volver al Inicio
+        <a href="{{ url_for('main.index') }}" class="btn-back">
+            <i class="fas fa-arrow-left"></i>
+            Volver al Inicio
         </a>
     </div>
 </div>
