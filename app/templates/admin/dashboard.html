@@ -413,20 +413,18 @@
     </div>
 </div>
 
+<!-- Datos del servidor (formato JSON en elemento HTML) -->
+<div id="dashboard-data" style="display:none;"
+     data-ultimos-meses='{{ ultimos_meses | tojson | safe }}'
+     data-pacientes-data='{{ pacientes_data | tojson | safe }}'
+     data-resultados-data='{{ resultados_data | tojson | safe }}'
+     data-total-pacientes='{{ total_pacientes }}'
+     data-total-resultados='{{ total_resultados }}'
+     data-total-pruebas='{{ total_pruebas }}'>
+</div>
+
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-
-<!-- Datos del servidor para JavaScript -->
-<script>
-    window.dashboardData = {
-        ultimos_meses: {{ ultimos_meses | tojson | safe }},
-        pacientes_data: {{ pacientes_data | tojson | safe }},
-        resultados_data: {{ resultados_data | tojson | safe }},
-        total_pacientes: {{ total_pacientes }},
-        total_resultados: {{ total_resultados }},
-        total_pruebas: {{ total_pruebas }}
-    };
-</script>
 
 <!-- Lógica del dashboard -->
 <script src="{{ url_for('static', filename='js/admin/dashboard.js') }}"></script>

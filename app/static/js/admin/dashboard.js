@@ -4,19 +4,20 @@
  */
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Verificar que los datos estén disponibles
-    if (typeof window.dashboardData === 'undefined') {
-        console.error('Los datos del dashboard no están disponibles');
+    // Obtener el elemento con los datos
+    const dataElement = document.getElementById('dashboard-data');
+    if (!dataElement) {
+        console.error('Elemento con datos del dashboard no encontrado');
         return;
     }
 
-    // Extraer datos del objeto global
-    const ultimos_meses = window.dashboardData.ultimos_meses;
-    const pacientes_data = window.dashboardData.pacientes_data;
-    const resultados_data = window.dashboardData.resultados_data;
-    const total_pacientes = window.dashboardData.total_pacientes;
-    const total_resultados = window.dashboardData.total_resultados;
-    const total_pruebas = window.dashboardData.total_pruebas;
+    // Extraer datos desde los atributos data-*
+    const ultimos_meses = JSON.parse(dataElement.dataset.ultimosMeses);
+    const pacientes_data = JSON.parse(dataElement.dataset.pacientesData);
+    const resultados_data = JSON.parse(dataElement.dataset.resultadosData);
+    const total_pacientes = parseInt(dataElement.dataset.totalPacientes);
+    const total_resultados = parseInt(dataElement.dataset.totalResultados);
+    const total_pruebas = parseInt(dataElement.dataset.totalPruebas);
 
     // Configuración global de Chart.js
     Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
