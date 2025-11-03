@@ -416,20 +416,31 @@
 <!-- Chart.js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
+<!-- Datos del servidor (Jinja2) - Script inline separado -->
+<script>
+    window.dashboardData = {
+        ultimos_meses: {{ ultimos_meses | tojson | safe }},
+        pacientes_data: {{ pacientes_data | tojson | safe }},
+        resultados_data: {{ resultados_data | tojson | safe }},
+        total_pacientes: {{ total_pacientes }},
+        total_resultados: {{ total_resultados }},
+        total_pruebas: {{ total_pruebas }}
+    };
+</script>
+
+<!-- JavaScript puro - Sin mezcla con Jinja2 -->
 <script>
     // Configuración global de Chart.js
     Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
     Chart.defaults.color = '#7F8C8D';
 
-    // Datos del servidor (Jinja2 templates)
-    /* eslint-disable */
-    const ultimos_meses = {{ ultimos_meses | tojson | safe }};
-    const pacientes_data = {{ pacientes_data | tojson | safe }};
-    const resultados_data = {{ resultados_data | tojson | safe }};
-    const total_pacientes = {{ total_pacientes }};
-    const total_resultados = {{ total_resultados }};
-    const total_pruebas = {{ total_pruebas }};
-    /* eslint-enable */
+    // Extraer datos del objeto global
+    const ultimos_meses = window.dashboardData.ultimos_meses;
+    const pacientes_data = window.dashboardData.pacientes_data;
+    const resultados_data = window.dashboardData.resultados_data;
+    const total_pacientes = window.dashboardData.total_pacientes;
+    const total_resultados = window.dashboardData.total_resultados;
+    const total_pruebas = window.dashboardData.total_pruebas;
 
     // Gráfico de Tendencia (Línea)
     const trendCtx = document.getElementById('trendChart').getContext('2d');
