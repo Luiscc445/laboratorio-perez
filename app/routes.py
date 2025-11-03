@@ -2,6 +2,7 @@
 from flask_login import login_required, current_user
 from app import db
 from app.models import Paciente, Resultado, Prueba
+from app.utils import admin_required
 from werkzeug.utils import secure_filename
 from datetime import datetime, timedelta
 from sqlalchemy import func, extract
@@ -51,7 +52,7 @@ def consultar_resultado():
         return redirect(url_for('main.portal_resultados'))
 
 @main.route('/dashboard')
-@login_required
+@admin_required
 def dashboard():
     # Estadísticas básicas
     total_pacientes = Paciente.query.count()
@@ -126,7 +127,7 @@ def dashboard():
                          top_pruebas=top_pruebas)
 
 @main.route('/pacientes', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_pacientes():
     if request.method == 'POST':
         try:
@@ -146,7 +147,7 @@ def admin_pacientes():
     return render_template('admin/pacientes.html', pacientes=pacientes)
 
 @main.route('/paciente/<int:paciente_id>')
-@login_required
+@admin_required
 def ver_paciente(paciente_id):
     paciente = Paciente.query.get_or_404(paciente_id)
     return jsonify({
@@ -159,7 +160,7 @@ def ver_paciente(paciente_id):
     })
 
 @main.route('/paciente/editar/<int:paciente_id>', methods=['POST'])
-@login_required
+@admin_required
 def editar_paciente(paciente_id):
     try:
         paciente = Paciente.query.get_or_404(paciente_id)
@@ -181,7 +182,7 @@ def editar_paciente(paciente_id):
     return redirect(url_for('main.admin_pacientes'))
 
 @main.route('/paciente/eliminar/<int:paciente_id>', methods=['POST'])
-@login_required
+@admin_required
 def eliminar_paciente(paciente_id):
     try:
         paciente = Paciente.query.get_or_404(paciente_id)
@@ -215,7 +216,7 @@ def eliminar_paciente(paciente_id):
     return redirect(url_for('main.admin_pacientes'))
 
 @main.route('/resultados', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_resultados():
     if request.method == 'POST':
         try:
@@ -260,7 +261,7 @@ def admin_resultados():
     return render_template('admin/resultados.html', resultados=resultados, pacientes=pacientes)
 
 @main.route('/descargar-credenciales-pdf/<int:resultado_id>')
-@login_required
+@admin_required
 def descargar_credenciales_pdf(resultado_id):
     resultado = Resultado.query.get_or_404(resultado_id)
     
@@ -342,7 +343,7 @@ def descargar_credenciales_pdf(resultado_id):
     return send_file(buffer, as_attachment=True, download_name=filename, mimetype='application/pdf')
 
 @main.route('/descargar-credenciales-word/<int:resultado_id>')
-@login_required
+@admin_required
 def descargar_credenciales_word(resultado_id):
     resultado = Resultado.query.get_or_404(resultado_id)
     
@@ -429,7 +430,7 @@ def descargar_credenciales_word(resultado_id):
     return send_file(buffer, as_attachment=True, download_name=filename, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
 @main.route('/pruebas', methods=['GET', 'POST'])
-@login_required
+@admin_required
 def admin_pruebas():
     if request.method == 'POST':
         try:
@@ -466,7 +467,7 @@ def admin_pruebas():
     return render_template('admin/pruebas.html', pruebas=pruebas)
 
 @main.route('/prueba/<int:prueba_id>')
-@login_required
+@admin_required
 def ver_prueba(prueba_id):
     prueba = Prueba.query.get_or_404(prueba_id)
     return jsonify({
@@ -479,7 +480,7 @@ def ver_prueba(prueba_id):
     })
 
 @main.route('/prueba/editar/<int:prueba_id>', methods=['POST'])
-@login_required
+@admin_required
 def editar_prueba(prueba_id):
     try:
         prueba = Prueba.query.get_or_404(prueba_id)
@@ -516,7 +517,7 @@ def editar_prueba(prueba_id):
     return redirect(url_for('main.admin_pruebas'))
 
 @main.route('/prueba/eliminar/<int:prueba_id>', methods=['POST'])
-@login_required
+@admin_required
 def eliminar_prueba(prueba_id):
     try:
         prueba = Prueba.query.get_or_404(prueba_id)
@@ -540,7 +541,7 @@ def eliminar_prueba(prueba_id):
     return redirect(url_for('main.admin_pruebas'))
 
 @main.route('/descargar/<int:resultado_id>')
-@login_required
+@admin_required
 def descargar(resultado_id):
     resultado = Resultado.query.get_or_404(resultado_id)
     if resultado.archivo_pdf:
