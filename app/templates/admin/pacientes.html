@@ -91,13 +91,24 @@
                             <td>{{ p.email or '-' }}</td>
                             <td>{{ p.fecha_registro.strftime('%d/%m/%Y') }}</td>
                             <td>
-                                <button class="btn btn-sm btn-info" onclick="verPaciente({{ p.id }})" title="Ver detalles">
+                                <button class="btn btn-sm btn-info btn-ver"
+                                        data-id="{{ p.id }}"
+                                        title="Ver detalles">
                                     <i class="fas fa-eye"></i>
                                 </button>
-                                <button class="btn btn-sm btn-warning" onclick="editarPaciente({{ p.id }}, '{{ p.nombre }}', '{{ p.ci }}', '{{ p.telefono or '' }}', '{{ p.email or '' }}')" title="Editar">
+                                <button class="btn btn-sm btn-warning btn-editar"
+                                        data-id="{{ p.id }}"
+                                        data-nombre="{{ p.nombre }}"
+                                        data-ci="{{ p.ci }}"
+                                        data-telefono="{{ p.telefono or '' }}"
+                                        data-email="{{ p.email or '' }}"
+                                        title="Editar">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <button class="btn btn-sm btn-danger" onclick="confirmarEliminar({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
+                                <button class="btn btn-sm btn-danger btn-eliminar"
+                                        data-id="{{ p.id }}"
+                                        data-nombre="{{ p.nombre }}"
+                                        title="Eliminar">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </td>
@@ -269,35 +280,56 @@
 </div>
 
 <script>
-function verPaciente(id) {
-    fetch(`/paciente/${id}`)
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('verID').textContent = data.id;
-            document.getElementById('verNombre').textContent = data.nombre;
-            document.getElementById('verCI').textContent = data.ci;
-            document.getElementById('verTelefono').textContent = data.telefono;
-            document.getElementById('verEmail').textContent = data.email;
-            document.getElementById('verFecha').textContent = data.fecha_registro;
-            new bootstrap.Modal(document.getElementById('modalVer')).show();
+document.addEventListener('DOMContentLoaded', function() {
+    // Event delegation para botones de ver
+    document.querySelectorAll('.btn-ver').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            fetch(`/paciente/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('verID').textContent = data.id;
+                    document.getElementById('verNombre').textContent = data.nombre;
+                    document.getElementById('verCI').textContent = data.ci;
+                    document.getElementById('verTelefono').textContent = data.telefono;
+                    document.getElementById('verEmail').textContent = data.email;
+                    document.getElementById('verFecha').textContent = data.fecha_registro;
+                    new bootstrap.Modal(document.getElementById('modalVer')).show();
+                });
         });
-}
+    });
 
-function editarPaciente(id, nombre, ci, telefono, email) {
-    document.getElementById('editID').value = id;
-    document.getElementById('editNombre').value = nombre;
-    document.getElementById('editCI').value = ci;
-    document.getElementById('editTelefono').value = telefono;
-    document.getElementById('editEmail').value = email;
-    document.getElementById('formEditar').action = `/paciente/editar/${id}`;
-    new bootstrap.Modal(document.getElementById('modalEditar')).show();
-}
+    // Event delegation para botones de editar
+    document.querySelectorAll('.btn-editar').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+            const ci = this.dataset.ci;
+            const telefono = this.dataset.telefono;
+            const email = this.dataset.email;
 
-function confirmarEliminar(id, nombre) {
-    document.getElementById('eliminarNombre').textContent = nombre;
-    document.getElementById('formEliminar').action = `/paciente/eliminar/${id}`;
-    new bootstrap.Modal(document.getElementById('modalEliminar')).show();
-}
+            document.getElementById('editID').value = id;
+            document.getElementById('editNombre').value = nombre;
+            document.getElementById('editCI').value = ci;
+            document.getElementById('editTelefono').value = telefono;
+            document.getElementById('editEmail').value = email;
+            document.getElementById('formEditar').action = `/paciente/editar/${id}`;
+            new bootstrap.Modal(document.getElementById('modalEditar')).show();
+        });
+    });
+
+    // Event delegation para botones de eliminar
+    document.querySelectorAll('.btn-eliminar').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const id = this.dataset.id;
+            const nombre = this.dataset.nombre;
+
+            document.getElementById('eliminarNombre').textContent = nombre;
+            document.getElementById('formEliminar').action = `/paciente/eliminar/${id}`;
+            new bootstrap.Modal(document.getElementById('modalEliminar')).show();
+        });
+    });
+});
 </script>
 {% endblock %}
 

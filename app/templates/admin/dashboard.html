@@ -421,10 +421,15 @@
     Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
     Chart.defaults.color = '#7F8C8D';
 
-    // Datos del servidor
-    const ultimos_meses = {{ ultimos_meses | tojson }};
-    const pacientes_data = {{ pacientes_data | tojson }};
-    const resultados_data = {{ resultados_data | tojson }};
+    // Datos del servidor (Jinja2 templates)
+    /* eslint-disable */
+    const ultimos_meses = {{ ultimos_meses | tojson | safe }};
+    const pacientes_data = {{ pacientes_data | tojson | safe }};
+    const resultados_data = {{ resultados_data | tojson | safe }};
+    const total_pacientes = {{ total_pacientes }};
+    const total_resultados = {{ total_resultados }};
+    const total_pruebas = {{ total_pruebas }};
+    /* eslint-enable */
 
     // Gráfico de Tendencia (Línea)
     const trendCtx = document.getElementById('trendChart').getContext('2d');
@@ -527,7 +532,7 @@
         data: {
             labels: ['Pacientes', 'Resultados', 'Pruebas'],
             datasets: [{
-                data: [{{ total_pacientes }}, {{ total_resultados }}, {{ total_pruebas }}],
+                data: [total_pacientes, total_resultados, total_pruebas],
                 backgroundColor: [
                     'rgba(26, 188, 156, 0.8)',
                     'rgba(243, 156, 18, 0.8)',
