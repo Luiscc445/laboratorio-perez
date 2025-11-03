@@ -26,26 +26,26 @@ def generar_codigo_acceso():
 
 @main.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('publico/index.html')
 
 @main.route('/portal-resultados')
 def portal_resultados():
-    return render_template('portal_resultados.html')
+    return render_template('publico/portal_resultados.html')
 
 @main.route('/catalogo-pruebas')
 def catalogo_pruebas():
     pruebas = Prueba.query.order_by(Prueba.categoria, Prueba.nombre).all()
-    return render_template('catalogo/lista_pruebas.html', pruebas=pruebas)
+    return render_template('publico/catalogo/lista_pruebas.html', pruebas=pruebas)
 
 @main.route('/consultar-resultado', methods=['POST'])
 def consultar_resultado():
     ci = request.form.get('ci')
     codigo = request.form.get('codigo')
-    
+
     resultado = Resultado.query.filter_by(paciente_ci=ci, codigo_acceso=codigo).first()
-    
+
     if resultado:
-        return render_template('ver_resultado_publico.html', resultado=resultado)
+        return render_template('publico/ver_resultado.html', resultado=resultado)
     else:
         flash('CI o código de acceso incorrecto', 'danger')
         return redirect(url_for('main.portal_resultados'))
