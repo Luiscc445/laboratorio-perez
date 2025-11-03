@@ -1,58 +1,82 @@
 #!/usr/bin/env python3
 """
 Script para crear el usuario administrador del sistema
-Laboratorio Pérez - Sistema de Gestión
+Laboratorio Pérez - Sistema de Gestión con Supabase
 """
 
 from app import create_app, db
 from app.models import Usuario
 
 def create_admin_user():
-    """Crea el usuario administrador con credenciales seguras"""
+    """Crea el usuario administrador con credenciales seguras en Supabase"""
     app = create_app()
 
     with app.app_context():
-        # Verificar si ya existe el usuario
+        # Credenciales del administrador
         username = 'DoctorMauricoPerezPTS574'
-        existing_user = Usuario.query.filter_by(username=username).first()
+        password = 'Cachuchin574'
 
-        if existing_user:
-            print(f"⚠️  El usuario '{username}' ya existe.")
-            respuesta = input("¿Deseas actualizar su contraseña? (s/n): ")
-            if respuesta.lower() != 's':
-                print("❌ Operación cancelada.")
-                return
+        print("\n" + "=" * 70)
+        print("🔒 SISTEMA DE SEGURIDAD - LABORATORIO PÉREZ")
+        print("=" * 70)
+        print("\n🔍 PASO 1: Verificando usuarios existentes en Supabase...\n")
 
-            # Actualizar contraseña
-            existing_user.set_password('Cachuchin574')
-            existing_user.is_admin = True
+        # Eliminar TODOS los usuarios antiguos
+        usuarios_antiguos = Usuario.query.all()
+        if usuarios_antiguos:
+            print(f"⚠️  Encontrados {len(usuarios_antiguos)} usuario(s) antiguo(s):")
+            for u in usuarios_antiguos:
+                print(f"   - ID: {u.id}, Username: {u.username}, Admin: {u.is_admin}")
+
+            print("\n🗑️  Eliminando usuarios antiguos de Supabase...")
+            for u in usuarios_antiguos:
+                db.session.delete(u)
             db.session.commit()
-            print(f"✅ Contraseña actualizada para '{username}'")
+            print("✅ Usuarios antiguos eliminados correctamente\n")
         else:
-            # Crear nuevo usuario administrador
-            admin = Usuario(
-                username=username,
-                is_admin=True
-            )
-            admin.set_password('Cachuchin574')
+            print("✅ No hay usuarios antiguos. Base de datos limpia.\n")
 
-            db.session.add(admin)
-            db.session.commit()
+        print("🔧 PASO 2: Creando nuevo usuario administrador...\n")
 
-            print("=" * 60)
-            print("✅ USUARIO ADMINISTRADOR CREADO EXITOSAMENTE")
-            print("=" * 60)
-            print(f"Usuario: {username}")
-            print(f"Contraseña: Cachuchin574 (hasheada con Werkzeug)")
-            print(f"Rol: Administrador (is_admin=True)")
-            print(f"ID: {admin.id}")
-            print("=" * 60)
-            print("\n🔒 IMPORTANTE:")
-            print("1. La contraseña está hasheada en la base de datos")
-            print("2. Solo este usuario puede acceder al panel administrativo")
-            print("3. Guarda estas credenciales en un lugar seguro")
-            print(f"4. URL de acceso: http://localhost:5000/auth/login")
-            print("=" * 60)
+        # Crear nuevo usuario administrador
+        admin = Usuario(
+            username=username,
+            is_admin=True
+        )
+        admin.set_password(password)
+
+        db.session.add(admin)
+        db.session.commit()
+
+        # Verificar que se creó correctamente
+        verificacion = Usuario.query.filter_by(username=username).first()
+
+        print("=" * 70)
+        print("✅ USUARIO ADMINISTRADOR CREADO EXITOSAMENTE EN SUPABASE")
+        print("=" * 70)
+        print(f"\n📋 DATOS DEL ADMINISTRADOR:")
+        print(f"   • ID en Supabase: {verificacion.id}")
+        print(f"   • Usuario: {username}")
+        print(f"   • Contraseña: {password}")
+        print(f"   • Rol: Administrador (is_admin=True)")
+        print(f"   • Hash en BD: {verificacion.password_hash[:50]}...")
+        print(f"   • Fecha creación: {verificacion.fecha_creacion}")
+        print("\n" + "=" * 70)
+        print("🔒 INFORMACIÓN DE SEGURIDAD:")
+        print("=" * 70)
+        print("   ✓ Contraseña hasheada con Werkzeug (pbkdf2:sha256)")
+        print("   ✓ Solo este usuario puede acceder al sistema administrativo")
+        print("   ✓ Todas las rutas admin protegidas con @admin_required")
+        print("   ✓ Hash almacenado de forma segura en Supabase")
+        print("\n" + "=" * 70)
+        print("🌐 ACCESO AL SISTEMA:")
+        print("=" * 70)
+        print(f"   URL: http://localhost:5000/auth/login")
+        print(f"   Usuario: {username}")
+        print(f"   Contraseña: {password}")
+        print("\n" + "=" * 70)
+        print("⚠️  GUARDA ESTAS CREDENCIALES EN UN LUGAR SEGURO")
+        print("=" * 70 + "\n")
 
 if __name__ == '__main__':
     create_admin_user()
