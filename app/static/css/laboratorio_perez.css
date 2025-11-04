@@ -39,6 +39,7 @@ body {
 
 /* Sobrescribir estilos de Bootstrap que pueden causar espacios */
 .navbar {
+    margin-top: 0 !important;
     margin-bottom: 0 !important;
 }
 
