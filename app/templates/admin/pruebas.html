@@ -2,428 +2,160 @@
 {% block title %}Gestión de Pruebas{% endblock %}
 {% block content %}
 <style>
-    /* ========== DISEÑO MODERNO - HEADER GLASS MORPHISM (AZUL) ========== */
+    /* Eliminar padding superior del container */
     .container-fluid {
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* Header moderno tipo glass card - AZUL */
+    /* Header moderno estilo dashboard */
     .page-header {
-        background: linear-gradient(135deg, rgba(52, 152, 219, 0.95) 0%, rgba(41, 128, 185, 0.98) 100%);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
         color: white;
-        padding: 40px;
-        border-radius: 25px;
-        margin-bottom: 35px;
-        box-shadow:
-            0 15px 50px rgba(52, 152, 219, 0.4),
-            0 8px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: shimmer 8s infinite;
-    }
-
-    @keyframes shimmer {
-        0%, 100% { transform: rotate(0deg); }
-        50% { transform: rotate(180deg); }
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 1;
+        padding: 30px;
+        border-radius: 0;
+        margin: 0 0 30px 0;
+        box-shadow: 0 10px 40px rgba(52, 152, 219, 0.3);
     }
 
     .page-header h1 {
-        font-size: 2.8rem;
-        font-weight: 900;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .page-header h1 i {
-        background: rgba(255, 255, 255, 0.25);
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .header-stats {
-        display: flex;
-        gap: 25px;
-        margin-top: 25px;
-        flex-wrap: wrap;
-    }
-
-    .stat-badge {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        padding: 15px 30px;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
         gap: 15px;
-        transition: all 0.3s ease;
     }
 
-    .stat-badge:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-badge i {
-        font-size: 2rem;
-        opacity: 0.9;
-    }
-
-    .stat-info h3 {
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin: 0;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-info p {
-        font-size: 0.9rem;
-        margin: 0;
+    .page-header p {
+        font-size: 1.1rem;
         opacity: 0.95;
+        margin: 0;
     }
 
-    .btn-action-main {
-        background: white;
-        color: #3498DB;
-        border: none;
-        padding: 15px 35px;
-        border-radius: 15px;
-        font-weight: 700;
-        font-size: 1.05rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    .header-actions {
+        display: flex;
+        gap: 10px;
         margin-top: 20px;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
     }
 
-    .btn-action-main:hover {
-        background: #f8f9fa;
-        color: #2980B9;
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-action-main i {
-        font-size: 1.2rem;
-    }
-
-    /* ========== TABLA MODERNA ========== */
-    .modern-table-card {
-        background: white;
-        border-radius: 25px;
-        padding: 0;
-        box-shadow:
-            0 10px 40px rgba(0, 0, 0, 0.08),
-            0 2px 8px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .table-card-header {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 25px 30px;
-        border-bottom: 2px solid #3498DB;
-    }
-
-    .table-card-header h4 {
-        margin: 0;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2C3E50;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .table-card-header h4 i {
-        color: #3498DB;
-        font-size: 1.6rem;
-    }
-
-    .table-card-body {
-        padding: 0;
-    }
-
-    .table-modern {
-        margin: 0;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .table-modern thead {
-        background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
+    .btn-header {
+        background: rgba(255, 255, 255, 0.2);
         color: white;
-    }
-
-    .table-modern thead th {
-        padding: 20px 20px;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        border: none;
-        white-space: nowrap;
-    }
-
-    .table-modern tbody tr {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        padding: 10px 25px;
+        border-radius: 10px;
+        font-weight: 600;
         transition: all 0.3s ease;
-        border-bottom: 1px solid #f1f3f5;
     }
 
-    .table-modern tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    .table-modern tbody tr:hover {
-        background: linear-gradient(135deg, rgba(52, 152, 219, 0.08) 0%, rgba(41, 128, 185, 0.05) 100%);
-        transform: scale(1.01);
-        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.15);
-    }
-
-    .table-modern tbody td {
-        padding: 18px 20px;
-        vertical-align: middle;
-        color: #495057;
-        font-size: 0.95rem;
-    }
-
-    .table-modern tbody td:first-child {
-        font-weight: 700;
+    .btn-header:hover {
+        background: white;
         color: #3498DB;
-        font-size: 1rem;
+        border-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .badge-modern {
-        padding: 6px 14px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    /* Contenedor del contenido */
+    .content-wrapper {
+        padding: 0 30px 30px 30px;
     }
 
-    .table-modern .btn-sm {
-        padding: 8px 12px;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.2s ease;
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         border: none;
-        margin-right: 5px;
     }
 
-    .table-modern .btn-info {
-        background: linear-gradient(135deg, #3498DB, #2980B9);
+    .card-header {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
         color: white;
-    }
-
-    .table-modern .btn-info:hover {
-        background: linear-gradient(135deg, #2980B9, #21618C);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-    }
-
-    .table-modern .btn-warning {
-        background: linear-gradient(135deg, #F39C12, #E67E22);
-        color: white;
-    }
-
-    .table-modern .btn-warning:hover {
-        background: linear-gradient(135deg, #E67E22, #D35400);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(243, 156, 18, 0.4);
-    }
-
-    .table-modern .btn-danger {
-        background: linear-gradient(135deg, #E74C3C, #C0392B);
-        color: white;
-    }
-
-    .table-modern .btn-danger:hover {
-        background: linear-gradient(135deg, #C0392B, #A93226);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
-    }
-
-    .empty-state {
-        padding: 60px 20px;
-        text-align: center;
-        color: #95a5a6;
-    }
-
-    .empty-state i {
-        font-size: 5rem;
-        margin-bottom: 20px;
-        opacity: 0.3;
-    }
-
-    .empty-state p {
-        font-size: 1.2rem;
-        margin: 0;
-    }
-
-    .prueba-imagen {
-        width: 50px;
-        height: 50px;
-        object-fit: cover;
-        border-radius: 10px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .prueba-imagen-placeholder {
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(135deg, #E8F5F1 0%, #D5EEE8 100%);
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .prueba-imagen-placeholder i {
-        color: #3498DB;
-        font-size: 1.5rem;
-    }
-
-    @media (max-width: 768px) {
-        .page-header h1 {
-            font-size: 2rem;
-        }
-        .header-stats {
-            flex-direction: column;
-        }
-        .stat-badge {
-            width: 100%;
-        }
+        font-weight: 600;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
     }
 </style>
 
 <div class="container-fluid">
-    <!-- Header Moderno Glass Morphism - AZUL -->
+    <!-- Header Moderno -->
     <div class="page-header">
-        <div class="header-content">
-            <h1>
-                <i class="fas fa-vial"></i>
-                Gestión de Pruebas
-            </h1>
-
-            <!-- Estadísticas del header -->
-            <div class="header-stats">
-                <div class="stat-badge">
-                    <i class="fas fa-flask"></i>
-                    <div class="stat-info">
-                        <h3>{{ pruebas|length }}</h3>
-                        <p>Pruebas Disponibles</p>
-                    </div>
-                </div>
-                <div class="stat-badge">
-                    <i class="fas fa-microscope"></i>
-                    <div class="stat-info">
-                        <h3>Catálogo</h3>
-                        <p>Análisis Clínicos</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botón de acción principal -->
-            <button class="btn-action-main" data-bs-toggle="modal" data-bs-target="#modalNuevo">
-                <i class="fas fa-plus-circle"></i>
-                Registrar Nueva Prueba
+        <h1>
+            <i class="fas fa-vial"></i>
+            Gestión de Pruebas
+        </h1>
+        <p><i class="fas fa-flask"></i> Catálogo de pruebas disponibles: {{ pruebas|length }}</p>
+        <div class="header-actions">
+            <button class="btn btn-header" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+                <i class="fas fa-plus"></i> Nueva Prueba
             </button>
         </div>
     </div>
 
-    <!-- Tabla Moderna -->
-    <div class="modern-table-card">
-        <div class="table-card-header">
-            <h4>
-                <i class="fas fa-list-alt"></i>
-                Catálogo de Pruebas ({{ pruebas|length }})
-            </h4>
-        </div>
-        <div class="table-card-body">
-            <div class="table-responsive">
-                <table class="table table-modern">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
-                            <th>Nombre de la Prueba</th>
-                            <th>Categoría</th>
-                            <th>Precio (Bs.)</th>
-                            <th style="text-align: center;">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in pruebas %}
-                        <tr>
-                            <td>{{ p.id }}</td>
-                            <td>
-                                {% if p.imagen %}
-                                <img src="{{ url_for('static', filename='uploads/pruebas/' + p.imagen) }}"
-                                     alt="{{ p.nombre }}"
-                                     class="prueba-imagen">
-                                {% else %}
-                                <div class="prueba-imagen-placeholder">
-                                    <i class="fas fa-flask"></i>
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td><strong>{{ p.nombre }}</strong></td>
-                            <td>
-                                <span class="badge badge-modern bg-info">
-                                    {{ p.categoria or 'General' }}
-                                </span>
-                            </td>
-                            <td><strong>Bs. {{ "%.2f"|format(p.precio) }}</strong></td>
-                            <td style="text-align: center;">
-                                <button class="btn btn-sm btn-info" onclick="verPrueba({{ p.id }})" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning" onclick="editarPrueba({{ p.id }})" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="confirmarEliminarPrueba({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6">
-                                <div class="empty-state">
-                                    <i class="fas fa-vial"></i>
+    <!-- Contenedor del contenido -->
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-list"></i> Catálogo de Pruebas ({{ pruebas|length }})
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre de la Prueba</th>
+                                <th>Categoría</th>
+                                <th>Precio (Bs.)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pruebas %}
+                            <tr>
+                                <td><b>{{ p.id }}</b></td>
+                                <td>
+                                    {% if p.imagen %}
+                                    <img src="{{ url_for('static', filename='uploads/pruebas/' + p.imagen) }}"
+                                         alt="{{ p.nombre }}"
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                    <div style="width: 50px; height: 50px; background: #E8F5F1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-flask" style="color: #1ABC9C;"></i>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ p.nombre }}</td>
+                                <td>
+                                    <span class="badge" style="background:#1ABC9C">
+                                        {{ p.categoria or 'General' }}
+                                    </span>
+                                </td>
+                                <td><b>Bs. {{ "%.2f"|format(p.precio) }}</b></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="verPrueba({{ p.id }})" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="editarPrueba({{ p.id }})" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="confirmarEliminarPrueba({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
                                     <p>No hay pruebas registradas</p>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -432,7 +164,7 @@
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white;">
                 <h5><i class="fas fa-vial"></i> Registrar Nueva Prueba</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -701,4 +433,3 @@ function confirmarEliminarPrueba(id, nombre) {
 </script>
 
 {% endblock %}
-
