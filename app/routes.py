@@ -144,7 +144,7 @@ def admin_pacientes():
             flash(f'Error: {str(e)}', 'danger')
         return redirect(url_for('main.admin_pacientes'))
     pacientes = Paciente.query.order_by(Paciente.fecha_registro.desc()).all()
-    return render_template('admin/pacientes.html', pacientes=pacientes)
+    return render_template('admin/pacientes.html', pacientes=pacientes, now=datetime.now())
 
 @main.route('/paciente/<int:paciente_id>')
 @admin_required
