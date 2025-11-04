@@ -2,403 +2,163 @@
 {% block title %}Gestión de Resultados{% endblock %}
 {% block content %}
 <style>
-    /* ========== DISEÑO MODERNO - HEADER GLASS MORPHISM (NARANJA) ========== */
+    /* Eliminar padding superior del container */
     .container-fluid {
-        padding-top: 30px;
-        padding-bottom: 30px;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
-    /* Header moderno tipo glass card - NARANJA */
+    /* Header moderno estilo dashboard */
     .page-header {
-        background: linear-gradient(135deg, rgba(243, 156, 18, 0.95) 0%, rgba(230, 126, 34, 0.98) 100%);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
         color: white;
-        padding: 40px;
-        border-radius: 25px;
-        margin-bottom: 35px;
-        box-shadow:
-            0 15px 50px rgba(243, 156, 18, 0.4),
-            0 8px 15px rgba(0, 0, 0, 0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .page-header::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-        animation: shimmer 8s infinite;
-    }
-
-    @keyframes shimmer {
-        0%, 100% { transform: rotate(0deg); }
-        50% { transform: rotate(180deg); }
-    }
-
-    .header-content {
-        position: relative;
-        z-index: 1;
+        padding: 30px;
+        border-radius: 0;
+        margin: 0 0 30px 0;
+        box-shadow: 0 10px 40px rgba(243, 156, 18, 0.3);
     }
 
     .page-header h1 {
-        font-size: 2.8rem;
-        font-weight: 900;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    }
-
-    .page-header h1 i {
-        background: rgba(255, 255, 255, 0.25);
-        padding: 20px;
-        border-radius: 20px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .header-stats {
-        display: flex;
-        gap: 25px;
-        margin-top: 25px;
-        flex-wrap: wrap;
-    }
-
-    .stat-badge {
-        background: rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        padding: 15px 30px;
-        border-radius: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.3);
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
         display: flex;
         align-items: center;
         gap: 15px;
-        transition: all 0.3s ease;
     }
 
-    .stat-badge:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-badge i {
-        font-size: 2rem;
-        opacity: 0.9;
-    }
-
-    .stat-info h3 {
-        font-size: 1.8rem;
-        font-weight: 800;
-        margin: 0;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    }
-
-    .stat-info p {
-        font-size: 0.9rem;
-        margin: 0;
+    .page-header p {
+        font-size: 1.1rem;
         opacity: 0.95;
-    }
-
-    .btn-action-main {
-        background: white;
-        color: #F39C12;
-        border: none;
-        padding: 15px 35px;
-        border-radius: 15px;
-        font-weight: 700;
-        font-size: 1.05rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        margin-top: 20px;
-        display: inline-flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .btn-action-main:hover {
-        background: #f8f9fa;
-        color: #E67E22;
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
-    }
-
-    .btn-action-main i {
-        font-size: 1.2rem;
-    }
-
-    /* ========== TABLA MODERNA ========== */
-    .modern-table-card {
-        background: white;
-        border-radius: 25px;
-        padding: 0;
-        box-shadow:
-            0 10px 40px rgba(0, 0, 0, 0.08),
-            0 2px 8px rgba(0, 0, 0, 0.04);
-        overflow: hidden;
-        border: 1px solid rgba(0, 0, 0, 0.05);
-    }
-
-    .table-card-header {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 25px 30px;
-        border-bottom: 2px solid #F39C12;
-    }
-
-    .table-card-header h4 {
         margin: 0;
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #2C3E50;
+    }
+
+    .header-actions {
         display: flex;
-        align-items: center;
-        gap: 12px;
+        gap: 10px;
+        margin-top: 20px;
     }
 
-    .table-card-header h4 i {
-        color: #F39C12;
-        font-size: 1.6rem;
-    }
-
-    .table-card-body {
-        padding: 0;
-    }
-
-    .table-modern {
-        margin: 0;
-        border-collapse: separate;
-        border-spacing: 0;
-    }
-
-    .table-modern thead {
-        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+    .btn-header {
+        background: rgba(255, 255, 255, 0.2);
         color: white;
-    }
-
-    .table-modern thead th {
-        padding: 20px 20px;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 0.85rem;
-        letter-spacing: 0.5px;
-        border: none;
-        white-space: nowrap;
-    }
-
-    .table-modern tbody tr {
+        border: 2px solid rgba(255, 255, 255, 0.5);
+        padding: 10px 25px;
+        border-radius: 10px;
+        font-weight: 600;
         transition: all 0.3s ease;
-        border-bottom: 1px solid #f1f3f5;
     }
 
-    .table-modern tbody tr:nth-child(even) {
-        background-color: #f8f9fa;
-    }
-
-    .table-modern tbody tr:hover {
-        background: linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(230, 126, 34, 0.05) 100%);
-        transform: scale(1.01);
-        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.15);
-    }
-
-    .table-modern tbody td {
-        padding: 18px 20px;
-        vertical-align: middle;
-        color: #495057;
-        font-size: 0.95rem;
-    }
-
-    .table-modern tbody td:first-child {
-        font-weight: 700;
+    .btn-header:hover {
+        background: white;
         color: #F39C12;
-        font-size: 1rem;
+        border-color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
 
-    .badge-modern {
-        padding: 6px 14px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 0.85rem;
+    /* Contenedor del contenido */
+    .content-wrapper {
+        padding: 0 30px 30px 30px;
     }
 
-    .table-modern .btn-sm {
-        padding: 8px 12px;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.2s ease;
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
         border: none;
-        margin-right: 5px;
     }
 
-    .table-modern .btn-success {
-        background: linear-gradient(135deg, #27AE60, #229954);
+    .card-header {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
         color: white;
-    }
-
-    .table-modern .btn-success:hover {
-        background: linear-gradient(135deg, #229954, #1E8449);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-    }
-
-    .table-modern .btn-primary {
-        background: linear-gradient(135deg, #3498DB, #2980B9);
-        color: white;
-    }
-
-    .table-modern .btn-primary:hover {
-        background: linear-gradient(135deg, #2980B9, #21618C);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-    }
-
-    .empty-state {
-        padding: 60px 20px;
-        text-align: center;
-        color: #95a5a6;
-    }
-
-    .empty-state i {
-        font-size: 5rem;
-        margin-bottom: 20px;
-        opacity: 0.3;
-    }
-
-    .empty-state p {
-        font-size: 1.2rem;
-        margin: 0;
-    }
-
-    @media (max-width: 768px) {
-        .page-header h1 {
-            font-size: 2rem;
-        }
-        .header-stats {
-            flex-direction: column;
-        }
-        .stat-badge {
-            width: 100%;
-        }
+        font-weight: 600;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
     }
 </style>
 
 <div class="container-fluid">
-    <!-- Header Moderno Glass Morphism - NARANJA -->
+    <!-- Header Moderno -->
     <div class="page-header">
-        <div class="header-content">
-            <h1>
-                <i class="fas fa-file-medical"></i>
-                Gestión de Resultados
-            </h1>
-
-            <!-- Estadísticas del header -->
-            <div class="header-stats">
-                <div class="stat-badge">
-                    <i class="fas fa-clipboard-check"></i>
-                    <div class="stat-info">
-                        <h3>{{ resultados|length }}</h3>
-                        <p>Resultados Almacenados</p>
-                    </div>
-                </div>
-                <div class="stat-badge">
-                    <i class="fas fa-file-pdf"></i>
-                    <div class="stat-info">
-                        <h3>PDF</h3>
-                        <p>Archivos Digitales</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botón de acción principal -->
-            <button class="btn-action-main" data-bs-toggle="modal" data-bs-target="#modalNuevo">
-                <i class="fas fa-plus-circle"></i>
-                Subir Nuevo Resultado
+        <h1>
+            <i class="fas fa-file-medical"></i>
+            Gestión de Resultados
+        </h1>
+        <p><i class="fas fa-clipboard-list"></i> Total de resultados almacenados: {{ resultados|length }}</p>
+        <div class="header-actions">
+            <button class="btn btn-header" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+                <i class="fas fa-plus"></i> Nuevo Resultado
             </button>
         </div>
     </div>
 
-    <!-- Tabla Moderna -->
-    <div class="modern-table-card">
-        <div class="table-card-header">
-            <h4>
-                <i class="fas fa-list-alt"></i>
-                Lista de Resultados ({{ resultados|length }})
-            </h4>
-        </div>
-        <div class="table-card-body">
-            <div class="table-responsive">
-                <table class="table table-modern">
-                    <thead>
-                        <tr>
-                            <th>Nº Orden</th>
-                            <th>Paciente</th>
-                            <th>CI</th>
-                            <th>Código</th>
-                            <th>Fecha</th>
-                            <th>Archivo</th>
-                            <th style="text-align: center;">Resultado</th>
-                            <th style="text-align: center;">Credenciales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in resultados %}
-                        <tr>
-                            <td>{{ r.numero_orden }}</td>
-                            <td><strong>{{ r.paciente_nombre }}</strong></td>
-                            <td><span class="badge badge-modern bg-secondary">{{ r.paciente_ci }}</span></td>
-                            <td><span class="badge badge-modern bg-info">{{ r.codigo_acceso }}</span></td>
-                            <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '—' }}</td>
-                            <td>
-                                {% if r.archivo_pdf %}
-                                <span class="badge badge-modern bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
-                                {% else %}
-                                <span class="badge badge-modern bg-secondary">—</span>
-                                {% endif %}
-                            </td>
-                            <td style="text-align: center;">
-                                {% if r.archivo_pdf %}
-                                <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success" title="Descargar PDF">
-                                    <i class="fas fa-download"></i>
-                                </a>
-                                {% else %}
-                                <span class="text-muted">—</span>
-                                {% endif %}
-                            </td>
-                            <td style="text-align: center;">
-                                <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
-                                    <i class="fas fa-file-pdf"></i>
-                                </a>
-                                <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-file-word"></i>
-                                
-                                </a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="8">
-                                <div class="empty-state">
-                                    <i class="fas fa-file-excel"></i>
-                                    <p>No hay resultados almacenados</p>
-                                </div>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Contenedor del contenido -->
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-list"></i> Lista de Resultados ({{ resultados|length }})</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nº Orden</th>
+                                <th>Paciente</th>
+                                <th>CI</th>
+                                <th>Código</th>
+                                <th>Fecha</th>
+                                <th>Archivo</th>
+                                <th class="text-center">Resultado</th>
+                                <th class="text-center">Credenciales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in resultados %}
+                            <tr>
+                                <td><b>{{ r.numero_orden }}</b></td>
+                                <td>{{ r.paciente_nombre }}</td>
+                                <td>{{ r.paciente_ci }}</td>
+                                <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
+                                <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
+                                <td>
+                                    {% if r.archivo_pdf %}
+                                    <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if r.archivo_pdf %}
+                                    <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-file-word"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay resultados</p></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header modal-naranja">
+            <div class="modal-header" style="background: linear-gradient(135deg, #F39C12, #E67E22); color: white;">
                 <h5><i class="fas fa-plus"></i> Registrar Nuevo Resultado</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -455,6 +215,7 @@
         </div>
     </div>
 </div>
+
 <script>
 function cargarDatosPaciente() {
     const select = document.getElementById('selectPaciente');
@@ -469,10 +230,3 @@ function cargarDatosPaciente() {
 }
 </script>
 {% endblock %}
-
-
-
-
-
-
-
