@@ -2,9 +2,10 @@
 {% block title %}Gestión de Pruebas{% endblock %}
 {% block content %}
 <style>
-    /* Contenedor sin padding superior */
+    /* Eliminar padding superior del container */
     .container-fluid {
-        padding-top: 30px;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* Header moderno estilo dashboard */
@@ -12,8 +13,8 @@
         background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
         color: white;
         padding: 30px;
-        border-radius: 15px;
-        margin-bottom: 30px;
+        border-radius: 0;
+        margin: 0 0 30px 0;
         box-shadow: 0 10px 40px rgba(52, 152, 219, 0.3);
     }
 
@@ -55,6 +56,25 @@
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
+
+    /* Contenedor del contenido */
+    .content-wrapper {
+        padding: 0 30px 30px 30px;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        color: white;
+        font-weight: 600;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -72,68 +92,70 @@
         </div>
     </div>
 
-    <!-- Contenido -->
-    <div class="card">
-        <div class="card-header">
-            <i class="fas fa-list"></i> Catálogo de Pruebas ({{ pruebas|length }})
-        </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Imagen</th>
-                            <th>Nombre de la Prueba</th>
-                            <th>Categoría</th>
-                            <th>Precio (Bs.)</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for p in pruebas %}
-                        <tr>
-                            <td><b>{{ p.id }}</b></td>
-                            <td>
-                                {% if p.imagen %}
-                                <img src="{{ url_for('static', filename='uploads/pruebas/' + p.imagen) }}"
-                                     alt="{{ p.nombre }}"
-                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
-                                {% else %}
-                                <div style="width: 50px; height: 50px; background: #E8F5F1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
-                                    <i class="fas fa-flask" style="color: #1ABC9C;"></i>
-                                </div>
-                                {% endif %}
-                            </td>
-                            <td>{{ p.nombre }}</td>
-                            <td>
-                                <span class="badge" style="background:#1ABC9C">
-                                    {{ p.categoria or 'General' }}
-                                </span>
-                            </td>
-                            <td><b>Bs. {{ "%.2f"|format(p.precio) }}</b></td>
-                            <td>
-                                <button class="btn btn-sm btn-info" onclick="verPrueba({{ p.id }})" title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning" onclick="editarPrueba({{ p.id }})" title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger" onclick="confirmarEliminarPrueba({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="fas fa-inbox fa-3x mb-3"></i>
-                                <p>No hay pruebas registradas</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Contenedor del contenido -->
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-list"></i> Catálogo de Pruebas ({{ pruebas|length }})
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Imagen</th>
+                                <th>Nombre de la Prueba</th>
+                                <th>Categoría</th>
+                                <th>Precio (Bs.)</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pruebas %}
+                            <tr>
+                                <td><b>{{ p.id }}</b></td>
+                                <td>
+                                    {% if p.imagen %}
+                                    <img src="{{ url_for('static', filename='uploads/pruebas/' + p.imagen) }}"
+                                         alt="{{ p.nombre }}"
+                                         style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                    <div style="width: 50px; height: 50px; background: #E8F5F1; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-flask" style="color: #1ABC9C;"></i>
+                                    </div>
+                                    {% endif %}
+                                </td>
+                                <td>{{ p.nombre }}</td>
+                                <td>
+                                    <span class="badge" style="background:#1ABC9C">
+                                        {{ p.categoria or 'General' }}
+                                    </span>
+                                </td>
+                                <td><b>Bs. {{ "%.2f"|format(p.precio) }}</b></td>
+                                <td>
+                                    <button class="btn btn-sm btn-info" onclick="verPrueba({{ p.id }})" title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="editarPrueba({{ p.id }})" title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="confirmarEliminarPrueba({{ p.id }}, '{{ p.nombre }}')" title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center text-muted py-4">
+                                    <i class="fas fa-inbox fa-3x mb-3"></i>
+                                    <p>No hay pruebas registradas</p>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -142,7 +164,7 @@
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background: linear-gradient(135deg, #3498DB, #2980B9); color: white;">
                 <h5><i class="fas fa-vial"></i> Registrar Nueva Prueba</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -411,4 +433,3 @@ function confirmarEliminarPrueba(id, nombre) {
 </script>
 
 {% endblock %}
-

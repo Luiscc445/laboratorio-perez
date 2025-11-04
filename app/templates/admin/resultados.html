@@ -2,9 +2,10 @@
 {% block title %}Gestión de Resultados{% endblock %}
 {% block content %}
 <style>
-    /* Contenedor sin padding superior */
+    /* Eliminar padding superior del container */
     .container-fluid {
-        padding-top: 30px;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* Header moderno estilo dashboard */
@@ -12,8 +13,8 @@
         background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
         color: white;
         padding: 30px;
-        border-radius: 15px;
-        margin-bottom: 30px;
+        border-radius: 0;
+        margin: 0 0 30px 0;
         box-shadow: 0 10px 40px rgba(243, 156, 18, 0.3);
     }
 
@@ -55,6 +56,25 @@
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
+
+    /* Contenedor del contenido */
+    .content-wrapper {
+        padding: 0 30px 30px 30px;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        color: white;
+        font-weight: 600;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
+    }
 </style>
 
 <div class="container-fluid">
@@ -72,71 +92,73 @@
         </div>
     </div>
 
-    <!-- Contenido -->
-    <div class="card">
-        <div class="card-header"><i class="fas fa-list"></i> Lista de Resultados ({{ resultados|length }})</div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead>
-                        <tr>
-                            <th>Nº Orden</th>
-                            <th>Paciente</th>
-                            <th>CI</th>
-                            <th>Código</th>
-                            <th>Fecha</th>
-                            <th>Archivo</th>
-                            <th class="text-center">Resultado</th>
-                            <th class="text-center">Credenciales</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in resultados %}
-                        <tr>
-                            <td><b>{{ r.numero_orden }}</b></td>
-                            <td>{{ r.paciente_nombre }}</td>
-                            <td>{{ r.paciente_ci }}</td>
-                            <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
-                            <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
-                            <td>
-                                {% if r.archivo_pdf %}
-                                <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
-                                {% else %}
-                                <span class="badge bg-secondary">-</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                {% if r.archivo_pdf %}
-                                <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success">
-                                    <i class="fas fa-download"></i>
-                                </a>
-                                {% else %}
-                                <span class="text-muted">-</span>
-                                {% endif %}
-                            </td>
-                            <td class="text-center">
-                                <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
-                                    <i class="fas fa-file-pdf"></i>
-                                </a>
-                                <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
-                                    <i class="fas fa-file-word"></i>
-                                
-                                </a>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay resultados</p></td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Contenedor del contenido -->
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-list"></i> Lista de Resultados ({{ resultados|length }})</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead>
+                            <tr>
+                                <th>Nº Orden</th>
+                                <th>Paciente</th>
+                                <th>CI</th>
+                                <th>Código</th>
+                                <th>Fecha</th>
+                                <th>Archivo</th>
+                                <th class="text-center">Resultado</th>
+                                <th class="text-center">Credenciales</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in resultados %}
+                            <tr>
+                                <td><b>{{ r.numero_orden }}</b></td>
+                                <td>{{ r.paciente_nombre }}</td>
+                                <td>{{ r.paciente_ci }}</td>
+                                <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
+                                <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
+                                <td>
+                                    {% if r.archivo_pdf %}
+                                    <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if r.archivo_pdf %}
+                                    <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    {% else %}
+                                    <span class="text-muted">-</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
+                                        <i class="fas fa-file-pdf"></i>
+                                    </a>
+                                    <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-file-word"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay resultados</p></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header modal-naranja">
+            <div class="modal-header" style="background: linear-gradient(135deg, #F39C12, #E67E22); color: white;">
                 <h5><i class="fas fa-plus"></i> Registrar Nuevo Resultado</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -193,6 +215,7 @@
         </div>
     </div>
 </div>
+
 <script>
 function cargarDatosPaciente() {
     const select = document.getElementById('selectPaciente');
@@ -207,10 +230,3 @@ function cargarDatosPaciente() {
 }
 </script>
 {% endblock %}
-
-
-
-
-
-
-

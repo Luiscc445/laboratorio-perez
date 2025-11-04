@@ -2,9 +2,10 @@
 {% block title %}Gestión de Pacientes{% endblock %}
 {% block content %}
 <style>
-    /* Contenedor sin padding superior */
+    /* Eliminar padding superior del container */
     .container-fluid {
-        padding-top: 30px;
+        padding: 0 !important;
+        margin: 0 !important;
     }
 
     /* Header moderno estilo dashboard */
@@ -12,8 +13,8 @@
         background: linear-gradient(135deg, #1ABC9C 0%, #16A085 100%);
         color: white;
         padding: 30px;
-        border-radius: 15px;
-        margin-bottom: 30px;
+        border-radius: 0;
+        margin: 0 0 30px 0;
         box-shadow: 0 10px 40px rgba(26, 188, 156, 0.3);
     }
 
@@ -55,6 +56,40 @@
         transform: translateY(-2px);
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     }
+
+    /* Contenedor del contenido */
+    .content-wrapper {
+        padding: 0 30px 30px 30px;
+    }
+
+    .card {
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        border: none;
+    }
+
+    .card-header {
+        background: linear-gradient(135deg, #3498DB, #2980B9);
+        color: white;
+        font-weight: 600;
+        border-radius: 15px 15px 0 0 !important;
+        padding: 15px 20px;
+    }
+
+    .table-responsive {
+        border-radius: 0 0 15px 15px;
+    }
+
+    .btn-sm {
+        padding: 5px 10px;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-sm:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+    }
 </style>
 
 <div class="container-fluid">
@@ -72,52 +107,54 @@
         </div>
     </div>
 
-    <!-- Contenido -->
-    <div class="card">
-        <div class="card-header"><i class="fas fa-list"></i> Lista de Pacientes ({{ pacientes|length }})</div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr><th>ID</th><th>Nombre Completo</th><th>CI</th><th>Teléfono</th><th>Email</th><th>Fecha Registro</th><th>Acciones</th></tr>
-                    </thead>
-                    <tbody>
-                        {% for p in pacientes %}
-                        <tr>
-                            <td><b>{{ p.id }}</b></td>
-                            <td>{{ p.nombre }}</td>
-                            <td>{{ p.ci }}</td>
-                            <td>{{ p.telefono or '-' }}</td>
-                            <td>{{ p.email or '-' }}</td>
-                            <td>{{ p.fecha_registro.strftime('%d/%m/%Y') }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-info btn-ver"
-                                        data-id="{{ p.id }}"
-                                        title="Ver detalles">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button class="btn btn-sm btn-warning btn-editar"
-                                        data-id="{{ p.id }}"
-                                        data-nombre="{{ p.nombre }}"
-                                        data-ci="{{ p.ci }}"
-                                        data-telefono="{{ p.telefono or '' }}"
-                                        data-email="{{ p.email or '' }}"
-                                        title="Editar">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                                <button class="btn btn-sm btn-danger btn-eliminar"
-                                        data-id="{{ p.id }}"
-                                        data-nombre="{{ p.nombre }}"
-                                        title="Eliminar">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay pacientes</p></td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <!-- Contenedor del contenido -->
+    <div class="content-wrapper">
+        <div class="card">
+            <div class="card-header"><i class="fas fa-list"></i> Lista de Pacientes ({{ pacientes|length }})</div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr><th>ID</th><th>Nombre Completo</th><th>CI</th><th>Teléfono</th><th>Email</th><th>Fecha Registro</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody>
+                            {% for p in pacientes %}
+                            <tr>
+                                <td><b>{{ p.id }}</b></td>
+                                <td>{{ p.nombre }}</td>
+                                <td>{{ p.ci }}</td>
+                                <td>{{ p.telefono or '-' }}</td>
+                                <td>{{ p.email or '-' }}</td>
+                                <td>{{ p.fecha_registro.strftime('%d/%m/%Y') }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-info btn-ver"
+                                            data-id="{{ p.id }}"
+                                            title="Ver detalles">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-warning btn-editar"
+                                            data-id="{{ p.id }}"
+                                            data-nombre="{{ p.nombre }}"
+                                            data-ci="{{ p.ci }}"
+                                            data-telefono="{{ p.telefono or '' }}"
+                                            data-email="{{ p.email or '' }}"
+                                            title="Editar">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-danger btn-eliminar"
+                                            data-id="{{ p.id }}"
+                                            data-nombre="{{ p.nombre }}"
+                                            title="Eliminar">
+                                        <i class="fas fa-trash-alt"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="7" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay pacientes</p></td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
@@ -127,7 +164,7 @@
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <div class="modal-header">
+            <div class="modal-header" style="background: linear-gradient(135deg, #1ABC9C, #16A085); color: white;">
                 <h5><i class="fas fa-user-plus"></i> Registrar Nuevo Paciente</h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
             </div>
@@ -282,6 +319,3 @@
 <!-- Lógica de pacientes -->
 <script src="{{ url_for('static', filename='js/admin/pacientes.js') }}"></script>
 {% endblock %}
-
-
-
