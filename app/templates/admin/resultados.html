@@ -69,11 +69,350 @@
     }
 
     .card-header {
-        background: linear-gradient(135deg, #1ABC9C, #16A085);
+        background: linear-gradient(135deg, #F39C12, #E67E22);
         color: white;
         font-weight: 600;
         border-radius: 15px 15px 0 0 !important;
         padding: 15px 20px;
+    }
+
+    /* ========== CONTADOR ESTILO LABORATORIO (NARANJA) ========== */
+    .lab-counter-container {
+        margin-bottom: 30px;
+    }
+
+    .lab-counter-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow:
+            0 10px 40px rgba(243, 156, 18, 0.15),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(243, 156, 18, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+    .lab-counter-card:hover {
+        transform: translateY(-5px);
+        box-shadow:
+            0 15px 50px rgba(243, 156, 18, 0.25),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .counter-decoration {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 200px;
+        height: 200px;
+        background: radial-gradient(circle, rgba(243, 156, 18, 0.1) 0%, transparent 70%);
+        border-radius: 50%;
+        animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.1); opacity: 0.3; }
+    }
+
+    .counter-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        position: relative;
+        z-index: 1;
+    }
+
+    .counter-icon i {
+        font-size: 2.5rem;
+        color: white;
+        animation: iconFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes iconFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
+
+    .counter-content {
+        flex: 1;
+        z-index: 1;
+    }
+
+    .counter-label {
+        font-size: 0.95rem;
+        color: #6c757d;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .counter-display {
+        display: flex;
+        align-items: baseline;
+        gap: 15px;
+    }
+
+    .counter-number {
+        font-family: 'Courier New', monospace;
+        font-size: 3.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 3px;
+        text-shadow: 0 2px 10px rgba(243, 156, 18, 0.2);
+        line-height: 1;
+    }
+
+    .counter-unit {
+        font-size: 1.1rem;
+        color: #F39C12;
+        font-weight: 600;
+        text-transform: lowercase;
+    }
+
+    /* ========== TABLA CRUD MODERNA (NARANJA) ========== */
+    .modern-crud-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .crud-card-header {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 25px 30px;
+        border-bottom: 3px solid #F39C12;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-left i {
+        font-size: 1.5rem;
+        color: #F39C12;
+    }
+
+    .header-left h3 {
+        margin: 0;
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #2C3E50;
+    }
+
+    .badge-count {
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        color: white;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+    }
+
+    .search-box {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .search-box i {
+        position: absolute;
+        left: 15px;
+        color: #F39C12;
+        font-size: 1rem;
+    }
+
+    .search-box input {
+        padding: 10px 15px 10px 45px;
+        border: 2px solid #e9ecef;
+        border-radius: 25px;
+        width: 300px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+    }
+
+    .search-box input:focus {
+        outline: none;
+        border-color: #F39C12;
+        box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.1);
+    }
+
+    .crud-card-body {
+        padding: 0;
+    }
+
+    /* Tabla Moderna */
+    .modern-table {
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .modern-table thead {
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+    }
+
+    .modern-table thead th {
+        color: white;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        padding: 18px 20px;
+        border: none;
+        white-space: nowrap;
+    }
+
+    .modern-table thead th i {
+        margin-right: 8px;
+        opacity: 0.9;
+    }
+
+    .modern-table tbody tr {
+        border-bottom: 1px solid #f1f3f5;
+        transition: all 0.3s ease;
+    }
+
+    .modern-table tbody tr:nth-child(even) {
+        background-color: #f8f9fa;
+    }
+
+    .table-row-hover:hover {
+        background: linear-gradient(135deg, rgba(243, 156, 18, 0.08) 0%, rgba(230, 126, 34, 0.05) 100%) !important;
+        transform: scale(1.01);
+        box-shadow: 0 4px 20px rgba(243, 156, 18, 0.15);
+        cursor: pointer;
+    }
+
+    .modern-table tbody td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        color: #495057;
+        font-size: 0.95rem;
+    }
+
+    .id-badge {
+        background: linear-gradient(135deg, #F39C12 0%, #E67E22 100%);
+        color: white;
+        padding: 5px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+    }
+
+    /* Botones Modernos */
+    .btn-group-modern {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+    }
+
+    .btn-modern {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        color: white;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-modern:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .btn-download {
+        background: linear-gradient(135deg, #27AE60, #229954);
+    }
+
+    .btn-download:hover {
+        background: linear-gradient(135deg, #229954, #1E8449);
+    }
+
+    .btn-pdf {
+        background: linear-gradient(135deg, #E74C3C, #C0392B);
+    }
+
+    .btn-pdf:hover {
+        background: linear-gradient(135deg, #C0392B, #A93226);
+    }
+
+    .btn-word {
+        background: linear-gradient(135deg, #3498DB, #2980B9);
+    }
+
+    .btn-word:hover {
+        background: linear-gradient(135deg, #2980B9, #21618C);
+    }
+
+    /* Empty State */
+    .empty-state-modern {
+        text-align: center;
+        padding: 60px 20px;
+        color: #95a5a6;
+    }
+
+    .empty-state-modern i {
+        font-size: 5rem;
+        margin-bottom: 20px;
+        opacity: 0.3;
+    }
+
+    .empty-state-modern p {
+        font-size: 1.2rem;
+        margin-bottom: 25px;
+    }
+
+    @media (max-width: 768px) {
+        .lab-counter-card {
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .counter-number {
+            font-size: 2.5rem;
+        }
+
+        .search-box input {
+            width: 100%;
+        }
+
+        .crud-card-header {
+            flex-direction: column;
+        }
+    }
+
+    /* ========== AJUSTAR POSICIÓN DE MODALES ========== */
+    .modal-dialog {
+        margin-top: 100px !important;
     }
 </style>
 
@@ -94,28 +433,58 @@
 
     <!-- Contenedor del contenido -->
     <div class="content-wrapper">
-        <div class="card">
-            <div class="card-header"><i class="fas fa-list"></i> Lista de Resultados ({{ resultados|length }})</div>
-            <div class="card-body">
+        <!-- Contador Estilo Laboratorio -->
+        <div class="lab-counter-container">
+            <div class="lab-counter-card">
+                <div class="counter-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="counter-content">
+                    <div class="counter-label">Total Resultados Almacenados</div>
+                    <div class="counter-display">
+                        <span class="counter-number">{{ "%03d"|format(resultados|length) }}</span>
+                        <span class="counter-unit">resultados</span>
+                    </div>
+                </div>
+                <div class="counter-decoration"></div>
+            </div>
+        </div>
+
+        <!-- Tabla CRUD Moderna -->
+        <div class="modern-crud-card">
+            <div class="crud-card-header">
+                <div class="header-left">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Lista de Resultados</h3>
+                    <span class="badge-count">{{ resultados|length }}</span>
+                </div>
+                <div class="header-right">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="searchResultados" placeholder="Buscar resultado...">
+                    </div>
+                </div>
+            </div>
+            <div class="crud-card-body">
                 <div class="table-responsive">
-                    <table class="table table-hover align-middle">
+                    <table class="table modern-table">
                         <thead>
                             <tr>
-                                <th>Nº Orden</th>
-                                <th>Paciente</th>
-                                <th>CI</th>
-                                <th>Código</th>
-                                <th>Fecha</th>
-                                <th>Archivo</th>
-                                <th class="text-center">Resultado</th>
-                                <th class="text-center">Credenciales</th>
+                                <th><i class="fas fa-hashtag"></i> Nº Orden</th>
+                                <th><i class="fas fa-user"></i> Paciente</th>
+                                <th><i class="fas fa-id-card"></i> CI</th>
+                                <th><i class="fas fa-key"></i> Código</th>
+                                <th><i class="fas fa-calendar"></i> Fecha</th>
+                                <th><i class="fas fa-file"></i> Archivo</th>
+                                <th class="text-center"><i class="fas fa-download"></i> Resultado</th>
+                                <th class="text-center"><i class="fas fa-file-alt"></i> Credenciales</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="tablaResultados">
                             {% for r in resultados %}
-                            <tr>
-                                <td><b>{{ r.numero_orden }}</b></td>
-                                <td>{{ r.paciente_nombre }}</td>
+                            <tr class="table-row-hover">
+                                <td><span class="id-badge">{{ r.numero_orden }}</span></td>
+                                <td><strong>{{ r.paciente_nombre }}</strong></td>
                                 <td>{{ r.paciente_ci }}</td>
                                 <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
                                 <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
@@ -123,12 +492,12 @@
                                     {% if r.archivo_pdf %}
                                     <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
                                     {% else %}
-                                    <span class="badge bg-secondary">-</span>
+                                    <span class="badge bg-secondary">Sin archivo</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
                                     {% if r.archivo_pdf %}
-                                    <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn btn-sm btn-success">
+                                    <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn-modern btn-download" title="Descargar PDF">
                                         <i class="fas fa-download"></i>
                                     </a>
                                     {% else %}
@@ -136,16 +505,28 @@
                                     {% endif %}
                                 </td>
                                 <td class="text-center">
-                                    <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn btn-sm btn-danger me-1">
-                                        <i class="fas fa-file-pdf"></i>
-                                    </a>
-                                    <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn btn-sm btn-primary">
-                                        <i class="fas fa-file-word"></i>
-                                    </a>
+                                    <div class="btn-group-modern">
+                                        <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn-modern btn-pdf" title="Descargar PDF">
+                                            <i class="fas fa-file-pdf"></i>
+                                        </a>
+                                        <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn-modern btn-word" title="Descargar Word">
+                                            <i class="fas fa-file-word"></i>
+                                        </a>
+                                    </div>
                                 </td>
                             </tr>
                             {% else %}
-                            <tr><td colspan="8" class="text-center text-muted py-4"><i class="fas fa-inbox fa-3x mb-3"></i><p>No hay resultados</p></td></tr>
+                            <tr>
+                                <td colspan="8">
+                                    <div class="empty-state-modern">
+                                        <i class="fas fa-file-medical-alt"></i>
+                                        <p>No hay resultados registrados</p>
+                                        <button class="btn btn-header" data-bs-toggle="modal" data-bs-target="#modalNuevo">
+                                            <i class="fas fa-plus"></i> Agregar Primer Resultado
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -154,6 +535,19 @@
         </div>
     </div>
 </div>
+
+<script>
+// Búsqueda en tiempo real
+document.getElementById('searchResultados')?.addEventListener('keyup', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#tablaResultados tr');
+
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>
 
 <div class="modal fade" id="modalNuevo" tabindex="-1">
     <div class="modal-dialog modal-lg">
