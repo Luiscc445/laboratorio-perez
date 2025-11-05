@@ -12,7 +12,7 @@ import hashlib
 from app import create_app, db
 from app.models import Prueba
 
-PEXELS_API_KEY = "13aoSqmc9IrPvwrKVO9vRS9UCXyjADcRskUZkgmRlM5AMFSqejwTYFgY"
+PEXELS_API_KEY = "pc4Lf88y25rYxtlfQmAcY1CZ4XOMq5b4tqWrfEk6cxWW5TyzKuWVPFp9"
 
 print("\n" + "="*80)
 print("   🔬 SCRIPT INTELIGENTE - PRIMERAS 60 PRUEBAS")
