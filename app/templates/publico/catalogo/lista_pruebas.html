@@ -10,6 +10,7 @@
     --dark-orange: #E67E22;
     --dark-gray: #2C3E50;
     --text-gray: #4A5568;
+    --light-gray: #F8F9FA;
     --white: #FFFFFF;
 }
 
@@ -43,7 +44,7 @@
     background-position: center 35%;
     color: var(--white);
     padding: 120px 0 90px;
-    margin-bottom: 60px;
+    margin-bottom: 0;
     position: relative;
     overflow: hidden;
 }
@@ -98,6 +99,162 @@
     animation: slideDown 0.8s ease-out 0.4s both;
 }
 
+/* ========== BARRA DE BÚSQUEDA MODERNA ========== */
+.search-section {
+    background: var(--white);
+    padding: 50px 0 40px;
+    border-bottom: 3px solid var(--light-gray);
+}
+
+.search-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.search-box {
+    position: relative;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.search-input {
+    width: 100%;
+    padding: 22px 70px 22px 65px;
+    font-size: 1.1rem;
+    border: 3px solid #E2E8F0;
+    border-radius: 60px;
+    outline: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.search-input:focus {
+    border-color: var(--primary-green);
+    box-shadow: 0 15px 50px rgba(26, 188, 156, 0.2);
+    transform: translateY(-2px);
+}
+
+.search-icon {
+    position: absolute;
+    left: 28px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: var(--primary-green);
+    pointer-events: none;
+}
+
+.clear-search {
+    position: absolute;
+    right: 25px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--primary-orange);
+    color: var(--white);
+    border: none;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(243, 156, 18, 0.3);
+}
+
+.clear-search:hover {
+    background: var(--dark-orange);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-stats {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 1rem;
+    color: var(--text-gray);
+    font-weight: 600;
+}
+
+.search-stats .highlight {
+    color: var(--primary-green);
+    font-size: 1.3rem;
+    font-weight: 800;
+}
+
+/* ========== SECCIONES DE CATEGORÍAS ========== */
+.categorias-container {
+    background: var(--light-gray);
+    padding: 60px 0;
+}
+
+.categoria-section {
+    margin-bottom: 70px;
+    animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.categoria-header {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: var(--white);
+    padding: 25px 35px;
+    border-radius: 20px 20px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 8px 30px rgba(26, 188, 156, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.categoria-header::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+}
+
+.categoria-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    backdrop-filter: blur(10px);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.categoria-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin: 0;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.categoria-count {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(10px);
+}
+
+.pruebas-grid {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+}
+
 /* ========== TARJETAS DE PRUEBAS ========== */
 .prueba-card-pro {
     background: var(--white);
@@ -111,13 +268,9 @@
 }
 
 .prueba-card-pro:nth-child(1) { animation-delay: 0.1s; }
-.prueba-card-pro:nth-child(2) { animation-delay: 0.2s; }
-.prueba-card-pro:nth-child(3) { animation-delay: 0.3s; }
-.prueba-card-pro:nth-child(4) { animation-delay: 0.4s; }
-.prueba-card-pro:nth-child(5) { animation-delay: 0.5s; }
-.prueba-card-pro:nth-child(6) { animation-delay: 0.6s; }
-.prueba-card-pro:nth-child(7) { animation-delay: 0.7s; }
-.prueba-card-pro:nth-child(8) { animation-delay: 0.8s; }
+.prueba-card-pro:nth-child(2) { animation-delay: 0.15s; }
+.prueba-card-pro:nth-child(3) { animation-delay: 0.2s; }
+.prueba-card-pro:nth-child(4) { animation-delay: 0.25s; }
 
 .prueba-card-pro:hover {
     transform: translateY(-15px);
@@ -127,7 +280,7 @@
 
 .prueba-img-container {
     position: relative;
-    height: 230px;
+    height: 200px;
     overflow: hidden;
 }
 
@@ -150,7 +303,7 @@
     align-items: center;
     justify-content: center;
     color: var(--white);
-    font-size: 75px;
+    font-size: 65px;
     transition: all 0.5s ease;
 }
 
@@ -162,39 +315,16 @@
     transform: scale(1.3) rotate(20deg);
 }
 
-.prueba-categoria {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    background: var(--white);
-    padding: 10px 22px;
-    border-radius: 30px;
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--primary-green);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
-    z-index: 2;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.prueba-card-pro:hover .prueba-categoria {
-    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
-    color: var(--white);
-    transform: scale(1.08);
-}
-
 .prueba-body-pro {
-    padding: 35px 30px;
+    padding: 30px 25px;
 }
 
 .prueba-titulo {
-    font-size: 1.35rem;
+    font-size: 1.25rem;
     font-weight: 800;
     color: var(--dark-gray);
     margin-bottom: 15px;
-    min-height: 55px;
+    min-height: 50px;
     line-height: 1.3;
     transition: all 0.3s ease;
 }
@@ -205,24 +335,24 @@
 
 .prueba-descripcion {
     color: var(--text-gray);
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     line-height: 1.7;
-    min-height: 65px;
-    margin-bottom: 22px;
+    min-height: 60px;
+    margin-bottom: 20px;
 }
 
 .prueba-precio {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 900;
     color: var(--primary-orange);
-    margin-bottom: 25px;
+    margin-bottom: 22px;
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
 .prueba-precio i {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: var(--primary-green);
 }
 
@@ -231,7 +361,7 @@
     color: var(--white);
     border: none;
     border-radius: 50px;
-    padding: 16px 28px;
+    padding: 15px 25px;
     font-weight: 800;
     width: 100%;
     display: inline-flex;
@@ -241,7 +371,7 @@
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 8px 25px rgba(37, 211, 102, 0.35);
     text-decoration: none;
-    font-size: 1.05rem;
+    font-size: 1rem;
 }
 
 .btn-whatsapp-pro:hover {
@@ -252,35 +382,66 @@
 }
 
 .btn-whatsapp-pro i {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
 }
 
 /* ========== EMPTY STATE ========== */
 .empty-state {
     text-align: center;
-    padding: 120px 20px;
+    padding: 100px 20px;
 }
 
 .empty-state i {
-    font-size: 6rem;
+    font-size: 5rem;
     color: #CBD5E0;
-    margin-bottom: 35px;
+    margin-bottom: 30px;
 }
 
 .empty-state h3 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     color: var(--text-gray);
-    margin-bottom: 18px;
+    margin-bottom: 15px;
     font-weight: 700;
 }
 
 .empty-state p {
     color: var(--text-gray);
     opacity: 0.7;
-    font-size: 1.15rem;
+    font-size: 1.1rem;
+}
+
+/* ========== MENSAJE SIN RESULTADOS ========== */
+.no-results {
+    text-align: center;
+    padding: 80px 20px;
+    display: none;
+}
+
+.no-results i {
+    font-size: 5rem;
+    color: #CBD5E0;
+    margin-bottom: 30px;
+}
+
+.no-results h3 {
+    font-size: 1.8rem;
+    color: var(--text-gray);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.no-results p {
+    color: var(--text-gray);
+    font-size: 1.1rem;
 }
 
 /* ========== BOTÓN VOLVER ========== */
+.btn-back-container {
+    background: var(--white);
+    padding: 50px 0;
+    text-align: center;
+}
+
 .btn-back {
     display: inline-flex;
     align-items: center;
@@ -317,6 +478,10 @@
     .catalogo-header-imagen p {
         font-size: 1.1rem;
     }
+
+    .categoria-title {
+        font-size: 1.5rem;
+    }
 }
 
 @media (max-width: 768px) {
@@ -333,18 +498,49 @@
         font-size: 1rem;
     }
 
+    .search-input {
+        padding: 18px 60px 18px 55px;
+        font-size: 1rem;
+    }
+
+    .categoria-header {
+        padding: 20px 25px;
+        flex-wrap: wrap;
+    }
+
+    .categoria-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+
+    .categoria-title {
+        font-size: 1.3rem;
+    }
+
+    .categoria-count {
+        flex-basis: 100%;
+        margin-left: 0;
+        margin-top: 15px;
+        text-align: center;
+    }
+
+    .pruebas-grid {
+        padding: 25px 15px;
+    }
+
     .prueba-titulo {
-        font-size: 1.15rem;
+        font-size: 1.1rem;
         min-height: 45px;
     }
 
     .prueba-precio {
-        font-size: 1.9rem;
+        font-size: 1.8rem;
     }
 
     .btn-whatsapp-pro {
-        font-size: 0.95rem;
-        padding: 14px 24px;
+        font-size: 0.9rem;
+        padding: 13px 22px;
     }
 }
 </style>
@@ -360,64 +556,205 @@
     </div>
 </div>
 
-<div class="container mb-5">
-    {% if pruebas %}
-    <div class="row g-4">
-        {% for prueba in pruebas %}
-        <div class="col-md-6 col-lg-3">
-            <div class="prueba-card-pro">
-                <div class="prueba-img-container">
-                    {% if prueba.imagen %}
-                        <img src="{{ url_for('static', filename='uploads/pruebas/' + prueba.imagen) }}"
-                             alt="{{ prueba.nombre }}"
-                             class="prueba-img">
-                    {% else %}
-                        <div class="prueba-img-placeholder">
-                            <i class="fas fa-flask"></i>
-                        </div>
-                    {% endif %}
-                    <span class="prueba-categoria">
-                        {{ prueba.categoria or 'General' }}
-                    </span>
-                </div>
-
-                <div class="prueba-body-pro">
-                    <h5 class="prueba-titulo">{{ prueba.nombre }}</h5>
-
-                    <p class="prueba-descripcion">
-                        {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional con tecnología avanzada.' }}
-                    </p>
-
-                    <div class="prueba-precio">
-                        <i class="fas fa-coins"></i>
-                        Bs. {{ "%.2f"|format(prueba.precio) }}
-                    </div>
-
-                    <a href="https://wa.me/59167619188?text=Hola%2C%20estoy%20interesado%20en%20la%20prueba%20*{{ prueba.nombre|urlencode }}*%20%F0%9F%94%AC%0A%0A%C2%BFPodr%C3%ADan%20proporcionarme%20m%C3%A1s%20informaci%C3%B3n%3F"
-                       target="_blank"
-                       class="btn-whatsapp-pro">
-                        <i class="fab fa-whatsapp"></i>
-                        Cotizar por WhatsApp
-                    </a>
-                </div>
+<div class="search-section">
+    <div class="container">
+        <div class="search-container">
+            <div class="search-box">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text"
+                       id="searchInput"
+                       class="search-input"
+                       placeholder="Buscar pruebas por nombre o categoría..."
+                       autocomplete="off">
+                <button class="clear-search" id="clearSearch">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-stats">
+                <span id="statsText">
+                    <span class="highlight">{{ pruebas|length }}</span> pruebas disponibles en
+                    <span class="highlight">{{ pruebas_por_categoria|length }}</span> categorías
+                </span>
             </div>
         </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="empty-state">
-        <i class="fas fa-inbox"></i>
-        <h3>No hay pruebas disponibles</h3>
-        <p>Pronto agregaremos más pruebas de laboratorio a nuestro catálogo</p>
-    </div>
-    {% endif %}
-
-    <div class="text-center mt-5">
-        <a href="{{ url_for('main.index') }}" class="btn-back">
-            <i class="fas fa-arrow-left"></i>
-            Volver al Inicio
-        </a>
     </div>
 </div>
+
+<div class="categorias-container">
+    <div class="container">
+        {% if pruebas_por_categoria %}
+            <div id="categoriasContent">
+                {% for categoria, lista_pruebas in pruebas_por_categoria.items()|sort %}
+                <div class="categoria-section" data-categoria="{{ categoria|lower }}">
+                    <div class="categoria-header">
+                        <div class="categoria-icon">
+                            <i class="fas fa-flask"></i>
+                        </div>
+                        <h2 class="categoria-title">{{ categoria }}</h2>
+                        <span class="categoria-count">{{ lista_pruebas|length }} prueba{% if lista_pruebas|length != 1 %}s{% endif %}</span>
+                    </div>
+
+                    <div class="pruebas-grid">
+                        <div class="row g-4">
+                            {% for prueba in lista_pruebas %}
+                            <div class="col-md-6 col-lg-3 prueba-item"
+                                 data-nombre="{{ prueba.nombre|lower }}"
+                                 data-categoria="{{ categoria|lower }}">
+                                <div class="prueba-card-pro">
+                                    <div class="prueba-img-container">
+                                        {% if prueba.imagen %}
+                                            <img src="{{ url_for('static', filename='uploads/pruebas/' + prueba.imagen) }}"
+                                                 alt="{{ prueba.nombre }}"
+                                                 class="prueba-img">
+                                        {% else %}
+                                            <div class="prueba-img-placeholder">
+                                                <i class="fas fa-flask"></i>
+                                            </div>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="prueba-body-pro">
+                                        <h5 class="prueba-titulo">{{ prueba.nombre }}</h5>
+
+                                        <p class="prueba-descripcion">
+                                            {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional con tecnología avanzada.' }}
+                                        </p>
+
+                                        <div class="prueba-precio">
+                                            <i class="fas fa-coins"></i>
+                                            Bs. {{ "%.2f"|format(prueba.precio) }}
+                                        </div>
+
+                                        <a href="https://wa.me/59167619188?text=Hola%2C%20estoy%20interesado%20en%20la%20prueba%20*{{ prueba.nombre|urlencode }}*%20%F0%9F%94%AC%0A%0A%C2%BFPodr%C3%ADan%20proporcionarme%20m%C3%A1s%20informaci%C3%B3n%3F"
+                                           target="_blank"
+                                           class="btn-whatsapp-pro">
+                                            <i class="fab fa-whatsapp"></i>
+                                            Cotizar por WhatsApp
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="no-results" id="noResults">
+                <i class="fas fa-search"></i>
+                <h3>No se encontraron resultados</h3>
+                <p>Intenta con otros términos de búsqueda</p>
+            </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-inbox"></i>
+            <h3>No hay pruebas disponibles</h3>
+            <p>Pronto agregaremos más pruebas de laboratorio a nuestro catálogo</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="btn-back-container">
+    <a href="{{ url_for('main.index') }}" class="btn-back">
+        <i class="fas fa-arrow-left"></i>
+        Volver al Inicio
+    </a>
+</div>
+
+<script>
+// Sistema de búsqueda en tiempo real
+const searchInput = document.getElementById('searchInput');
+const clearSearch = document.getElementById('clearSearch');
+const categoriasSections = document.querySelectorAll('.categoria-section');
+const pruebaItems = document.querySelectorAll('.prueba-item');
+const noResults = document.getElementById('noResults');
+const statsText = document.getElementById('statsText');
+const categoriasContent = document.getElementById('categoriasContent');
+
+const totalPruebas = {{ pruebas|length }};
+const totalCategorias = {{ pruebas_por_categoria|length }};
+
+searchInput.addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase().trim();
+
+    // Mostrar/ocultar botón de limpiar
+    if (searchTerm) {
+        clearSearch.style.display = 'flex';
+    } else {
+        clearSearch.style.display = 'none';
+    }
+
+    let visiblePruebas = 0;
+    let visibleCategorias = 0;
+
+    if (searchTerm === '') {
+        // Mostrar todo
+        categoriasSections.forEach(section => {
+            section.style.display = 'block';
+        });
+        pruebaItems.forEach(item => {
+            item.style.display = 'block';
+        });
+        noResults.style.display = 'none';
+        categoriasContent.style.display = 'block';
+        statsText.innerHTML = `<span class="highlight">${totalPruebas}</span> pruebas disponibles en <span class="highlight">${totalCategorias}</span> categorías`;
+    } else {
+        // Filtrar
+        categoriasSections.forEach(section => {
+            const categoria = section.dataset.categoria;
+            const pruebasEnCategoria = section.querySelectorAll('.prueba-item');
+            let hayCoincidencias = false;
+
+            pruebasEnCategoria.forEach(item => {
+                const nombre = item.dataset.nombre;
+                const itemCategoria = item.dataset.categoria;
+
+                if (nombre.includes(searchTerm) || itemCategoria.includes(searchTerm)) {
+                    item.style.display = 'block';
+                    hayCoincidencias = true;
+                    visiblePruebas++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            if (hayCoincidencias) {
+                section.style.display = 'block';
+                visibleCategorias++;
+            } else {
+                section.style.display = 'none';
+            }
+        });
+
+        // Mostrar/ocultar mensaje de sin resultados
+        if (visiblePruebas === 0) {
+            noResults.style.display = 'block';
+            categoriasContent.style.display = 'none';
+            statsText.innerHTML = `<span class="highlight">0</span> resultados encontrados`;
+        } else {
+            noResults.style.display = 'none';
+            categoriasContent.style.display = 'block';
+            statsText.innerHTML = `<span class="highlight">${visiblePruebas}</span> prueba${visiblePruebas !== 1 ? 's' : ''} encontrada${visiblePruebas !== 1 ? 's' : ''} en <span class="highlight">${visibleCategorias}</span> categoría${visibleCategorias !== 1 ? 's' : ''}`;
+        }
+    }
+});
+
+// Limpiar búsqueda
+clearSearch.addEventListener('click', function() {
+    searchInput.value = '';
+    searchInput.dispatchEvent(new Event('input'));
+    searchInput.focus();
+});
+
+// Limpiar con Escape
+searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        searchInput.value = '';
+        searchInput.dispatchEvent(new Event('input'));
+    }
+});
+</script>
 
 {% endblock %}
