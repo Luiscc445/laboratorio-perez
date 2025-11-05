@@ -21,7 +21,7 @@ from app.models import Prueba
 # 4. Copia tu API Key
 # 5. Pégala aquí abajo entre las comillas:
 
-PEXELS_API_KEY = "PONER_TU_API_KEY_AQUI"
+PEXELS_API_KEY = "13aoSqmc9IrPvwrKVO9vRS9UCXyjADcRskUZkgmRlM5AMFSqejwTYFgY"
 
 # ========================================
 
