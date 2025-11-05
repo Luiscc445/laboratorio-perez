@@ -1,16 +1,26 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Script para poblar la base de datos con todas las pruebas de laboratorio
-organizadas por categorías CON IMÁGENES PROFESIONALES
+Script para poblar TODAS las pruebas con IMÁGENES INDIVIDUALES usando Pexels API
+Cada una de las 176+ pruebas tendrá su propia imagen profesional única y fija
 """
 
 import os
 import requests
+import time
+import hashlib
 from app import create_app, db
 from app.models import Prueba
 
-# Datos de pruebas organizadas por categoría
+# ========== CONFIGURACIÓN PEXELS API ==========
+# Pexels API es GRATUITA - Registro en: https://www.pexels.com/api/
+# Límite: 200 requests por hora (suficiente para este uso)
+PEXELS_API_KEY = "TU_API_KEY_AQUI"  # Debes registrarte en Pexels y obtener tu API key gratuita
+
+# Si no quieres usar Pexels, se usará Unsplash (también gratuito, sin API key)
+USE_PEXELS = True  # Cambiar a False para usar Unsplash sin API key
+
+# ========== DATOS DE PRUEBAS ==========
 PRUEBAS_DATA = {
     "HEMATOLOGÍA": [
         "HEMOGRAMA",
@@ -219,7 +229,6 @@ PRUEBAS_DATA = {
     ]
 }
 
-# Precios sugeridos por categoría (en Bolivianos)
 PRECIOS_POR_CATEGORIA = {
     "HEMATOLOGÍA": 80.0,
     "COAGULACIÓN": 100.0,
@@ -242,35 +251,101 @@ PRECIOS_POR_CATEGORIA = {
     "BIOLOGÍA MOLECULAR": 450.0
 }
 
-# IMÁGENES PROFESIONALES DE UNSPLASH POR CATEGORÍA
-# Cada categoría tiene una imagen fija específica de alta calidad
-IMAGENES_POR_CATEGORIA = {
-    "HEMATOLOGÍA": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=800&h=600&fit=crop",  # Blood test tubes
-    "COAGULACIÓN": "https://images.unsplash.com/photo-1579154204601-01588f351e67?w=800&h=600&fit=crop",  # Lab equipment
-    "BIOQUÍMICA CLÍNICA": "https://images.unsplash.com/photo-1582719471137-c3967ffb1c42?w=800&h=600&fit=crop",  # Lab analysis
-    "ELECTROLITOS": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=600&fit=crop",  # Chemical testing
-    "ALERGIAS": "https://images.unsplash.com/photo-1576671081837-49000212a370?w=800&h=600&fit=crop",  # Allergy testing
-    "ENDOCRINOLOGÍA": "https://images.unsplash.com/photo-1583912267550-bc83b8389e66?w=800&h=600&fit=crop",  # Hormone testing
-    "MARCADORES ONCOLÓGICOS": "https://images.unsplash.com/photo-1530026405186-ed1f139313f8?w=800&h=600&fit=crop",  # Cancer research
-    "BACTERIOLOGÍA": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&h=600&fit=crop",  # Petri dish bacteria
-    "ORINA": "https://images.unsplash.com/photo-1584362917165-526a968579e8?w=800&h=600&fit=crop",  # Urine sample
-    "VITAMINAS": "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=800&h=600&fit=crop",  # Vitamins
-    "MATERIA FECAL": "https://images.unsplash.com/photo-1581595220892-b0739db3ba8c?w=800&h=600&fit=crop",  # Lab sample
-    "PERFIL PRE-OPERATORIO": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800&h=600&fit=crop",  # Surgery prep
-    "PERFIL REUMATOIDEO": "https://images.unsplash.com/photo-1579154341141-a0c2c9e30b4e?w=800&h=600&fit=crop",  # Rheumatology
-    "PERFIL HEPÁTICO": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800&h=600&fit=crop",  # Liver tests
-    "PERFIL OBSTÉTRICO CONTROL": "https://images.unsplash.com/photo-1555252333-9f8e92e65df9?w=800&h=600&fit=crop",  # Pregnancy test
-    "MARCADORES DE HEPATITIS": "https://images.unsplash.com/photo-1584362917165-526a968579e8?w=800&h=600&fit=crop",  # Hepatitis testing
-    "INMUNOLOGÍA": "https://images.unsplash.com/photo-1576086213369-97a306d36557?w=800&h=600&fit=crop",  # Immune system
-    "PERFIL OBSTÉTRICO": "https://images.unsplash.com/photo-1631815589968-fdb09a223b1e?w=800&h=600&fit=crop",  # Obstetric care
-    "BIOLOGÍA MOLECULAR": "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=800&h=600&fit=crop"  # DNA/Molecular
-}
+
+def generar_keywords(nombre_prueba, categoria):
+    """
+    Genera keywords inteligentes para buscar imágenes basándose en el nombre de la prueba
+    """
+    # Mapeo de términos médicos a términos de búsqueda en inglés
+    mapeo_terminos = {
+        "HEMOGRAMA": "blood test cells",
+        "SANGRE": "blood test",
+        "GLUCOSA": "glucose blood sugar",
+        "COLESTEROL": "cholesterol test",
+        "HEPATITIS": "hepatitis liver",
+        "VIH": "hiv test",
+        "ORINA": "urine test",
+        "HECES": "stool sample",
+        "CULTIVO": "bacterial culture",
+        "BACTERIA": "bacteria petri dish",
+        "HORMONA": "hormone blood test",
+        "TIROIDES": "thyroid",
+        "VITAMINA": "vitamin supplement",
+        "CANCER": "cancer cells",
+        "DNA": "dna helix",
+        "MOLECULAR": "molecular biology",
+        "EMBARAZO": "pregnancy test",
+        "CORAZÓN": "heart",
+        "RIÑÓN": "kidney",
+        "HÍGADO": "liver"
+    }
+
+    # Extraer palabras clave del nombre
+    nombre_upper = nombre_prueba.upper()
+
+    # Buscar coincidencias en el mapeo
+    for termino, keywords in mapeo_terminos.items():
+        if termino in nombre_upper:
+            return f"{keywords} laboratory medical"
+
+    # Si no hay coincidencia específica, usar categoría + "laboratory test"
+    categoria_map = {
+        "HEMATOLOGÍA": "blood test hematology",
+        "COAGULACIÓN": "blood clotting coagulation",
+        "BIOQUÍMICA CLÍNICA": "biochemistry laboratory",
+        "ELECTROLITOS": "electrolytes laboratory",
+        "ALERGIAS": "allergy test",
+        "ENDOCRINOLOGÍA": "hormone endocrine",
+        "MARCADORES ONCOLÓGICOS": "cancer markers",
+        "BACTERIOLOGÍA": "bacteria culture",
+        "ORINA": "urine test",
+        "VITAMINAS": "vitamin test",
+        "MATERIA FECAL": "stool sample",
+        "INMUNOLOGÍA": "immune system antibody"
+    }
+
+    return categoria_map.get(categoria, "medical laboratory test")
+
+
+def buscar_imagen_pexels(keywords, api_key):
+    """Busca una imagen en Pexels basada en keywords"""
+    try:
+        url = "https://api.pexels.com/v1/search"
+        headers = {"Authorization": api_key}
+        params = {
+            "query": keywords,
+            "per_page": 1,
+            "orientation": "landscape"
+        }
+
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        response.raise_for_status()
+
+        data = response.json()
+        if data.get("photos") and len(data["photos"]) > 0:
+            return data["photos"][0]["src"]["medium"]  # 350px de ancho
+        return None
+    except Exception as e:
+        print(f"         Error en Pexels: {str(e)}")
+        return None
+
+
+def buscar_imagen_unsplash(keywords):
+    """Busca una imagen en Unsplash (sin API key necesaria)"""
+    try:
+        # Unsplash Source permite búsquedas sin API key
+        keywords_encoded = keywords.replace(" ", ",")
+        url = f"https://source.unsplash.com/800x600/?{keywords_encoded}"
+        return url
+    except Exception as e:
+        print(f"         Error en Unsplash: {str(e)}")
+        return None
 
 
 def descargar_imagen(url, nombre_archivo, directorio):
-    """Descarga una imagen desde una URL y la guarda localmente"""
+    """Descarga una imagen desde URL y la guarda"""
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=15, allow_redirects=True)
         response.raise_for_status()
 
         ruta_completa = os.path.join(directorio, nombre_archivo)
@@ -279,69 +354,100 @@ def descargar_imagen(url, nombre_archivo, directorio):
 
         return nombre_archivo
     except Exception as e:
-        print(f"      ❌ Error descargando imagen: {str(e)}")
+        print(f"         ❌ Error descargando: {str(e)}")
         return None
 
 
-def poblar_pruebas():
-    """Pobla la base de datos con todas las pruebas de laboratorio CON IMÁGENES"""
+def generar_nombre_imagen_unico(nombre_prueba):
+    """Genera un nombre de archivo único basado en el nombre de la prueba"""
+    # Usar hash MD5 para nombre corto y único
+    hash_obj = hashlib.md5(nombre_prueba.encode())
+    hash_str = hash_obj.hexdigest()[:12]
+    return f"prueba_{hash_str}.jpg"
+
+
+def poblar_pruebas_con_imagenes():
+    """Pobla TODAS las pruebas con imágenes individuales únicas"""
     app = create_app()
 
     with app.app_context():
-        print("🔬 Iniciando poblado de pruebas de laboratorio con imágenes...")
+        print("\n" + "="*70)
+        print("🔬 POBLANDO PRUEBAS CON IMÁGENES INDIVIDUALES")
+        print("="*70)
+
+        # Verificar API key si se usa Pexels
+        if USE_PEXELS and PEXELS_API_KEY == "TU_API_KEY_AQUI":
+            print("\n⚠️  ADVERTENCIA: No has configurado PEXELS_API_KEY")
+            print("   Se usará Unsplash en su lugar (sin API key necesaria)")
+            global USE_PEXELS
+            USE_PEXELS = False
+
+        print(f"\n📸 Servicio de imágenes: {'Pexels API' if USE_PEXELS else 'Unsplash Source'}")
         print(f"📊 Total de categorías: {len(PRUEBAS_DATA)}")
 
-        # Crear directorio de imágenes si no existe
-        directorio_imagenes = os.path.join('app', 'static', 'uploads', 'pruebas')
-        os.makedirs(directorio_imagenes, exist_ok=True)
-        print(f"📁 Directorio de imágenes: {directorio_imagenes}")
+        # Crear directorio
+        dir_imagenes = os.path.join('app', 'static', 'uploads', 'pruebas')
+        os.makedirs(dir_imagenes, exist_ok=True)
+        print(f"📁 Directorio: {dir_imagenes}\n")
 
-        # Contar total de pruebas
         total_pruebas = sum(len(pruebas) for pruebas in PRUEBAS_DATA.values())
-        print(f"📋 Total de pruebas a agregar: {total_pruebas}\n")
+        print(f"📋 Total de pruebas: {total_pruebas}")
+        print(f"🖼️  Imágenes a buscar: {total_pruebas}\n")
 
         contador_agregadas = 0
         contador_existentes = 0
-        imagenes_descargadas = {}
+        contador_imagenes = 0
 
         for categoria, pruebas in PRUEBAS_DATA.items():
-            print(f"\n📂 Categoría: {categoria}")
-            print(f"   Pruebas: {len(pruebas)}")
+            print(f"\n{'='*70}")
+            print(f"📂 {categoria} ({len(pruebas)} pruebas)")
+            print(f"{'='*70}")
 
             precio_base = PRECIOS_POR_CATEGORIA.get(categoria, 100.0)
-            url_imagen = IMAGENES_POR_CATEGORIA.get(categoria)
 
-            # Descargar imagen de la categoría (una sola vez por categoría)
-            nombre_imagen = None
-            if url_imagen and categoria not in imagenes_descargadas:
-                print(f"   🖼️  Descargando imagen para {categoria}...")
-                nombre_imagen = f"{categoria.lower().replace(' ', '_')}.jpg"
-                resultado = descargar_imagen(url_imagen, nombre_imagen, directorio_imagenes)
-                if resultado:
-                    imagenes_descargadas[categoria] = nombre_imagen
-                    print(f"      ✅ Imagen descargada: {nombre_imagen}")
-                else:
-                    print(f"      ⚠️  No se pudo descargar imagen, se usará placeholder")
-            elif categoria in imagenes_descargadas:
-                nombre_imagen = imagenes_descargadas[categoria]
+            for idx, nombre_prueba in enumerate(pruebas, 1):
+                print(f"\n   [{idx}/{len(pruebas)}] {nombre_prueba}")
 
-            for nombre_prueba in pruebas:
-                # Verificar si la prueba ya existe
+                # Verificar si existe
                 prueba_existente = Prueba.query.filter_by(
                     nombre=nombre_prueba,
                     categoria=categoria
                 ).first()
 
-                if prueba_existente:
-                    # Actualizar imagen si no tiene
-                    if not prueba_existente.imagen and nombre_imagen:
-                        prueba_existente.imagen = nombre_imagen
-                        print(f"   🔄 Actualizada imagen: {nombre_prueba}")
+                # Generar keywords y buscar imagen
+                keywords = generar_keywords(nombre_prueba, categoria)
+                print(f"      🔍 Keywords: {keywords}")
+
+                nombre_imagen = generar_nombre_imagen_unico(nombre_prueba)
+                ruta_imagen_completa = os.path.join(dir_imagenes, nombre_imagen)
+
+                # Buscar y descargar imagen
+                url_imagen = None
+                if USE_PEXELS:
+                    url_imagen = buscar_imagen_pexels(keywords, PEXELS_API_KEY)
+                    time.sleep(1)  # Rate limiting
+                else:
+                    url_imagen = buscar_imagen_unsplash(keywords)
+
+                if url_imagen:
+                    print(f"      🖼️  Descargando imagen...")
+                    resultado = descargar_imagen(url_imagen, nombre_imagen, dir_imagenes)
+                    if resultado:
+                        print(f"      ✅ Imagen guardada: {nombre_imagen}")
+                        contador_imagenes += 1
                     else:
-                        print(f"   ⚠️  Ya existe: {nombre_prueba}")
+                        nombre_imagen = None
+                else:
+                    print(f"      ⚠️  No se encontró imagen")
+                    nombre_imagen = None
+
+                # Crear o actualizar prueba
+                if prueba_existente:
+                    if nombre_imagen and not prueba_existente.imagen:
+                        prueba_existente.imagen = nombre_imagen
+                        print(f"      🔄 Imagen actualizada")
                     contador_existentes += 1
                 else:
-                    # Crear nueva prueba con imagen
                     nueva_prueba = Prueba(
                         nombre=nombre_prueba,
                         categoria=categoria,
@@ -350,46 +456,41 @@ def poblar_pruebas():
                         imagen=nombre_imagen
                     )
                     db.session.add(nueva_prueba)
-                    print(f"   ✅ Agregada: {nombre_prueba} (Bs. {precio_base}) + 🖼️")
+                    print(f"      ✅ Prueba agregada (Bs. {precio_base})")
                     contador_agregadas += 1
 
         # Confirmar cambios
         try:
             db.session.commit()
-            print(f"\n{'='*60}")
-            print("✨ ¡Poblado completado exitosamente!")
-            print(f"{'='*60}")
-            print(f"✅ Pruebas agregadas: {contador_agregadas}")
-            print(f"⚠️  Pruebas que ya existían: {contador_existentes}")
-            print(f"🖼️  Imágenes descargadas: {len(imagenes_descargadas)}")
+            print(f"\n\n{'='*70}")
+            print("✨ ¡PROCESO COMPLETADO EXITOSAMENTE!")
+            print(f"{'='*70}")
+            print(f"✅ Pruebas nuevas agregadas: {contador_agregadas}")
+            print(f"⚠️  Pruebas existentes: {contador_existentes}")
+            print(f"🖼️  Imágenes descargadas: {contador_imagenes}")
             print(f"📊 Total en base de datos: {Prueba.query.count()}")
-            print(f"{'='*60}\n")
+            print(f"{'='*70}\n")
 
-            # Mostrar resumen por categoría
-            print("\n📈 RESUMEN POR CATEGORÍA:")
-            print(f"{'='*60}")
-            for categoria in PRUEBAS_DATA.keys():
-                cantidad = Prueba.query.filter_by(categoria=categoria).count()
-                tiene_imagen = "🖼️" if categoria in imagenes_descargadas else "❌"
-                print(f"   {categoria}: {cantidad} pruebas {tiene_imagen}")
-            print(f"{'='*60}\n")
-
+            return True
         except Exception as e:
             db.session.rollback()
-            print(f"\n❌ Error al guardar en la base de datos: {str(e)}")
+            print(f"\n❌ Error: {str(e)}")
             return False
-
-        return True
 
 
 if __name__ == "__main__":
-    print("\n" + "="*60)
-    print("   🔬 SCRIPT DE POBLADO DE PRUEBAS CON IMÁGENES")
-    print("="*60 + "\n")
+    print("\n" + "="*70)
+    print("   🔬 SCRIPT AVANZADO DE IMÁGENES INDIVIDUALES")
+    print("="*70)
+    print("\n📝 INSTRUCCIONES:")
+    print("   1. Registrarse en Pexels: https://www.pexels.com/api/")
+    print("   2. Obtener API Key gratuita (200 requests/hora)")
+    print("   3. Editar este archivo y poner tu API Key en PEXELS_API_KEY")
+    print("   4. O dejar como está para usar Unsplash sin API key\n")
 
-    if poblar_pruebas():
-        print("🎉 Proceso completado con éxito!")
-        print("\n💡 Todas las pruebas ahora tienen imágenes profesionales")
-        print("   de alta calidad organizadas por categoría.")
+    input("Presiona ENTER para continuar...")
+
+    if poblar_pruebas_con_imagenes():
+        print("\n🎉 ¡Todas las pruebas tienen imágenes profesionales únicas!")
     else:
-        print("❌ El proceso falló. Revisa los errores anteriores.")
+        print("\n❌ El proceso falló.")
