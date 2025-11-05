@@ -591,7 +591,13 @@ document.getElementById('searchPruebas')?.addEventListener('keyup', function(e) 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-tags"></i> Categoría</label>
-                                <input type="text" class="form-control" name="categoria" placeholder="Ej: Hematología">
+                                <input type="text" class="form-control" name="categoria" list="categoriasList" placeholder="Seleccione o escriba una categoría" autocomplete="off">
+                                <datalist id="categoriasList">
+                                    {% for cat in categorias %}
+                                    <option value="{{ cat }}">
+                                    {% endfor %}
+                                </datalist>
+                                <small class="text-muted">Seleccione una existente o escriba una nueva</small>
                             </div>
                         </div>
                     </div>
@@ -709,7 +715,8 @@ document.getElementById('searchPruebas')?.addEventListener('keyup', function(e) 
                         <div class="col-md-6">
                             <div class="mb-3">
                                 <label class="form-label"><i class="fas fa-tags"></i> Categoría</label>
-                                <input type="text" class="form-control" name="categoria" id="editCategoria">
+                                <input type="text" class="form-control" name="categoria" id="editCategoria" list="categoriasList" autocomplete="off">
+                                <small class="text-muted">Seleccione una existente o escriba una nueva</small>
                             </div>
                         </div>
                     </div>

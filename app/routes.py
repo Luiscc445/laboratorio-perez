@@ -35,8 +35,20 @@ def portal_resultados():
 
 @main.route('/catalogo-pruebas')
 def catalogo_pruebas():
+    # Obtener todas las pruebas ordenadas por categoría y nombre
     pruebas = Prueba.query.order_by(Prueba.categoria, Prueba.nombre).all()
-    return render_template('publico/catalogo/lista_pruebas.html', pruebas=pruebas)
+
+    # Organizar pruebas por categoría
+    pruebas_por_categoria = {}
+    for prueba in pruebas:
+        categoria = prueba.categoria or 'General'
+        if categoria not in pruebas_por_categoria:
+            pruebas_por_categoria[categoria] = []
+        pruebas_por_categoria[categoria].append(prueba)
+
+    return render_template('publico/catalogo/lista_pruebas.html',
+                         pruebas=pruebas,
+                         pruebas_por_categoria=pruebas_por_categoria)
 
 @main.route('/consultar-resultado', methods=['POST'])
 def consultar_resultado():
@@ -463,8 +475,14 @@ def admin_pruebas():
         except Exception as e:
             flash(f'Error: {str(e)}', 'danger')
         return redirect(url_for('main.admin_pruebas'))
+
     pruebas = Prueba.query.order_by(Prueba.nombre).all()
-    return render_template('admin/pruebas.html', pruebas=pruebas)
+
+    # Obtener categorías únicas de la base de datos
+    categorias = db.session.query(Prueba.categoria).distinct().filter(Prueba.categoria.isnot(None)).order_by(Prueba.categoria).all()
+    categorias_list = [cat[0] for cat in categorias if cat[0]]
+
+    return render_template('admin/pruebas.html', pruebas=pruebas, categorias=categorias_list)
 
 @main.route('/prueba/<int:prueba_id>')
 @admin_required
