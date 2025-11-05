@@ -181,6 +181,84 @@
     font-weight: 800;
 }
 
+/* ========== FILTRO DE CATEGORÍAS ========== */
+.category-filter {
+    background: var(--white);
+    padding: 30px 0 40px;
+    border-bottom: 3px solid var(--light-gray);
+}
+
+.filter-label {
+    text-align: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-gray);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.filter-label i {
+    color: var(--primary-green);
+    font-size: 1.1rem;
+}
+
+.category-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.category-pill {
+    background: var(--white);
+    color: var(--text-gray);
+    border: 2px solid #E2E8F0;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.category-pill:hover {
+    border-color: var(--primary-green);
+    color: var(--primary-green);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(26, 188, 156, 0.2);
+}
+
+.category-pill.active {
+    background: linear-gradient(135deg, var(--primary-green), var(--dark-green));
+    color: var(--white);
+    border-color: var(--primary-green);
+    box-shadow: 0 8px 25px rgba(26, 188, 156, 0.4);
+}
+
+.category-pill .count {
+    background: rgba(0, 0, 0, 0.1);
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.category-pill.active .count {
+    background: rgba(255, 255, 255, 0.25);
+}
+
 /* ========== SECCIONES DE CATEGORÍAS ========== */
 .categorias-container {
     background: var(--light-gray);
@@ -542,6 +620,25 @@
         font-size: 0.9rem;
         padding: 13px 22px;
     }
+
+    .category-filter {
+        padding: 25px 0 35px;
+    }
+
+    .category-pills {
+        gap: 8px;
+        padding: 0 10px;
+    }
+
+    .category-pill {
+        padding: 10px 18px;
+        font-size: 0.8rem;
+    }
+
+    .category-pill .count {
+        padding: 2px 8px;
+        font-size: 0.75rem;
+    }
 }
 </style>
 
@@ -576,6 +673,29 @@
                     <span class="highlight">{{ pruebas_por_categoria|length }}</span> categorías
                 </span>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="category-filter">
+    <div class="container">
+        <div class="filter-label">
+            <i class="fas fa-filter"></i>
+            Filtrar por Categoría
+        </div>
+        <div class="category-pills">
+            <button class="category-pill active" data-categoria="todas">
+                <i class="fas fa-th"></i>
+                Todas
+                <span class="count">{{ pruebas|length }}</span>
+            </button>
+            {% for categoria, lista_pruebas in pruebas_por_categoria.items()|sort %}
+            <button class="category-pill" data-categoria="{{ categoria|lower }}">
+                <i class="fas fa-flask"></i>
+                {{ categoria }}
+                <span class="count">{{ lista_pruebas|length }}</span>
+            </button>
+            {% endfor %}
         </div>
     </div>
 </div>
@@ -664,7 +784,7 @@
 </div>
 
 <script>
-// Sistema de búsqueda en tiempo real
+// Sistema de búsqueda y filtrado en tiempo real
 const searchInput = document.getElementById('searchInput');
 const clearSearch = document.getElementById('clearSearch');
 const categoriasSections = document.querySelectorAll('.categoria-section');
@@ -672,12 +792,16 @@ const pruebaItems = document.querySelectorAll('.prueba-item');
 const noResults = document.getElementById('noResults');
 const statsText = document.getElementById('statsText');
 const categoriasContent = document.getElementById('categoriasContent');
+const categoryPills = document.querySelectorAll('.category-pill');
 
 const totalPruebas = {{ pruebas|length }};
 const totalCategorias = {{ pruebas_por_categoria|length }};
 
-searchInput.addEventListener('input', function(e) {
-    const searchTerm = e.target.value.toLowerCase().trim();
+let categoriaSeleccionada = 'todas';
+
+// Función para aplicar filtros
+function aplicarFiltros() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
 
     // Mostrar/ocultar botón de limpiar
     if (searchTerm) {
@@ -689,62 +813,69 @@ searchInput.addEventListener('input', function(e) {
     let visiblePruebas = 0;
     let visibleCategorias = 0;
 
-    if (searchTerm === '') {
-        // Mostrar todo
-        categoriasSections.forEach(section => {
-            section.style.display = 'block';
-        });
-        pruebaItems.forEach(item => {
-            item.style.display = 'block';
-        });
-        noResults.style.display = 'none';
-        categoriasContent.style.display = 'block';
-        statsText.innerHTML = `<span class="highlight">${totalPruebas}</span> pruebas disponibles en <span class="highlight">${totalCategorias}</span> categorías`;
-    } else {
-        // Filtrar
-        categoriasSections.forEach(section => {
-            const categoria = section.dataset.categoria;
-            const pruebasEnCategoria = section.querySelectorAll('.prueba-item');
-            let hayCoincidencias = false;
+    categoriasSections.forEach(section => {
+        const categoria = section.dataset.categoria;
+        const pruebasEnCategoria = section.querySelectorAll('.prueba-item');
+        let hayCoincidencias = false;
 
-            pruebasEnCategoria.forEach(item => {
-                const nombre = item.dataset.nombre;
-                const itemCategoria = item.dataset.categoria;
+        // Verificar si la categoría debe mostrarse según el filtro de categoría
+        const mostrarCategoria = categoriaSeleccionada === 'todas' || categoria === categoriaSeleccionada;
 
-                if (nombre.includes(searchTerm) || itemCategoria.includes(searchTerm)) {
-                    item.style.display = 'block';
-                    hayCoincidencias = true;
-                    visiblePruebas++;
-                } else {
-                    item.style.display = 'none';
-                }
-            });
+        if (!mostrarCategoria) {
+            section.style.display = 'none';
+            return;
+        }
 
-            if (hayCoincidencias) {
-                section.style.display = 'block';
-                visibleCategorias++;
+        pruebasEnCategoria.forEach(item => {
+            const nombre = item.dataset.nombre;
+            const itemCategoria = item.dataset.categoria;
+
+            // Verificar si la prueba coincide con el término de búsqueda
+            const coincideBusqueda = searchTerm === '' || nombre.includes(searchTerm) || itemCategoria.includes(searchTerm);
+
+            if (coincideBusqueda) {
+                item.style.display = 'block';
+                hayCoincidencias = true;
+                visiblePruebas++;
             } else {
-                section.style.display = 'none';
+                item.style.display = 'none';
             }
         });
 
-        // Mostrar/ocultar mensaje de sin resultados
-        if (visiblePruebas === 0) {
-            noResults.style.display = 'block';
-            categoriasContent.style.display = 'none';
-            statsText.innerHTML = `<span class="highlight">0</span> resultados encontrados`;
+        if (hayCoincidencias) {
+            section.style.display = 'block';
+            visibleCategorias++;
         } else {
-            noResults.style.display = 'none';
-            categoriasContent.style.display = 'block';
+            section.style.display = 'none';
+        }
+    });
+
+    // Mostrar/ocultar mensaje de sin resultados
+    if (visiblePruebas === 0) {
+        noResults.style.display = 'block';
+        categoriasContent.style.display = 'none';
+        statsText.innerHTML = `<span class="highlight">0</span> resultados encontrados`;
+    } else {
+        noResults.style.display = 'none';
+        categoriasContent.style.display = 'block';
+
+        if (searchTerm) {
             statsText.innerHTML = `<span class="highlight">${visiblePruebas}</span> prueba${visiblePruebas !== 1 ? 's' : ''} encontrada${visiblePruebas !== 1 ? 's' : ''} en <span class="highlight">${visibleCategorias}</span> categoría${visibleCategorias !== 1 ? 's' : ''}`;
+        } else if (categoriaSeleccionada === 'todas') {
+            statsText.innerHTML = `<span class="highlight">${totalPruebas}</span> pruebas disponibles en <span class="highlight">${totalCategorias}</span> categorías`;
+        } else {
+            statsText.innerHTML = `<span class="highlight">${visiblePruebas}</span> prueba${visiblePruebas !== 1 ? 's' : ''} en categoría seleccionada`;
         }
     }
-});
+}
+
+// Búsqueda en tiempo real
+searchInput.addEventListener('input', aplicarFiltros);
 
 // Limpiar búsqueda
 clearSearch.addEventListener('click', function() {
     searchInput.value = '';
-    searchInput.dispatchEvent(new Event('input'));
+    aplicarFiltros();
     searchInput.focus();
 });
 
@@ -752,8 +883,31 @@ clearSearch.addEventListener('click', function() {
 searchInput.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         searchInput.value = '';
-        searchInput.dispatchEvent(new Event('input'));
+        aplicarFiltros();
     }
+});
+
+// Filtro de categorías con pills
+categoryPills.forEach(pill => {
+    pill.addEventListener('click', function() {
+        // Remover clase active de todos los pills
+        categoryPills.forEach(p => p.classList.remove('active'));
+
+        // Agregar clase active al pill seleccionado
+        this.classList.add('active');
+
+        // Actualizar categoría seleccionada
+        categoriaSeleccionada = this.dataset.categoria;
+
+        // Aplicar filtros
+        aplicarFiltros();
+
+        // Hacer scroll suave hacia las categorías
+        document.querySelector('.categorias-container').scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+    });
 });
 </script>
 
