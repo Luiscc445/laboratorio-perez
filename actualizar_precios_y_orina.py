@@ -23,13 +23,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///laboratorio.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
-# Modelo
+# Modelo - Solo columnas que existen en la DB
 class Prueba(db.Model):
     __tablename__ = 'pruebas'
     id = db.Column(db.Integer, primary_key=True)
     nombre = db.Column(db.String(200), nullable=False)
     categoria = db.Column(db.String(100))
-    descripcion = db.Column(db.Text)
     precio = db.Column(db.Float, default=0.0)
     imagen = db.Column(db.String(200))
     fecha_creacion = db.Column(db.DateTime)
