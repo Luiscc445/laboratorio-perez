@@ -1,51 +1,458 @@
-﻿{% extends "base.html" %}
-{% block title %}Mi Resultado{% endblock %}
-{% block content %}
-<div class="container mt-4">
-    <div class="card shadow-lg">
-        <div class="card-header text-center" style="background: linear-gradient(135deg, #1ABC9C, #16A085); color: white;">
-            <h3><i class="fas fa-user-circle"></i> Información del Paciente</h3>
-        </div>
-        <div class="card-body p-4">
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-user text-success"></i> Nombre Completo:</h5>
-                    <p class="lead">{{ resultado.paciente_nombre }}</p>
-                </div>
-                <div class="col-md-6">
-                    <h5><i class="fas fa-id-card text-primary"></i> CI:</h5>
-                    <p class="lead">{{ resultado.paciente_ci }}</p>
-                </div>
-            </div>
-            <div class="row mb-3">
-                <div class="col-md-6">
-                    <h5><i class="fas fa-hashtag text-warning"></i> Nº de Orden:</h5>
-                    <p class="lead">{{ resultado.numero_orden }}</p>
-                </div>
-                <div class="col-md-6">
-                    <h5><i class="fas fa-calendar text-info"></i> Fecha de Muestra:</h5>
-                    <p class="lead">{{ resultado.fecha_muestra.strftime('%d/%m/%Y') if resultado.fecha_muestra else '-' }}</p>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <h4 class="mb-4"><i class="fas fa-file-pdf text-danger"></i> Resultado de Laboratorio</h4>
-                {% if resultado.archivo_pdf %}
-                <a href="{{ url_for('static', filename='uploads/' + resultado.archivo_pdf) }}" class="btn btn-success btn-lg" download>
-                    <i class="fas fa-download"></i> Descargar Resultado en PDF
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Resultado - Laboratorio Pérez</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/laboratorio_perez.css') }}">
+    <style>
+        :root {
+            --verde-perez: #1ABC9C;
+            --verde-oscuro: #16A085;
+            --naranja: #F39C12;
+            --azul: #3498DB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+        }
+
+        /* ========== NAVBAR MODERNO BRUTAL ========== */
+        .navbar-brutal {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            border-bottom: 3px solid var(--verde-perez);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar-brutal .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .navbar-brutal .logo-img {
+            height: 50px;
+            width: 50px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(26, 188, 156, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brutal .logo-img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .navbar-brutal .brand-text {
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--verde-perez), var(--verde-oscuro));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-link-brutal {
+            padding: 10px 20px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: #2C3E50;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link-brutal:hover {
+            background: rgba(26, 188, 156, 0.1);
+            color: var(--verde-perez);
+            transform: translateY(-2px);
+        }
+
+        .nav-link-brutal.active {
+            background: linear-gradient(135deg, var(--verde-perez), var(--verde-oscuro));
+            color: white;
+            box-shadow: 0 4px 15px rgba(26, 188, 156, 0.4);
+        }
+
+        .btn-ubicacion {
+            background: linear-gradient(135deg, var(--naranja), #E67E22);
+            color: white !important;
+            padding: 10px 25px !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
+        }
+
+        .btn-ubicacion:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(243, 156, 18, 0.5);
+        }
+
+        /* Hamburguesa móvil */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .hamburger span {
+            width: 30px;
+            height: 3px;
+            background: var(--verde-perez);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                position: fixed;
+                top: 82px;
+                left: -100%;
+                width: 100%;
+                background: white;
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                transition: left 0.3s ease;
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .nav-link-brutal {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        /* ========== CONTENIDO BRUTAL ========== */
+        .resultado-wrapper {
+            padding: 40px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .resultado-card-brutal {
+            background: white;
+            border-radius: 30px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card-header-brutal {
+            background: linear-gradient(135deg, var(--verde-perez), var(--verde-oscuro));
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header-brutal::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .card-header-brutal h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-header-brutal p {
+            font-size: 1.2rem;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-body-brutal {
+            padding: 50px 40px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 20px;
+            border-left: 5px solid var(--verde-perez);
+            transition: all 0.3s ease;
+        }
+
+        .info-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .info-box h5 {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #6c757d;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-box p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2C3E50;
+            margin: 0;
+        }
+
+        .pdf-section {
+            background: linear-gradient(135deg, rgba(26, 188, 156, 0.05), rgba(22, 160, 133, 0.05));
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            border: 3px dashed var(--verde-perez);
+        }
+
+        .pdf-icon {
+            font-size: 5rem;
+            color: #E74C3C;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .btn-download-brutal {
+            background: linear-gradient(135deg, #E74C3C, #C0392B);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            border: none;
+            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        .btn-download-brutal:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(231, 76, 60, 0.5);
+            color: white;
+        }
+
+        .btn-volver {
+            background: white;
+            color: var(--verde-perez);
+            padding: 15px 35px;
+            border-radius: 50px;
+            font-weight: 700;
+            border: 3px solid var(--verde-perez);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+        }
+
+        .btn-volver:hover {
+            background: var(--verde-perez);
+            color: white;
+            transform: translateY(-3px);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAVBAR BRUTAL -->
+    <nav class="navbar-brutal">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+                <a href="{{ url_for('main.index') }}" class="logo-container text-decoration-none">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo" class="logo-img">
+                    <span class="brand-text">Laboratorio Pérez</span>
                 </a>
-                {% else %}
-                <div class="alert alert-warning">
-                    <i class="fas fa-exclamation-triangle"></i> No hay archivo PDF disponible
+
+                <div class="hamburger" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </div>
-                {% endif %}
+
+                <div class="nav-links" id="navLinks">
+                    <a href="{{ url_for('main.index') }}" class="nav-link-brutal">
+                        <i class="fas fa-home"></i> Inicio
+                    </a>
+                    <a href="{{ url_for('main.portal_resultados') }}" class="nav-link-brutal active">
+                        <i class="fas fa-file-medical"></i> Ver mis Resultados
+                    </a>
+                    <a href="{{ url_for('main.catalogo_pruebas') }}" class="nav-link-brutal">
+                        <i class="fas fa-microscope"></i> Pruebas
+                    </a>
+                    <a href="https://www.google.com/maps/dir/?api=1&destination=-19.588398057678,-65.750749111176" target="_blank" class="nav-link-brutal btn-ubicacion">
+                        <i class="fas fa-map-marker-alt"></i> Encuéntranos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- CONTENIDO -->
+    <div class="resultado-wrapper">
+        <div class="resultado-card-brutal">
+
+            <div class="card-header-brutal">
+                <h1><i class="fas fa-user-circle"></i> Tu Resultado Está Listo</h1>
+                <p>Información del Paciente y Resultado de Laboratorio</p>
+            </div>
+
+            <div class="card-body-brutal">
+
+                <!-- INFORMACIÓN DEL PACIENTE -->
+                <div class="info-grid">
+                    <div class="info-box">
+                        <h5><i class="fas fa-user"></i> Nombre Completo</h5>
+                        <p>{{ resultado.paciente_nombre }}</p>
+                    </div>
+                    <div class="info-box">
+                        <h5><i class="fas fa-id-card"></i> Cédula de Identidad</h5>
+                        <p>{{ resultado.paciente_ci }}</p>
+                    </div>
+                    <div class="info-box">
+                        <h5><i class="fas fa-hashtag"></i> Número de Orden</h5>
+                        <p>{{ resultado.numero_orden }}</p>
+                    </div>
+                    <div class="info-box">
+                        <h5><i class="fas fa-calendar-alt"></i> Fecha de Muestra</h5>
+                        <p>{{ resultado.fecha_muestra.strftime('%d/%m/%Y') if resultado.fecha_muestra else '-' }}</p>
+                    </div>
+                </div>
+
+                <!-- SECCIÓN PDF -->
+                <div class="pdf-section">
+                    <div class="pdf-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <h3 style="color: #2C3E50; font-weight: 800; margin-bottom: 20px;">
+                        Resultado de Laboratorio
+                    </h3>
+                    {% if resultado.archivo_pdf %}
+                        <a href="{{ url_for('static', filename='uploads/' + resultado.archivo_pdf) }}"
+                           class="btn-download-brutal" download>
+                            <i class="fas fa-download"></i>
+                            Descargar Mi Resultado en PDF
+                        </a>
+                        <p style="margin-top: 20px; color: #6c757d;">
+                            <i class="fas fa-info-circle"></i> El archivo se descargará automáticamente
+                        </p>
+                    {% else %}
+                        <div class="alert alert-warning" style="max-width: 500px; margin: 0 auto;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <strong>No hay archivo PDF disponible</strong><br>
+                            Contacta con el laboratorio para más información.
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- BOTÓN VOLVER -->
+                <div class="text-center">
+                    <a href="{{ url_for('main.portal_resultados') }}" class="btn-volver">
+                        <i class="fas fa-arrow-left"></i>
+                        Volver a Consultar
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
-    <div class="text-center mt-4">
-        <a href="{{ url_for('main.portal_resultados') }}" class="btn btn-secondary">
-            <i class="fas fa-arrow-left"></i> Volver
-        </a>
-    </div>
-</div>
-{% endblock %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleMenu() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('active');
+        }
+
+        // Cerrar menú al hacer click en un link
+        document.querySelectorAll('.nav-link-brutal').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinks').classList.remove('active');
+            });
+        });
+
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', (e) => {
+            const navLinks = document.getElementById('navLinks');
+            const hamburger = document.querySelector('.hamburger');
+            if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>
