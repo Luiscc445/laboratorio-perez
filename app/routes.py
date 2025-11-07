@@ -1041,6 +1041,45 @@ def descargar(resultado_id):
     flash('No hay archivo PDF disponible', 'warning')
     return redirect(url_for('main.admin_resultados'))
 
+@main.route('/descargar-resultado-publico/<int:resultado_id>')
+def descargar_resultado_publico(resultado_id):
+    """
+    Descarga pública de PDFs para pacientes
+    - Sin @admin_required para acceso público
+    - Siempre obtiene el archivo MÁS RECIENTE de la BD
+    - Headers anti-cache para evitar descargas viejas
+    """
+    from flask import make_response
+
+    resultado = Resultado.query.get_or_404(resultado_id)
+
+    if not resultado.archivo_pdf:
+        flash('No hay archivo PDF disponible', 'warning')
+        return redirect(url_for('main.portal_resultados'))
+
+    # Construir ruta del archivo más reciente desde BD
+    pdf_path = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
+
+    # Verificar que existe
+    if not os.path.exists(pdf_path):
+        # Si no existe el principal, buscar en backup
+        backup_path = os.path.join(BACKUP_DIR, resultado.archivo_pdf)
+        if os.path.exists(backup_path):
+            pdf_path = backup_path
+        else:
+            flash(f'El archivo PDF no se encuentra disponible', 'danger')
+            return redirect(url_for('main.portal_resultados'))
+
+    # Enviar archivo con headers anti-cache
+    response = make_response(send_file(pdf_path, as_attachment=True))
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+
+    print(f"📥 Descarga pública: Paciente {resultado.paciente_nombre}, Archivo: {resultado.archivo_pdf}")
+
+    return response
+
 @main.route('/resultado/eliminar/<int:resultado_id>', methods=['POST'])
 @admin_required
 def eliminar_resultado(resultado_id):
