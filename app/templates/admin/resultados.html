@@ -622,5 +622,76 @@ function cargarDatosPaciente() {
         document.getElementById('pacienteCI').value = '';
     }
 }
+
+// Mostrar modal de confirmación si la flash tiene "Resultado guardado"
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        if (alert.textContent.includes('Resultado guardado')) {
+            const modal = new bootstrap.Modal(document.getElementById('modalConfirmacion'));
+            modal.show();
+        }
+    });
+});
+
+function subirOtro() {
+    const modalConfirmacion = bootstrap.Modal.getInstance(document.getElementById('modalConfirmacion'));
+    if (modalConfirmacion) {
+        modalConfirmacion.hide();
+    }
+
+    // Resetear el formulario
+    const form = document.querySelector('#modalNuevo form');
+    if (form) {
+        form.reset();
+        document.getElementById('pacienteNombre').value = '';
+        document.getElementById('pacienteCI').value = '';
+    }
+
+    // Abrir modal de nuevo resultado
+    setTimeout(() => {
+        const modalNuevo = new bootstrap.Modal(document.getElementById('modalNuevo'));
+        modalNuevo.show();
+    }, 300);
+}
 </script>
+
+<!-- Modal de confirmación después de subir PDF -->
+<div class="modal fade" id="modalConfirmacion" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; overflow: hidden; border: none;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); border: none; padding: 30px; text-align: center;">
+                <div style="width: 100%; text-align: center;">
+                    <div style="background: rgba(255,255,255,0.3); width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 20px auto; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-check-circle" style="font-size: 3rem; color: white;"></i>
+                    </div>
+                    <h4 style="color: white; font-weight: 700; margin: 0;">¡PDF Subido Exitosamente!</h4>
+                </div>
+            </div>
+            <div class="modal-body text-center" style="padding: 40px 30px;">
+                <h5 style="color: #2c3e50; font-weight: 600; margin-bottom: 15px;">
+                    <i class="fas fa-user-md" style="color: #11998e;"></i> Doctor Pérez
+                </h5>
+                <p style="color: #7f8c8d; font-size: 1.1rem; margin-bottom: 30px;">
+                    La prueba ha sido subida correctamente al servidor.<br>
+                    El paciente ya puede consultar sus resultados.
+                </p>
+                <div style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); padding: 20px; border-radius: 15px; margin-bottom: 25px;">
+                    <p style="color: #2c3e50; font-size: 1rem; margin: 0;">
+                        <strong>¿Desea subir otra prueba?</strong>
+                    </p>
+                </div>
+                <div class="d-flex gap-3 justify-content-center">
+                    <button type="button" class="btn btn-lg" onclick="subirOtro()" style="background: linear-gradient(135deg, #11998e, #38ef7d); color: white; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 600; transition: all 0.3s;">
+                        <i class="fas fa-plus-circle"></i> Sí, subir otra
+                    </button>
+                    <button type="button" class="btn btn-lg btn-outline-secondary" data-bs-dismiss="modal" style="padding: 12px 30px; border-radius: 10px; font-weight: 600;">
+                        <i class="fas fa-times-circle"></i> No, cerrar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

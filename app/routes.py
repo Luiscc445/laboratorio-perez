@@ -21,6 +21,11 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 main = Blueprint('main', __name__)
 
+# Definir ruta base absoluta para archivos
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+UPLOAD_DIR = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
+PRUEBAS_UPLOAD_DIR = os.path.join(UPLOAD_DIR, 'pruebas')
+
 def generar_codigo_acceso():
     """Genera un código aleatorio de 8 caracteres"""
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
@@ -208,7 +213,7 @@ def eliminar_paciente(paciente_id):
         for resultado in resultados:
             if resultado.archivo_pdf:
                 try:
-                    pdf_path = os.path.join('app/static/uploads', resultado.archivo_pdf)
+                    pdf_path = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
                     if os.path.exists(pdf_path):
                         os.remove(pdf_path)
                         archivos_eliminados += 1
@@ -231,47 +236,91 @@ def eliminar_paciente(paciente_id):
 @admin_required
 def admin_resultados():
     if request.method == 'POST':
+        archivo_guardado = None
         try:
             archivo = request.files.get('archivo_pdf')
             filename = None
-            if archivo and archivo.filename.endswith('.pdf'):
-                filename = secure_filename(f"{request.form['numero_orden']}_{archivo.filename}")
 
-                # Asegurar que el directorio existe
-                upload_dir = os.path.join('app', 'static', 'uploads')
-                os.makedirs(upload_dir, exist_ok=True)
+            if not archivo or not archivo.filename:
+                flash('Debe seleccionar un archivo PDF', 'danger')
+                return redirect(url_for('main.admin_resultados'))
 
-                # Guardar archivo
-                archivo.save(os.path.join(upload_dir, filename))
-            
+            if not archivo.filename.endswith('.pdf'):
+                flash('Solo se permiten archivos PDF', 'danger')
+                return redirect(url_for('main.admin_resultados'))
+
+            # Generar nombre de archivo seguro y único
+            filename = secure_filename(f"{request.form['numero_orden']}_{archivo.filename}")
+
+            # Asegurar que el directorio existe con permisos correctos
+            os.makedirs(UPLOAD_DIR, exist_ok=True)
+
+            # Ruta completa del archivo
+            filepath = os.path.join(UPLOAD_DIR, filename)
+
+            # Guardar archivo
+            archivo.save(filepath)
+            archivo_guardado = filepath
+
+            # VERIFICACIÓN CRÍTICA: Asegurar que el archivo existe y tiene contenido
+            if not os.path.exists(filepath):
+                raise Exception(f"El archivo no se guardó correctamente en: {filepath}")
+
+            file_size = os.path.getsize(filepath)
+            if file_size == 0:
+                os.remove(filepath)
+                raise Exception("El archivo PDF está vacío")
+
+            print(f"✓ PDF guardado exitosamente: {filepath} ({file_size} bytes)")
+
+            # Continuar con el registro en base de datos
             fecha_str = request.form.get('fecha_muestra')
             fecha_muestra = datetime.strptime(fecha_str, '%Y-%m-%d').date() if fecha_str else None
-            
+
             paciente_id = request.form.get('paciente_id')
-            if paciente_id:
-                paciente = Paciente.query.get(int(paciente_id))
-                if paciente:
-                    codigo_acceso = generar_codigo_acceso()
-                    resultado = Resultado(
-                        numero_orden=request.form['numero_orden'],
-                        paciente_id=paciente.id,
-                        paciente_nombre=paciente.nombre,
-                        paciente_ci=paciente.ci,
-                        fecha_muestra=fecha_muestra,
-                        archivo_pdf=filename,
-                        codigo_acceso=codigo_acceso
-                    )
-                    db.session.add(resultado)
-                    db.session.commit()
-                    flash(f'Resultado guardado. Código de acceso: {codigo_acceso}', 'success')
-                else:
-                    flash('Paciente no encontrado', 'danger')
-                    return redirect(url_for('main.admin_resultados'))
-            else:
+            if not paciente_id:
+                # Si falla, eliminar el archivo guardado
+                if archivo_guardado and os.path.exists(archivo_guardado):
+                    os.remove(archivo_guardado)
                 flash('Debe seleccionar un paciente', 'danger')
                 return redirect(url_for('main.admin_resultados'))
+
+            paciente = Paciente.query.get(int(paciente_id))
+            if not paciente:
+                # Si falla, eliminar el archivo guardado
+                if archivo_guardado and os.path.exists(archivo_guardado):
+                    os.remove(archivo_guardado)
+                flash('Paciente no encontrado', 'danger')
+                return redirect(url_for('main.admin_resultados'))
+
+            codigo_acceso = generar_codigo_acceso()
+            resultado = Resultado(
+                numero_orden=request.form['numero_orden'],
+                paciente_id=paciente.id,
+                paciente_nombre=paciente.nombre,
+                paciente_ci=paciente.ci,
+                fecha_muestra=fecha_muestra,
+                archivo_pdf=filename,
+                codigo_acceso=codigo_acceso
+            )
+            db.session.add(resultado)
+            db.session.commit()
+
+            print(f"✓ Resultado registrado en BD: ID={resultado.id}, Código={codigo_acceso}")
+            flash(f'Resultado guardado. Código de acceso: {codigo_acceso}', 'success')
+
         except Exception as e:
+            db.session.rollback()
+            # Si hubo error y el archivo se guardó, eliminarlo para mantener consistencia
+            if archivo_guardado and os.path.exists(archivo_guardado):
+                try:
+                    os.remove(archivo_guardado)
+                    print(f"✗ Archivo eliminado por error: {archivo_guardado}")
+                except:
+                    pass
+            print(f"✗ Error al guardar resultado: {str(e)}")
             flash(f'Error: {str(e)}', 'danger')
+
         return redirect(url_for('main.admin_resultados'))
     
     resultados = Resultado.query.order_by(Resultado.fecha_creacion.desc()).all()
@@ -458,15 +507,14 @@ def admin_pruebas():
                 imagen = request.files['imagen']
                 if imagen and imagen.filename:
                     # Crear carpeta si no existe
-                    upload_folder = os.path.join('app/static/uploads/pruebas')
-                    os.makedirs(upload_folder, exist_ok=True)
+                    os.makedirs(PRUEBAS_UPLOAD_DIR, exist_ok=True)
 
                     # Guardar imagen con nombre seguro
                     from werkzeug.utils import secure_filename
                     import time
                     filename = secure_filename(imagen.filename)
                     imagen_filename = f"{int(time.time())}_{filename}"
-                    imagen.save(os.path.join(upload_folder, imagen_filename))
+                    imagen.save(os.path.join(PRUEBAS_UPLOAD_DIR, imagen_filename))
 
             prueba = Prueba(
                 nombre=request.form['nombre'],
@@ -519,7 +567,7 @@ def editar_prueba(prueba_id):
             if imagen and imagen.filename:
                 # Eliminar imagen anterior si existe
                 if prueba.imagen:
-                    old_path = os.path.join('app/static/uploads/pruebas', prueba.imagen)
+                    old_path = os.path.join(PRUEBAS_UPLOAD_DIR, prueba.imagen)
                     if os.path.exists(old_path):
                         os.remove(old_path)
 
@@ -528,9 +576,8 @@ def editar_prueba(prueba_id):
                 import time
                 filename = secure_filename(imagen.filename)
                 imagen_filename = f"{int(time.time())}_{filename}"
-                upload_folder = os.path.join('app/static/uploads/pruebas')
-                os.makedirs(upload_folder, exist_ok=True)
-                imagen.save(os.path.join(upload_folder, imagen_filename))
+                os.makedirs(PRUEBAS_UPLOAD_DIR, exist_ok=True)
+                imagen.save(os.path.join(PRUEBAS_UPLOAD_DIR, imagen_filename))
                 prueba.imagen = imagen_filename
 
         db.session.commit()
@@ -550,7 +597,7 @@ def eliminar_prueba(prueba_id):
         # Eliminar imagen si existe
         if prueba.imagen:
             try:
-                imagen_path = os.path.join('app/static/uploads/pruebas', prueba.imagen)
+                imagen_path = os.path.join(PRUEBAS_UPLOAD_DIR, prueba.imagen)
                 if os.path.exists(imagen_path):
                     os.remove(imagen_path)
             except Exception as e:
@@ -569,8 +616,8 @@ def eliminar_prueba(prueba_id):
 def descargar(resultado_id):
     resultado = Resultado.query.get_or_404(resultado_id)
     if resultado.archivo_pdf:
-        # Construir ruta absoluta correcta
-        pdf_path = os.path.join('app', 'static', 'uploads', resultado.archivo_pdf)
+        # Construir ruta absoluta correcta usando UPLOAD_DIR
+        pdf_path = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
 
         # Verificar que el archivo existe
         if not os.path.exists(pdf_path):
