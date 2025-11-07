@@ -761,6 +761,114 @@ def descargar(resultado_id):
     flash('No hay archivo PDF disponible', 'warning')
     return redirect(url_for('main.admin_resultados'))
 
+@main.route('/resultado/eliminar/<int:resultado_id>', methods=['POST'])
+@admin_required
+def eliminar_resultado(resultado_id):
+    """
+    Elimina un resultado individual con sus archivos (principal y backup)
+    """
+    try:
+        resultado = Resultado.query.get_or_404(resultado_id)
+        numero_orden = resultado.numero_orden
+        paciente_nombre = resultado.paciente_nombre
+
+        # Eliminar archivos PDF (principal y backup)
+        archivos_eliminados = 0
+
+        if resultado.archivo_pdf:
+            # Eliminar archivo principal
+            filepath = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
+            if os.path.exists(filepath):
+                os.remove(filepath)
+                archivos_eliminados += 1
+                print(f"🗑 Archivo principal eliminado: {resultado.archivo_pdf}")
+
+            # Eliminar backup
+            backup_path = os.path.join(BACKUP_DIR, resultado.archivo_pdf)
+            if os.path.exists(backup_path):
+                os.remove(backup_path)
+                archivos_eliminados += 1
+                print(f"🗑 Backup eliminado: {resultado.archivo_pdf}")
+
+        # Eliminar registro de base de datos
+        db.session.delete(resultado)
+        db.session.commit()
+
+        print("=" * 80)
+        print("✅ RESULTADO ELIMINADO EXITOSAMENTE")
+        print(f"   Número Orden: {numero_orden}")
+        print(f"   Paciente: {paciente_nombre}")
+        print(f"   Archivos eliminados: {archivos_eliminados}")
+        print("=" * 80)
+
+        flash(f'✅ Resultado de "{paciente_nombre}" (Orden: {numero_orden}) eliminado exitosamente', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error al eliminar resultado: {str(e)}")
+        flash(f'❌ Error al eliminar resultado: {str(e)}', 'danger')
+
+    return redirect(url_for('main.admin_resultados'))
+
+@main.route('/resultado/reemplazar/<int:resultado_id>', methods=['POST'])
+@admin_required
+def reemplazar_pdf(resultado_id):
+    """
+    Reemplaza el PDF de un resultado existente
+    - Elimina el PDF anterior (principal y backup)
+    - Sube el nuevo PDF con backup
+    """
+    try:
+        resultado = Resultado.query.get_or_404(resultado_id)
+        archivo_nuevo = request.files.get('archivo_pdf')
+
+        if not archivo_nuevo or not archivo_nuevo.filename:
+            flash('❌ Debe seleccionar un archivo PDF', 'danger')
+            return redirect(url_for('main.admin_resultados'))
+
+        # Eliminar archivos anteriores (principal y backup)
+        if resultado.archivo_pdf:
+            # Eliminar principal
+            old_filepath = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
+            if os.path.exists(old_filepath):
+                os.remove(old_filepath)
+                print(f"🗑 PDF anterior eliminado: {resultado.archivo_pdf}")
+
+            # Eliminar backup
+            old_backup = os.path.join(BACKUP_DIR, resultado.archivo_pdf)
+            if os.path.exists(old_backup):
+                os.remove(old_backup)
+                print(f"🗑 Backup anterior eliminado: {resultado.archivo_pdf}")
+
+        # Guardar nuevo PDF con backup
+        filename_nuevo, filepath_nuevo, backup_nuevo = guardar_pdf_con_backup(
+            archivo_nuevo,
+            resultado.numero_orden
+        )
+
+        if not filename_nuevo:
+            raise Exception("No se pudo guardar el nuevo archivo PDF")
+
+        # Actualizar registro en BD
+        resultado.archivo_pdf = filename_nuevo
+        db.session.commit()
+
+        print("=" * 80)
+        print("✅ PDF REEMPLAZADO EXITOSAMENTE")
+        print(f"   Resultado ID: {resultado.id}")
+        print(f"   Número Orden: {resultado.numero_orden}")
+        print(f"   Archivo nuevo: {filename_nuevo}")
+        print(f"   Backup: ✓ Creado")
+        print("=" * 80)
+
+        flash(f'✅ PDF reemplazado exitosamente para el paciente "{resultado.paciente_nombre}"', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"❌ Error al reemplazar PDF: {str(e)}")
+        flash(f'❌ Error al reemplazar PDF: {str(e)}', 'danger')
+
+    return redirect(url_for('main.admin_resultados'))
 
 
 

@@ -313,6 +313,44 @@
         vertical-align: middle;
         color: #495057;
         font-size: 0.95rem;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    /* Ajustes específicos de columnas */
+    .col-numero-orden {
+        min-width: 150px;
+        white-space: normal !important;
+    }
+
+    .col-paciente {
+        min-width: 180px;
+        max-width: 220px;
+    }
+
+    .col-ci {
+        min-width: 100px;
+        max-width: 120px;
+    }
+
+    .col-codigo {
+        min-width: 100px;
+    }
+
+    .col-fecha {
+        min-width: 110px;
+    }
+
+    .col-archivo {
+        min-width: 90px;
+        text-align: center;
+    }
+
+    .col-acciones {
+        min-width: 180px;
+        text-align: center;
     }
 
     .id-badge {
@@ -371,6 +409,30 @@
 
     .btn-word:hover {
         background: linear-gradient(135deg, #2980B9, #21618C);
+    }
+
+    .btn-replace {
+        background: linear-gradient(135deg, #27AE60, #229954);
+        padding: 8px 12px;
+    }
+
+    .btn-replace:hover {
+        background: linear-gradient(135deg, #229954, #1E8449);
+    }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #E74C3C, #C0392B);
+        padding: 8px 12px;
+    }
+
+    .btn-delete:hover {
+        background: linear-gradient(135deg, #C0392B, #A93226);
+    }
+
+    /* Botón pequeño */
+    .btn-sm-modern {
+        padding: 6px 12px;
+        font-size: 0.85rem;
     }
 
     /* Empty State */
@@ -470,46 +532,69 @@
                     <table class="table modern-table">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-hashtag"></i> Nº Orden</th>
-                                <th><i class="fas fa-user"></i> Paciente</th>
-                                <th><i class="fas fa-id-card"></i> CI</th>
-                                <th><i class="fas fa-key"></i> Código</th>
-                                <th><i class="fas fa-calendar"></i> Fecha</th>
-                                <th><i class="fas fa-file"></i> Archivo</th>
-                                <th class="text-center"><i class="fas fa-download"></i> Resultado</th>
-                                <th class="text-center"><i class="fas fa-file-alt"></i> Credenciales</th>
+                                <th class="col-numero-orden"><i class="fas fa-hashtag"></i> Nº Orden</th>
+                                <th class="col-paciente"><i class="fas fa-user"></i> Paciente</th>
+                                <th class="col-ci"><i class="fas fa-id-card"></i> CI</th>
+                                <th class="col-codigo"><i class="fas fa-key"></i> Código</th>
+                                <th class="col-fecha"><i class="fas fa-calendar"></i> Fecha</th>
+                                <th class="col-archivo"><i class="fas fa-file"></i> PDF</th>
+                                <th class="col-acciones"><i class="fas fa-cogs"></i> Acciones</th>
+                                <th class="text-center"><i class="fas fa-id-badge"></i> Credenciales</th>
                             </tr>
                         </thead>
                         <tbody id="tablaResultados">
                             {% for r in resultados %}
                             <tr class="table-row-hover">
-                                <td><span class="id-badge">{{ r.numero_orden }}</span></td>
-                                <td><strong>{{ r.paciente_nombre }}</strong></td>
-                                <td>{{ r.paciente_ci }}</td>
-                                <td><span class="badge bg-info">{{ r.codigo_acceso }}</span></td>
-                                <td>{{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}</td>
-                                <td>
+                                <td class="col-numero-orden">
+                                    <span class="id-badge">{{ r.numero_orden }}</span>
+                                </td>
+                                <td class="col-paciente" title="{{ r.paciente_nombre }}">
+                                    <strong>{{ r.paciente_nombre }}</strong>
+                                </td>
+                                <td class="col-ci" title="{{ r.paciente_ci }}">
+                                    {{ r.paciente_ci }}
+                                </td>
+                                <td class="col-codigo">
+                                    <span class="badge bg-info">{{ r.codigo_acceso }}</span>
+                                </td>
+                                <td class="col-fecha">
+                                    {{ r.fecha_muestra.strftime('%d/%m/%Y') if r.fecha_muestra else '-' }}
+                                </td>
+                                <td class="col-archivo">
                                     {% if r.archivo_pdf %}
                                     <span class="badge bg-success"><i class="fas fa-file-pdf"></i> PDF</span>
                                     {% else %}
                                     <span class="badge bg-secondary">Sin archivo</span>
                                     {% endif %}
                                 </td>
-                                <td class="text-center">
-                                    {% if r.archivo_pdf %}
-                                    <a href="{{ url_for('main.descargar', resultado_id=r.id) }}" class="btn-modern btn-download" title="Descargar PDF">
-                                        <i class="fas fa-download"></i>
-                                    </a>
-                                    {% else %}
-                                    <span class="text-muted">-</span>
-                                    {% endif %}
+                                <td class="col-acciones">
+                                    <div class="btn-group-modern">
+                                        <!-- Botón verde: Reemplazar PDF -->
+                                        <button class="btn-modern btn-replace btn-sm-modern"
+                                                onclick="abrirModalReemplazar({{ r.id }}, '{{ r.paciente_nombre }}', '{{ r.numero_orden }}')"
+                                                title="Reemplazar PDF">
+                                            <i class="fas fa-sync-alt"></i>
+                                        </button>
+                                        <!-- Botón rojo: Eliminar resultado -->
+                                        <button class="btn-modern btn-delete btn-sm-modern"
+                                                onclick="confirmarEliminar({{ r.id }}, '{{ r.paciente_nombre }}', '{{ r.numero_orden }}')"
+                                                title="Eliminar resultado">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
                                 </td>
                                 <td class="text-center">
                                     <div class="btn-group-modern">
-                                        <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}" class="btn-modern btn-pdf" title="Descargar PDF">
+                                        <!-- Botón rojo: PDF credenciales -->
+                                        <a href="{{ url_for('main.descargar_credenciales_pdf', resultado_id=r.id) }}"
+                                           class="btn-modern btn-pdf btn-sm-modern"
+                                           title="Descargar credenciales PDF">
                                             <i class="fas fa-file-pdf"></i>
                                         </a>
-                                        <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}" class="btn-modern btn-word" title="Descargar Word">
+                                        <!-- Botón azul: Word credenciales -->
+                                        <a href="{{ url_for('main.descargar_credenciales_word', resultado_id=r.id) }}"
+                                           class="btn-modern btn-word btn-sm-modern"
+                                           title="Descargar credenciales Word">
                                             <i class="fas fa-file-word"></i>
                                         </a>
                                     </div>
@@ -702,5 +787,125 @@ function subirOtro() {
         </div>
     </div>
 </div>
+
+<!-- Modal para reemplazar PDF -->
+<div class="modal fade" id="modalReemplazar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #27AE60, #229954); color: white; border: none;">
+                <h5 class="modal-title">
+                    <i class="fas fa-sync-alt"></i> Reemplazar PDF del Resultado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formReemplazar" method="POST" enctype="multipart/form-data">
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Atención:</strong> El PDF actual será reemplazado permanentemente.
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-user"></i> Paciente:</label>
+                        <input type="text" class="form-control" id="reemplazarPaciente" readonly style="background-color: #f8f9fa; font-weight: 600;">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-hashtag"></i> Número de Orden:</label>
+                        <input type="text" class="form-control" id="reemplazarNumeroOrden" readonly style="background-color: #f8f9fa; font-weight: 600;">
+                    </div>
+                    <hr>
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-file-pdf"></i> Nuevo Archivo PDF <span class="text-danger">*</span></label>
+                        <input type="file" class="form-control" name="archivo_pdf" accept=".pdf" required>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-shield-alt"></i> El archivo se guardará con backup automático
+                        </small>
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-top: none; padding: 20px 30px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #27AE60, #229954); color: white; border: none;">
+                        <i class="fas fa-sync-alt"></i> Reemplazar PDF
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para confirmar eliminación -->
+<div class="modal fade" id="modalEliminar" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius: 20px; border: none; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #E74C3C, #C0392B); color: white; border: none;">
+                <h5 class="modal-title">
+                    <i class="fas fa-trash-alt"></i> Eliminar Resultado
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="formEliminar" method="POST">
+                <div class="modal-body" style="padding: 30px;">
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>¡ADVERTENCIA!</strong> Esta acción NO se puede deshacer.
+                    </div>
+                    <p style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 20px;">
+                        ¿Está seguro que desea eliminar este resultado?
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                        <div class="mb-2">
+                            <strong><i class="fas fa-user"></i> Paciente:</strong>
+                            <span id="eliminarPaciente"></span>
+                        </div>
+                        <div class="mb-2">
+                            <strong><i class="fas fa-hashtag"></i> Número de Orden:</strong>
+                            <span id="eliminarNumeroOrden"></span>
+                        </div>
+                    </div>
+                    <p style="color: #e74c3c; font-weight: 600;">
+                        <i class="fas fa-ban"></i> Se eliminarán:
+                    </p>
+                    <ul style="color: #7f8c8d;">
+                        <li>El registro del resultado en la base de datos</li>
+                        <li>El archivo PDF principal</li>
+                        <li>El archivo PDF de backup</li>
+                        <li>El código de acceso del paciente</li>
+                    </ul>
+                </div>
+                <div class="modal-footer" style="border-top: none; padding: 20px 30px;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button type="submit" class="btn" style="background: linear-gradient(135deg, #E74C3C, #C0392B); color: white; border: none;">
+                        <i class="fas fa-trash-alt"></i> Sí, Eliminar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+// Función para abrir modal de reemplazar PDF
+function abrirModalReemplazar(resultadoId, paciente, numeroOrden) {
+    document.getElementById('reemplazarPaciente').value = paciente;
+    document.getElementById('reemplazarNumeroOrden').value = numeroOrden;
+    document.getElementById('formReemplazar').action = `/resultado/reemplazar/${resultadoId}`;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalReemplazar'));
+    modal.show();
+}
+
+// Función para confirmar eliminación
+function confirmarEliminar(resultadoId, paciente, numeroOrden) {
+    document.getElementById('eliminarPaciente').textContent = paciente;
+    document.getElementById('eliminarNumeroOrden').textContent = numeroOrden;
+    document.getElementById('formEliminar').action = `/resultado/eliminar/${resultadoId}`;
+
+    const modal = new bootstrap.Modal(document.getElementById('modalEliminar'));
+    modal.show();
+}
+</script>
 
 {% endblock %}
