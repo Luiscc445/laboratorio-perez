@@ -416,7 +416,22 @@
     font-size: 0.95rem;
     line-height: 1.7;
     min-height: 60px;
-    margin-bottom: 30px;
+    margin-bottom: 15px;
+}
+
+.prueba-precio {
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--primary-orange);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.prueba-precio i {
+    font-size: 1.5rem;
+    color: var(--primary-green);
 }
 
 .btn-whatsapp-pro {
@@ -597,6 +612,10 @@
         min-height: 45px;
     }
 
+    .prueba-precio {
+        font-size: 1.8rem;
+    }
+
     .btn-whatsapp-pro {
         font-size: 0.9rem;
         padding: 13px 22px;
@@ -720,6 +739,13 @@
                                         <p class="prueba-descripcion">
                                             {{ prueba.descripcion[:100] if prueba.descripcion else 'Prueba de laboratorio clínico profesional con tecnología avanzada.' }}
                                         </p>
+
+                                        {% if prueba.precio and prueba.precio > 0 %}
+                                        <div class="prueba-precio">
+                                            <i class="fas fa-coins"></i>
+                                            Bs. {{ "%.2f"|format(prueba.precio) }}
+                                        </div>
+                                        {% endif %}
 
                                         <a href="https://wa.me/59167619188?text=Hola%2C%20estoy%20interesado%20en%20la%20prueba%20*{{ prueba.nombre|urlencode }}*%20%F0%9F%94%AC%0A%0A%C2%BFPodr%C3%ADan%20proporcionarme%20m%C3%A1s%20informaci%C3%B3n%3F"
                                            target="_blank"
