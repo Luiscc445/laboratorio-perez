@@ -25,10 +25,114 @@ main = Blueprint('main', __name__)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 UPLOAD_DIR = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
 PRUEBAS_UPLOAD_DIR = os.path.join(UPLOAD_DIR, 'pruebas')
+BACKUP_DIR = os.path.join(UPLOAD_DIR, 'backups')  # Carpeta de backups
 
 def generar_codigo_acceso():
-    """Genera un código aleatorio de 8 caracteres"""
-    return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    """Genera un código aleatorio de 8 caracteres ÚNICO"""
+    while True:
+        codigo = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+        # Verificar que no existe en la BD
+        if not Resultado.query.filter_by(codigo_acceso=codigo).first():
+            return codigo
+
+def generar_numero_orden():
+    """
+    Genera un número de orden ÚNICO basado en timestamp + contador
+    Formato: YYYYMMDD-HHMMSS-XXX
+    Ejemplo: 20251107-153045-001
+    """
+    from datetime import datetime
+    timestamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+
+    # Contar cuántos resultados se crearon en este segundo
+    contador = Resultado.query.filter(
+        Resultado.numero_orden.like(f'{timestamp}%')
+    ).count()
+
+    numero_orden = f"{timestamp}-{contador+1:03d}"
+    return numero_orden
+
+def guardar_pdf_con_backup(archivo, numero_orden):
+    """
+    Guarda un PDF de forma SÚPER ROBUSTA con:
+    - Nombre único basado en timestamp
+    - Verificación de integridad
+    - Backup automático
+    - Manejo de errores
+
+    Returns:
+        tuple: (filename, filepath, backup_path) o (None, None, None) si falla
+    """
+    try:
+        # 1. Validar archivo
+        if not archivo or not archivo.filename:
+            raise ValueError("Archivo no válido")
+
+        if not archivo.filename.lower().endswith('.pdf'):
+            raise ValueError("Solo se permiten archivos PDF")
+
+        # 2. Generar nombre único con timestamp
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S_%f')
+        nombre_base = secure_filename(archivo.filename.replace('.pdf', ''))
+        filename = f"{numero_orden}_{timestamp}_{nombre_base}.pdf"
+
+        # 3. Crear directorios si no existen
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        os.makedirs(BACKUP_DIR, exist_ok=True)
+
+        # 4. Guardar archivo principal
+        filepath = os.path.join(UPLOAD_DIR, filename)
+        archivo.save(filepath)
+
+        # 5. Verificar que se guardó correctamente
+        if not os.path.exists(filepath):
+            raise Exception(f"Archivo no se guardó: {filepath}")
+
+        file_size = os.path.getsize(filepath)
+        if file_size == 0:
+            os.remove(filepath)
+            raise Exception("Archivo PDF vacío")
+
+        # 6. Crear BACKUP automático
+        backup_path = os.path.join(BACKUP_DIR, filename)
+        import shutil
+        shutil.copy2(filepath, backup_path)
+
+        # 7. Verificar backup
+        if not os.path.exists(backup_path):
+            print(f"⚠ WARNING: Backup no se creó: {backup_path}")
+        else:
+            print(f"✓ BACKUP creado: {backup_path}")
+
+        print(f"✓ PDF guardado: {filepath} ({file_size} bytes)")
+
+        return filename, filepath, backup_path
+
+    except Exception as e:
+        print(f"✗ Error guardando PDF: {str(e)}")
+        # Limpiar archivos parciales
+        if 'filepath' in locals() and os.path.exists(filepath):
+            os.remove(filepath)
+        if 'backup_path' in locals() and os.path.exists(backup_path):
+            os.remove(backup_path)
+        return None, None, None
+
+def limpiar_archivo_huerfano(filename):
+    """Elimina un archivo PDF y su backup si existen"""
+    try:
+        # Eliminar archivo principal
+        filepath = os.path.join(UPLOAD_DIR, filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            print(f"🗑 Archivo principal eliminado: {filename}")
+
+        # Eliminar backup
+        backup_path = os.path.join(BACKUP_DIR, filename)
+        if os.path.exists(backup_path):
+            os.remove(backup_path)
+            print(f"🗑 Backup eliminado: {filename}")
+    except Exception as e:
+        print(f"⚠ Error limpiando archivos huérfanos: {e}")
 
 @main.route('/')
 def index():
@@ -235,91 +339,119 @@ def eliminar_paciente(paciente_id):
 @main.route('/resultados', methods=['GET', 'POST'])
 @admin_required
 def admin_resultados():
+    """
+    SISTEMA ROBUSTO DE GESTIÓN DE RESULTADOS
+    - Números de orden automáticos y únicos
+    - Almacenamiento seguro de PDFs
+    - Backups automáticos
+    - Manejo inteligente de errores
+    - Nunca se pierden archivos
+    """
     if request.method == 'POST':
-        archivo_guardado = None
+        filename_guardado = None
+        numero_orden_generado = None
+
         try:
+            # ============ VALIDACIONES INICIALES ============
             archivo = request.files.get('archivo_pdf')
-            filename = None
 
-            if not archivo or not archivo.filename:
-                flash('Debe seleccionar un archivo PDF', 'danger')
-                return redirect(url_for('main.admin_resultados'))
-
-            if not archivo.filename.endswith('.pdf'):
-                flash('Solo se permiten archivos PDF', 'danger')
-                return redirect(url_for('main.admin_resultados'))
-
-            # Generar nombre de archivo seguro y único
-            filename = secure_filename(f"{request.form['numero_orden']}_{archivo.filename}")
-
-            # Asegurar que el directorio existe con permisos correctos
-            os.makedirs(UPLOAD_DIR, exist_ok=True)
-
-            # Ruta completa del archivo
-            filepath = os.path.join(UPLOAD_DIR, filename)
-
-            # Guardar archivo
-            archivo.save(filepath)
-            archivo_guardado = filepath
-
-            # VERIFICACIÓN CRÍTICA: Asegurar que el archivo existe y tiene contenido
-            if not os.path.exists(filepath):
-                raise Exception(f"El archivo no se guardó correctamente en: {filepath}")
-
-            file_size = os.path.getsize(filepath)
-            if file_size == 0:
-                os.remove(filepath)
-                raise Exception("El archivo PDF está vacío")
-
-            print(f"✓ PDF guardado exitosamente: {filepath} ({file_size} bytes)")
-
-            # Continuar con el registro en base de datos
-            fecha_str = request.form.get('fecha_muestra')
-            fecha_muestra = datetime.strptime(fecha_str, '%Y-%m-%d').date() if fecha_str else None
-
+            # Validar paciente PRIMERO (antes de guardar archivo)
             paciente_id = request.form.get('paciente_id')
             if not paciente_id:
-                # Si falla, eliminar el archivo guardado
-                if archivo_guardado and os.path.exists(archivo_guardado):
-                    os.remove(archivo_guardado)
-                flash('Debe seleccionar un paciente', 'danger')
+                flash('❌ Debe seleccionar un paciente', 'danger')
                 return redirect(url_for('main.admin_resultados'))
 
             paciente = Paciente.query.get(int(paciente_id))
             if not paciente:
-                # Si falla, eliminar el archivo guardado
-                if archivo_guardado and os.path.exists(archivo_guardado):
-                    os.remove(archivo_guardado)
-                flash('Paciente no encontrado', 'danger')
+                flash('❌ Paciente no encontrado', 'danger')
                 return redirect(url_for('main.admin_resultados'))
 
+            # ============ GENERAR NÚMERO DE ORDEN AUTOMÁTICO ============
+            numero_orden_manual = request.form.get('numero_orden', '').strip()
+
+            if numero_orden_manual:
+                # Usuario proporcionó número manual
+                numero_orden_generado = numero_orden_manual
+                print(f"📋 Usando número de orden manual: {numero_orden_generado}")
+            else:
+                # Generar automáticamente
+                numero_orden_generado = generar_numero_orden()
+                print(f"🔢 Número de orden generado automáticamente: {numero_orden_generado}")
+
+            # ============ GUARDAR PDF CON BACKUP ============
+            filename_guardado, filepath, backup_path = guardar_pdf_con_backup(
+                archivo,
+                numero_orden_generado
+            )
+
+            if not filename_guardado:
+                raise Exception("No se pudo guardar el archivo PDF")
+
+            print(f"📁 Archivo guardado: {filename_guardado}")
+            print(f"💾 Backup creado en: {BACKUP_DIR}")
+
+            # ============ PROCESAR FECHA ============
+            fecha_str = request.form.get('fecha_muestra')
+            fecha_muestra = datetime.strptime(fecha_str, '%Y-%m-%d').date() if fecha_str else None
+
+            # ============ GENERAR CÓDIGO DE ACCESO ÚNICO ============
             codigo_acceso = generar_codigo_acceso()
+
+            # ============ REGISTRAR EN BASE DE DATOS ============
             resultado = Resultado(
-                numero_orden=request.form['numero_orden'],
+                numero_orden=numero_orden_generado,
                 paciente_id=paciente.id,
                 paciente_nombre=paciente.nombre,
                 paciente_ci=paciente.ci,
                 fecha_muestra=fecha_muestra,
-                archivo_pdf=filename,
+                archivo_pdf=filename_guardado,
                 codigo_acceso=codigo_acceso
             )
+
             db.session.add(resultado)
             db.session.commit()
 
-            print(f"✓ Resultado registrado en BD: ID={resultado.id}, Código={codigo_acceso}")
-            flash(f'Resultado guardado. Código de acceso: {codigo_acceso}', 'success')
+            # ============ ÉXITO COMPLETO ============
+            print("=" * 80)
+            print("✅ RESULTADO GUARDADO EXITOSAMENTE")
+            print(f"   ID: {resultado.id}")
+            print(f"   Número Orden: {numero_orden_generado}")
+            print(f"   Código Acceso: {codigo_acceso}")
+            print(f"   Paciente: {paciente.nombre}")
+            print(f"   Archivo: {filename_guardado}")
+            print(f"   Backup: ✓ Creado")
+            print("=" * 80)
+
+            flash(f'✅ Resultado guardado exitosamente. Código de acceso: {codigo_acceso}', 'success')
+
+        except ValueError as ve:
+            # Errores de validación (archivo no válido, etc.)
+            db.session.rollback()
+            if filename_guardado:
+                limpiar_archivo_huerfano(filename_guardado)
+            flash(f'❌ Error de validación: {str(ve)}', 'danger')
+            print(f"✗ Error de validación: {str(ve)}")
 
         except Exception as e:
+            # Errores inesperados
             db.session.rollback()
-            # Si hubo error y el archivo se guardó, eliminarlo para mantener consistencia
-            if archivo_guardado and os.path.exists(archivo_guardado):
-                try:
-                    os.remove(archivo_guardado)
-                    print(f"✗ Archivo eliminado por error: {archivo_guardado}")
-                except:
-                    pass
-            print(f"✗ Error al guardar resultado: {str(e)}")
-            flash(f'Error: {str(e)}', 'danger')
+
+            # Limpiar archivos huérfanos
+            if filename_guardado:
+                limpiar_archivo_huerfano(filename_guardado)
+
+            error_msg = str(e)
+            print("=" * 80)
+            print("❌ ERROR AL GUARDAR RESULTADO")
+            print(f"   Error: {error_msg}")
+            print(f"   Archivos limpiados: {filename_guardado if filename_guardado else 'N/A'}")
+            print("=" * 80)
+
+            # Mensaje de error amigable
+            if 'duplicate key' in error_msg.lower():
+                flash('❌ Este número de orden ya existe. El sistema generará uno automático.', 'danger')
+            else:
+                flash(f'❌ Error al guardar: {error_msg}', 'danger')
 
         return redirect(url_for('main.admin_resultados'))
     

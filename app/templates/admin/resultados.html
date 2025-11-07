@@ -581,8 +581,14 @@ document.getElementById('searchResultados')?.addEventListener('keyup', function(
                     <hr>
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label class="form-label"><i class="fas fa-hashtag"></i> Número de Orden <span class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="numero_orden" required>
+                            <label class="form-label">
+                                <i class="fas fa-hashtag"></i> Número de Orden
+                                <small class="text-muted">(Opcional - se genera automáticamente)</small>
+                            </label>
+                            <input type="text" class="form-control" name="numero_orden" placeholder="Dejar vacío para generar automáticamente">
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Si lo dejas vacío, el sistema generará un número único automáticamente
+                            </small>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label class="form-label"><i class="fas fa-calendar"></i> Fecha de Muestra <span class="text-danger">*</span></label>
@@ -592,6 +598,9 @@ document.getElementById('searchResultados')?.addEventListener('keyup', function(
                     <div class="mb-3">
                         <label class="form-label"><i class="fas fa-file-pdf"></i> Archivo PDF <span class="text-danger">*</span></label>
                         <input type="file" class="form-control" name="archivo_pdf" accept=".pdf" required>
+                        <small class="form-text text-muted">
+                            <i class="fas fa-shield-alt"></i> El archivo se guardará de forma segura con backup automático
+                        </small>
                     </div>
                     {% else %}
                     <div class="alert alert-warning">
