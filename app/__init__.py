@@ -23,7 +23,9 @@ def create_app():
     
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     
-    with app.app_context():
-        db.create_all()
+    # NOTA: db.create_all() comentado para evitar WORKER TIMEOUT en Render
+    # Las tablas ya están creadas en Supabase, no es necesario crearlas cada vez
+    # with app.app_context():
+    #     db.create_all()
     
     return app
