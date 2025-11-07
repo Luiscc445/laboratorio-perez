@@ -514,7 +514,7 @@ def descargar_credenciales_pdf(resultado_id):
     # ============ ENCABEZADO ============
     elements.append(Paragraph('LABORATORIO CLÍNICO PÉREZ', title_style))
     elements.append(Paragraph('Potosí, Bolivia', subtitle_style))
-    elements.append(Spacer(1, 0.2*inch))
+    elements.append(Spacer(1, 0.1*inch))
 
     # ============ TÍTULO PRINCIPAL ============
     header_data = [['CREDENCIALES DE ACCESO A RESULTADOS']]
@@ -524,13 +524,13 @@ def descargar_credenciales_pdf(resultado_id):
         ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
         ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
         ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, -1), 16),
-        ('TOPPADDING', (0, 0), (-1, -1), 15),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 15),
+        ('FONTSIZE', (0, 0), (-1, -1), 14),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
     ]))
     elements.append(header_table)
-    elements.append(Spacer(1, 0.3*inch))
+    elements.append(Spacer(1, 0.15*inch))
 
     # ============ INFORMACIÓN DEL PACIENTE ============
     patient_data = [
@@ -547,26 +547,26 @@ def descargar_credenciales_pdf(resultado_id):
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#34495e')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
         ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
         ('SPAN', (0, 0), (-1, 0)),  # Merge header cells
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+        ('TOPPADDING', (0, 0), (-1, 0), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('LEFTPADDING', (0, 0), (-1, 0), 10),
 
         # Data rows
         ('BACKGROUND', (0, 1), (0, -1), colors.HexColor('#ecf0f1')),
         ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
         ('FONTNAME', (1, 1), (1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, -1), 11),
+        ('FONTSIZE', (0, 1), (-1, -1), 9),
         ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2c3e50')),
         ('ALIGN', (0, 1), (0, -1), 'LEFT'),
         ('ALIGN', (1, 1), (1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 1), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
-        ('LEFTPADDING', (0, 1), (-1, -1), 15),
-        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+        ('TOPPADDING', (0, 1), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ('LEFTPADDING', (0, 1), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 10),
 
         # Borders
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
@@ -575,7 +575,7 @@ def descargar_credenciales_pdf(resultado_id):
     ]))
 
     elements.append(patient_table)
-    elements.append(Spacer(1, 0.4*inch))
+    elements.append(Spacer(1, 0.15*inch))
 
     # ============ CREDENCIALES DE ACCESO ============
     credentials_data = [
@@ -590,17 +590,17 @@ def descargar_credenciales_pdf(resultado_id):
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#e67e22')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
         ('SPAN', (0, 0), (-1, 0)),
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+        ('TOPPADDING', (0, 0), (-1, 0), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('LEFTPADDING', (0, 0), (-1, 0), 10),
 
         # Data rows - CI
         ('BACKGROUND', (0, 1), (0, 1), colors.HexColor('#ecf0f1')),
         ('FONTNAME', (0, 1), (0, 1), 'Helvetica-Bold'),
         ('FONTNAME', (1, 1), (1, 1), 'Helvetica'),
-        ('FONTSIZE', (0, 1), (-1, 1), 11),
+        ('FONTSIZE', (0, 1), (-1, 1), 9),
         ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#2c3e50')),
 
         # CÓDIGO - Destacado
@@ -608,17 +608,17 @@ def descargar_credenciales_pdf(resultado_id):
         ('BACKGROUND', (1, 2), (1, 2), colors.HexColor('#fff9e6')),
         ('FONTNAME', (0, 2), (0, 2), 'Helvetica-Bold'),
         ('FONTNAME', (1, 2), (1, 2), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 2), (0, 2), 11),
-        ('FONTSIZE', (1, 2), (1, 2), 16),
+        ('FONTSIZE', (0, 2), (0, 2), 9),
+        ('FONTSIZE', (1, 2), (1, 2), 14),
         ('TEXTCOLOR', (1, 2), (1, 2), colors.HexColor('#e74c3c')),
 
         # General
         ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 1), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
-        ('LEFTPADDING', (0, 1), (-1, -1), 15),
-        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+        ('TOPPADDING', (0, 1), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 6),
+        ('LEFTPADDING', (0, 1), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 10),
 
         # Borders
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
@@ -627,7 +627,7 @@ def descargar_credenciales_pdf(resultado_id):
     ]))
 
     elements.append(credentials_table)
-    elements.append(Spacer(1, 0.4*inch))
+    elements.append(Spacer(1, 0.15*inch))
 
     # ============ INSTRUCCIONES ============
     instructions_data = [
@@ -645,34 +645,34 @@ def descargar_credenciales_pdf(resultado_id):
         ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498db')),
         ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('FONTSIZE', (0, 0), (-1, 0), 11),
         ('SPAN', (0, 0), (-1, 0)),
-        ('TOPPADDING', (0, 0), (-1, 0), 12),
-        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+        ('TOPPADDING', (0, 0), (-1, 0), 8),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+        ('LEFTPADDING', (0, 0), (-1, 0), 10),
 
         # Steps
         ('FONTNAME', (0, 1), (0, 4), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 1), (0, 4), 14),
+        ('FONTSIZE', (0, 1), (0, 4), 11),
         ('TEXTCOLOR', (0, 1), (0, 4), colors.HexColor('#3498db')),
         ('ALIGN', (0, 1), (0, 4), 'CENTER'),
         ('FONTNAME', (1, 1), (1, 4), 'Helvetica'),
-        ('FONTSIZE', (1, 1), (1, 4), 10),
+        ('FONTSIZE', (1, 1), (1, 4), 9),
         ('TEXTCOLOR', (1, 1), (1, 4), colors.HexColor('#2c3e50')),
 
         # Note
         ('BACKGROUND', (0, 5), (-1, 5), colors.HexColor('#fff3cd')),
         ('SPAN', (0, 5), (-1, 5)),
         ('FONTNAME', (0, 5), (-1, 5), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 5), (-1, 5), 9),
+        ('FONTSIZE', (0, 5), (-1, 5), 8),
         ('TEXTCOLOR', (0, 5), (-1, 5), colors.HexColor('#856404')),
 
         # General
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('TOPPADDING', (0, 1), (-1, -1), 10),
-        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
-        ('LEFTPADDING', (0, 1), (-1, -1), 15),
-        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+        ('TOPPADDING', (0, 1), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 5),
+        ('LEFTPADDING', (0, 1), (-1, -1), 10),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 10),
 
         # Borders
         ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
@@ -681,7 +681,7 @@ def descargar_credenciales_pdf(resultado_id):
     ]))
 
     elements.append(instructions_table)
-    elements.append(Spacer(1, 0.5*inch))
+    elements.append(Spacer(1, 0.1*inch))
 
     # ============ FOOTER ============
     footer_text = Paragraph(
@@ -728,24 +728,22 @@ def descargar_credenciales_word(resultado_id):
     titulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
     titulo_run = titulo.runs[0]
     titulo_run.font.color.rgb = RGBColor(17, 153, 142)  # Verde Pérez
-    titulo_run.font.size = Pt(26)
+    titulo_run.font.size = Pt(20)
     titulo_run.font.name = 'Arial'
 
     subtitulo = doc.add_paragraph('Potosí, Bolivia')
     subtitulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
     subtitulo_run = subtitulo.runs[0]
-    subtitulo_run.font.size = Pt(12)
+    subtitulo_run.font.size = Pt(10)
     subtitulo_run.font.color.rgb = RGBColor(127, 140, 141)
     subtitulo_run.font.italic = True
-
-    doc.add_paragraph()  # Espacio
 
     # ============ TÍTULO PRINCIPAL ============
     header_para = doc.add_paragraph()
     header_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     header_run = header_para.add_run('CREDENCIALES DE ACCESO A RESULTADOS')
     header_run.font.bold = True
-    header_run.font.size = Pt(16)
+    header_run.font.size = Pt(12)
     header_run.font.color.rgb = RGBColor(255, 255, 255)
 
     # Fondo verde para el título
@@ -759,11 +757,9 @@ def descargar_credenciales_word(resultado_id):
     # Padding del párrafo
     pPr = header_para._element.get_or_add_pPr()
     spacing = OxmlElement('w:spacing')
-    spacing.set(qn('w:before'), '200')
-    spacing.set(qn('w:after'), '200')
+    spacing.set(qn('w:before'), '100')
+    spacing.set(qn('w:after'), '100')
     pPr.append(spacing)
-
-    doc.add_paragraph()  # Espacio
 
     # ============ TABLA: INFORMACIÓN DEL PACIENTE ============
     table1 = doc.add_table(rows=5, cols=2)
@@ -775,7 +771,7 @@ def descargar_credenciales_word(resultado_id):
     header_cell.text = 'INFORMACIÓN DEL PACIENTE'
     header_run = header_cell.paragraphs[0].runs[0]
     header_run.font.bold = True
-    header_run.font.size = Pt(13)
+    header_run.font.size = Pt(10)
     header_run.font.color.rgb = RGBColor(255, 255, 255)
     shading_elm = OxmlElement('w:shd')
     shading_elm.set(qn('w:fill'), '34495e')
@@ -794,7 +790,7 @@ def descargar_credenciales_word(resultado_id):
         cell_label = table1.rows[i].cells[0]
         cell_label.text = label
         cell_label.paragraphs[0].runs[0].font.bold = True
-        cell_label.paragraphs[0].runs[0].font.size = Pt(11)
+        cell_label.paragraphs[0].runs[0].font.size = Pt(9)
         shading_elm = OxmlElement('w:shd')
         shading_elm.set(qn('w:fill'), 'ecf0f1')
         cell_label.paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
@@ -802,9 +798,7 @@ def descargar_credenciales_word(resultado_id):
         # Columna derecha (valores)
         cell_value = table1.rows[i].cells[1]
         cell_value.text = value
-        cell_value.paragraphs[0].runs[0].font.size = Pt(11)
-
-    doc.add_paragraph()  # Espacio
+        cell_value.paragraphs[0].runs[0].font.size = Pt(9)
 
     # ============ TABLA: CREDENCIALES DE ACCESO ============
     table2 = doc.add_table(rows=3, cols=2)
@@ -816,7 +810,7 @@ def descargar_credenciales_word(resultado_id):
     header_cell2.text = 'CREDENCIALES PARA CONSULTAR RESULTADOS'
     header_run2 = header_cell2.paragraphs[0].runs[0]
     header_run2.font.bold = True
-    header_run2.font.size = Pt(13)
+    header_run2.font.size = Pt(10)
     header_run2.font.color.rgb = RGBColor(255, 255, 255)
     shading_elm2 = OxmlElement('w:shd')
     shading_elm2.set(qn('w:fill'), 'e67e22')
@@ -825,18 +819,18 @@ def descargar_credenciales_word(resultado_id):
     # CI
     table2.rows[1].cells[0].text = 'CÉDULA DE IDENTIDAD:'
     table2.rows[1].cells[0].paragraphs[0].runs[0].font.bold = True
-    table2.rows[1].cells[0].paragraphs[0].runs[0].font.size = Pt(11)
+    table2.rows[1].cells[0].paragraphs[0].runs[0].font.size = Pt(9)
     shading_elm = OxmlElement('w:shd')
     shading_elm.set(qn('w:fill'), 'ecf0f1')
     table2.rows[1].cells[0].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
 
     table2.rows[1].cells[1].text = resultado.paciente_ci
-    table2.rows[1].cells[1].paragraphs[0].runs[0].font.size = Pt(11)
+    table2.rows[1].cells[1].paragraphs[0].runs[0].font.size = Pt(9)
 
     # CÓDIGO DE ACCESO (destacado)
     table2.rows[2].cells[0].text = 'CÓDIGO DE ACCESO:'
     table2.rows[2].cells[0].paragraphs[0].runs[0].font.bold = True
-    table2.rows[2].cells[0].paragraphs[0].runs[0].font.size = Pt(11)
+    table2.rows[2].cells[0].paragraphs[0].runs[0].font.size = Pt(9)
     shading_elm = OxmlElement('w:shd')
     shading_elm.set(qn('w:fill'), 'ecf0f1')
     table2.rows[2].cells[0].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
@@ -844,13 +838,11 @@ def descargar_credenciales_word(resultado_id):
     table2.rows[2].cells[1].text = resultado.codigo_acceso
     codigo_run = table2.rows[2].cells[1].paragraphs[0].runs[0]
     codigo_run.font.bold = True
-    codigo_run.font.size = Pt(18)
+    codigo_run.font.size = Pt(14)
     codigo_run.font.color.rgb = RGBColor(231, 76, 60)  # Rojo para destacar
     shading_elm = OxmlElement('w:shd')
     shading_elm.set(qn('w:fill'), 'fff9e6')  # Amarillo claro
     table2.rows[2].cells[1].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
-
-    doc.add_paragraph()  # Espacio
 
     # ============ TABLA: INSTRUCCIONES ============
     table3 = doc.add_table(rows=6, cols=1)
@@ -861,7 +853,7 @@ def descargar_credenciales_word(resultado_id):
     header_cell3.text = 'INSTRUCCIONES PARA ACCEDER A SUS RESULTADOS'
     header_run3 = header_cell3.paragraphs[0].runs[0]
     header_run3.font.bold = True
-    header_run3.font.size = Pt(13)
+    header_run3.font.size = Pt(10)
     header_run3.font.color.rgb = RGBColor(255, 255, 255)
     shading_elm3 = OxmlElement('w:shd')
     shading_elm3.set(qn('w:fill'), '3498db')
@@ -880,7 +872,7 @@ def descargar_credenciales_word(resultado_id):
         cell = table3.rows[i].cells[0]
         cell.text = instruccion
         cell_run = cell.paragraphs[0].runs[0]
-        cell_run.font.size = Pt(10)
+        cell_run.font.size = Pt(8)
 
         # Última fila (nota) con fondo especial
         if i == 5:
@@ -896,14 +888,14 @@ def descargar_credenciales_word(resultado_id):
     footer_para = doc.add_paragraph()
     footer_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
     footer_run = footer_para.add_run('Laboratorio Clínico Pérez - Potosí, Bolivia')
-    footer_run.font.size = Pt(9)
+    footer_run.font.size = Pt(8)
     footer_run.font.italic = True
     footer_run.font.color.rgb = RGBColor(149, 165, 166)
 
     footer_para2 = doc.add_paragraph()
     footer_para2.alignment = WD_ALIGN_PARAGRAPH.CENTER
     footer_run2 = footer_para2.add_run('Documento generado automáticamente')
-    footer_run2.font.size = Pt(8)
+    footer_run2.font.size = Pt(7)
     footer_run2.font.italic = True
     footer_run2.font.color.rgb = RGBColor(149, 165, 166)
 
