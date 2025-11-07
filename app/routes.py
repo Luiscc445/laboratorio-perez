@@ -236,7 +236,13 @@ def admin_resultados():
             filename = None
             if archivo and archivo.filename.endswith('.pdf'):
                 filename = secure_filename(f"{request.form['numero_orden']}_{archivo.filename}")
-                archivo.save(os.path.join('app/static/uploads', filename))
+
+                # Asegurar que el directorio existe
+                upload_dir = os.path.join('app', 'static', 'uploads')
+                os.makedirs(upload_dir, exist_ok=True)
+
+                # Guardar archivo
+                archivo.save(os.path.join(upload_dir, filename))
             
             fecha_str = request.form.get('fecha_muestra')
             fecha_muestra = datetime.strptime(fecha_str, '%Y-%m-%d').date() if fecha_str else None
@@ -563,7 +569,16 @@ def eliminar_prueba(prueba_id):
 def descargar(resultado_id):
     resultado = Resultado.query.get_or_404(resultado_id)
     if resultado.archivo_pdf:
-        return send_file(os.path.join('static/uploads', resultado.archivo_pdf), as_attachment=True)
+        # Construir ruta absoluta correcta
+        pdf_path = os.path.join('app', 'static', 'uploads', resultado.archivo_pdf)
+
+        # Verificar que el archivo existe
+        if not os.path.exists(pdf_path):
+            flash(f'El archivo PDF no se encuentra en el servidor: {resultado.archivo_pdf}', 'danger')
+            return redirect(url_for('main.admin_resultados'))
+
+        return send_file(pdf_path, as_attachment=True)
+
     flash('No hay archivo PDF disponible', 'warning')
     return redirect(url_for('main.admin_resultados'))
 
