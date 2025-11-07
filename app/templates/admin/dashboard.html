@@ -572,7 +572,7 @@ async function exportarPDF() {
         // Estadísticas generales
         pdf.setFontSize(16);
         pdf.setFont(undefined, 'bold');
-        pdf.text('📊 Estadísticas Generales', margin, yPosition);
+        pdf.text('ESTADISTICAS GENERALES', margin, yPosition);
         yPosition += 10;
 
         const stats = [
@@ -607,7 +607,7 @@ async function exportarPDF() {
             pdf.setFontSize(14);
             pdf.setFont(undefined, 'bold');
             pdf.setTextColor(0, 0, 0);
-            pdf.text('📈 Tendencia de Pacientes y Resultados', margin, yPosition);
+            pdf.text('TENDENCIA DE PACIENTES Y RESULTADOS', margin, yPosition);
             yPosition += 8;
 
             const trendImage = trendCanvas.toDataURL('image/png');
@@ -632,7 +632,7 @@ async function exportarPDF() {
         if (distCanvas) {
             pdf.setFontSize(14);
             pdf.setFont(undefined, 'bold');
-            pdf.text('🥧 Distribución General', margin, yPosition);
+            pdf.text('DISTRIBUCION GENERAL', margin, yPosition);
             yPosition += 8;
 
             const distImage = distCanvas.toDataURL('image/png');
@@ -695,64 +695,167 @@ function exportarExcel() {
         // Crear libro de Excel
         const wb = XLSX.utils.book_new();
 
-        // Hoja 1: Estadísticas Generales
+        // Hoja 1: Estadísticas Generales - CON ESTILOS MODERNOS
         const statsData = [
-            ['DASHBOARD - LABORATORIO PÉREZ'],
-            ['Potosí, Bolivia'],
-            ['Fecha:', new Date().toLocaleDateString('es-BO')],
+            ['DASHBOARD - LABORATORIO CLINICO PEREZ'],
+            ['Potosi, Bolivia'],
+            ['Fecha de Reporte:', new Date().toLocaleDateString('es-BO', {day: '2-digit', month: 'long', year: 'numeric'})],
             [],
-            ['ESTADÍSTICAS GENERALES'],
+            ['ESTADISTICAS GENERALES DEL SISTEMA'],
             [],
-            ['Métrica', 'Valor'],
-            ['Total Pacientes', {{ total_pacientes }}],
-            ['Pacientes Este Mes', {{ pacientes_este_mes }}],
-            ['Total Resultados', {{ total_resultados }}],
-            ['Resultados Este Mes', {{ resultados_este_mes }}],
-            ['Pruebas Disponibles', {{ total_pruebas }}],
-            ['Actividad del Mes', {{ pacientes_este_mes + resultados_este_mes }}]
+            ['Metrica', 'Valor Actual', 'Este Mes', 'Estado'],
+            ['Total Pacientes', {{ total_pacientes }}, {{ pacientes_este_mes }}, 'Activo'],
+            ['Total Resultados', {{ total_resultados }}, {{ resultados_este_mes }}, 'Activo'],
+            ['Pruebas Disponibles', {{ total_pruebas }}, '-', 'Catalogo Completo'],
+            ['Actividad Mensual', {{ pacientes_este_mes + resultados_este_mes }}, {{ pacientes_este_mes + resultados_este_mes }}, 'En Progreso'],
+            [],
+            [],
+            ['RESUMEN EJECUTIVO'],
+            [],
+            ['Categoria', 'Descripcion', 'Valor'],
+            ['Crecimiento', 'Nuevos pacientes este mes', {{ pacientes_este_mes }}],
+            ['Productividad', 'Nuevos resultados este mes', {{ resultados_este_mes }}],
+            ['Servicios', 'Pruebas de laboratorio activas', {{ total_pruebas }}],
+            ['Base de Datos', 'Total registros de pacientes', {{ total_pacientes }}]
         ];
 
         const wsStats = XLSX.utils.aoa_to_sheet(statsData);
 
-        // Estilos para el encabezado
-        wsStats['!cols'] = [{ width: 30 }, { width: 15 }];
+        // Columnas con anchos optimizados
+        wsStats['!cols'] = [
+            { width: 35 },  // Columna A - Métrica
+            { width: 18 },  // Columna B - Valor
+            { width: 18 },  // Columna C - Este mes
+            { width: 20 }   // Columna D - Estado
+        ];
 
-        XLSX.utils.book_append_sheet(wb, wsStats, 'Estadísticas');
+        // Altura de filas
+        wsStats['!rows'] = [
+            { hpt: 25 },  // Fila 1 - Título
+            { hpt: 18 },  // Fila 2
+            { hpt: 18 },  // Fila 3
+            { hpt: 10 },  // Fila 4 - espacio
+            { hpt: 22 },  // Fila 5 - Subtítulo
+        ];
 
-        // Hoja 2: Tendencias
+        // Merge cells para títulos
+        wsStats['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 3 } },  // Título principal
+            { s: { r: 4, c: 0 }, e: { r: 4, c: 3 } },  // Subtítulo estadísticas
+            { s: { r: 13, c: 0 }, e: { r: 13, c: 2 } }  // Resumen ejecutivo
+        ];
+
+        XLSX.utils.book_append_sheet(wb, wsStats, 'Dashboard');
+
+        // Hoja 2: Tendencias Mensuales - MEJORADA
         const mesesData = {{ ultimos_meses | tojson | safe }};
         const pacientesData = {{ pacientes_data | tojson | safe }};
         const resultadosData = {{ resultados_data | tojson | safe }};
 
         const trendData = [
-            ['TENDENCIA MENSUAL'],
+            ['ANALISIS DE TENDENCIAS - LABORATORIO PEREZ'],
             [],
-            ['Mes', 'Pacientes', 'Resultados']
+            ['Periodo de Analisis:', 'Ultimos 6 meses'],
+            [],
+            ['Mes', 'Nuevos Pacientes', 'Nuevos Resultados', 'Total Actividad', 'Tendencia'],
         ];
 
+        // Calcular datos con análisis
         for (let i = 0; i < mesesData.length; i++) {
-            trendData.push([mesesData[i], pacientesData[i], resultadosData[i]]);
+            const totalActividad = pacientesData[i] + resultadosData[i];
+            let tendencia = 'Estable';
+
+            if (i > 0) {
+                const actividadAnterior = pacientesData[i-1] + resultadosData[i-1];
+                if (totalActividad > actividadAnterior) tendencia = 'Creciendo';
+                else if (totalActividad < actividadAnterior) tendencia = 'Descendiendo';
+            }
+
+            trendData.push([
+                mesesData[i],
+                pacientesData[i],
+                resultadosData[i],
+                totalActividad,
+                tendencia
+            ]);
         }
 
-        const wsTrend = XLSX.utils.aoa_to_sheet(trendData);
-        wsTrend['!cols'] = [{ width: 20 }, { width: 15 }, { width: 15 }];
-        XLSX.utils.book_append_sheet(wb, wsTrend, 'Tendencias');
+        // Agregar totales y promedios
+        const totalPacientesPeriodo = pacientesData.reduce((a, b) => a + b, 0);
+        const totalResultadosPeriodo = resultadosData.reduce((a, b) => a + b, 0);
+        const promedioPacientes = Math.round(totalPacientesPeriodo / mesesData.length);
+        const promedioResultados = Math.round(totalResultadosPeriodo / mesesData.length);
 
-        // Hoja 3: Top Pruebas
-        {% if top_pruebas %}
-        const pruebasData = [
-            ['TOP PRUEBAS'],
-            [],
-            ['Prueba', 'Precio (Bs.)']
+        trendData.push([]);
+        trendData.push(['RESUMEN DEL PERIODO']);
+        trendData.push(['Total Pacientes:', totalPacientesPeriodo, 'Promedio Mensual:', promedioPacientes]);
+        trendData.push(['Total Resultados:', totalResultadosPeriodo, 'Promedio Mensual:', promedioResultados]);
+
+        const wsTrend = XLSX.utils.aoa_to_sheet(trendData);
+        wsTrend['!cols'] = [
+            { width: 20 },  // Mes
+            { width: 20 },  // Nuevos Pacientes
+            { width: 20 },  // Nuevos Resultados
+            { width: 18 },  // Total Actividad
+            { width: 18 }   // Tendencia
         ];
 
+        // Merge cells
+        wsTrend['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } }  // Título
+        ];
+
+        XLSX.utils.book_append_sheet(wb, wsTrend, 'Tendencias Mensuales');
+
+        // Hoja 3: Catálogo de Pruebas - PROFESIONAL
+        {% if top_pruebas %}
+        const pruebasData = [
+            ['CATALOGO DE PRUEBAS DE LABORATORIO'],
+            ['Laboratorio Clinico Perez - Potosi, Bolivia'],
+            [],
+            ['Precio actualizado al:', new Date().toLocaleDateString('es-BO', {day: '2-digit', month: 'long', year: 'numeric'})],
+            [],
+            ['No.', 'Nombre de la Prueba', 'Precio (Bs.)', 'Estado', 'Observaciones']
+        ];
+
+        let numeroLinea = 1;
         {% for prueba, precio in top_pruebas %}
-        pruebasData.push(['{{ prueba }}', {{ precio }}]);
+        pruebasData.push([
+            numeroLinea,
+            '{{ prueba }}',
+            {{ precio if precio else 0 }},
+            {{ precio }} > 0 ? 'Con Precio' : 'Consultar',
+            {{ precio }} > 0 ? 'Precio disponible' : 'El doctor debe establecer precio'
+        ]);
+        numeroLinea++;
         {% endfor %}
 
+        // Agregar resumen
+        pruebasData.push([]);
+        pruebasData.push(['RESUMEN DEL CATALOGO']);
+        pruebasData.push(['Total de Pruebas:', {{ top_pruebas|length }}]);
+        pruebasData.push(['Pruebas con precio definido:', 'Se calculan automaticamente']);
+        pruebasData.push([]);
+        pruebasData.push(['NOTA IMPORTANTE:']);
+        pruebasData.push(['Los precios se establecen manualmente desde el panel administrativo.']);
+        pruebasData.push(['Si una prueba muestra 0.00, el precio debe ser consultado con el laboratorio.']);
+
         const wsPruebas = XLSX.utils.aoa_to_sheet(pruebasData);
-        wsPruebas['!cols'] = [{ width: 40 }, { width: 15 }];
-        XLSX.utils.book_append_sheet(wb, wsPruebas, 'Pruebas');
+        wsPruebas['!cols'] = [
+            { width: 8 },   // No.
+            { width: 50 },  // Nombre prueba
+            { width: 15 },  // Precio
+            { width: 18 },  // Estado
+            { width: 35 }   // Observaciones
+        ];
+
+        // Merge cells para títulos
+        wsPruebas['!merges'] = [
+            { s: { r: 0, c: 0 }, e: { r: 0, c: 4 } },  // Título principal
+            { s: { r: 1, c: 0 }, e: { r: 1, c: 4 } }   // Subtítulo
+        ];
+
+        XLSX.utils.book_append_sheet(wb, wsPruebas, 'Catalogo de Pruebas');
         {% endif %}
 
         // Guardar archivo
