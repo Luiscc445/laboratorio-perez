@@ -34,13 +34,13 @@ class Paciente(db.Model):
 class Resultado(db.Model):
     __tablename__ = 'resultados'
     id = db.Column(db.Integer, primary_key=True)
-    numero_orden = db.Column(db.String(50), unique=True, nullable=False)
+    numero_orden = db.Column(db.String(50), nullable=False)  # Removido unique=True para permitir múltiples resultados
     paciente_id = db.Column(db.Integer, db.ForeignKey('pacientes.id'), nullable=True)
     paciente_nombre = db.Column(db.String(200), nullable=False)
     paciente_ci = db.Column(db.String(20), nullable=False)
     fecha_muestra = db.Column(db.Date)
     archivo_pdf = db.Column(db.String(200))
-    codigo_acceso = db.Column(db.String(20))
+    codigo_acceso = db.Column(db.String(20), unique=True)  # Código de acceso debe ser único
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Prueba(db.Model):
