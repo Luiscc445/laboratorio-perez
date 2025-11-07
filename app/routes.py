@@ -462,170 +462,458 @@ def admin_resultados():
 @main.route('/descargar-credenciales-pdf/<int:resultado_id>')
 @admin_required
 def descargar_credenciales_pdf(resultado_id):
+    """
+    Genera PDF de credenciales PROFESIONAL y SIN ERRORES
+    Para que el paciente vea su código de acceso
+    """
     resultado = Resultado.query.get_or_404(resultado_id)
-    
+
     buffer = BytesIO()
-    doc = SimpleDocTemplate(buffer, pagesize=letter)
-    elements = []
-    
-    # Logo (si existe)
-    try:
-        logo = Image('app/static/img/logo.jpg', width=1.5*inch, height=1.5*inch)
-        elements.append(logo)
-    except:
-        pass
-    
-    elements.append(Spacer(1, 0.3*inch))
-    
-    # Título
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=18,
-        textColor=colors.HexColor('#1ABC9C'),
-        spaceAfter=20,
-        alignment=1
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=letter,
+        rightMargin=50,
+        leftMargin=50,
+        topMargin=50,
+        bottomMargin=50
     )
+    elements = []
+    styles = getSampleStyleSheet()
+
+    # ============ ESTILOS PERSONALIZADOS ============
+    title_style = ParagraphStyle(
+        'TitleStyle',
+        parent=styles['Heading1'],
+        fontSize=24,
+        textColor=colors.HexColor('#11998e'),
+        spaceAfter=10,
+        alignment=1,  # Centrado
+        fontName='Helvetica-Bold'
+    )
+
+    subtitle_style = ParagraphStyle(
+        'SubtitleStyle',
+        parent=styles['Normal'],
+        fontSize=12,
+        textColor=colors.HexColor('#7f8c8d'),
+        spaceAfter=30,
+        alignment=1,  # Centrado
+        fontName='Helvetica'
+    )
+
+    section_title_style = ParagraphStyle(
+        'SectionTitle',
+        parent=styles['Heading2'],
+        fontSize=14,
+        textColor=colors.HexColor('#2c3e50'),
+        spaceBefore=10,
+        spaceAfter=10,
+        fontName='Helvetica-Bold'
+    )
+
+    # ============ ENCABEZADO ============
     elements.append(Paragraph('LABORATORIO CLÍNICO PÉREZ', title_style))
-    elements.append(Paragraph('Potosí, Bolivia', styles['Normal']))
+    elements.append(Paragraph('Potosí, Bolivia', subtitle_style))
+    elements.append(Spacer(1, 0.2*inch))
+
+    # ============ TÍTULO PRINCIPAL ============
+    header_data = [['CREDENCIALES DE ACCESO A RESULTADOS']]
+    header_table = Table(header_data, colWidths=[6.5*inch])
+    header_table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#11998e')),
+        ('TEXTCOLOR', (0, 0), (-1, -1), colors.white),
+        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -1), 16),
+        ('TOPPADDING', (0, 0), (-1, -1), 15),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 15),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    ]))
+    elements.append(header_table)
     elements.append(Spacer(1, 0.3*inch))
-    
-    # Tabla de credenciales
-    data = [
-        ['CREDENCIALES DE ACCESO A RESULTADOS'],
-        [''],
+
+    # ============ INFORMACIÓN DEL PACIENTE ============
+    patient_data = [
         ['INFORMACIÓN DEL PACIENTE'],
         ['Nombre Completo:', resultado.paciente_nombre],
         ['Cédula de Identidad:', resultado.paciente_ci],
         ['Número de Orden:', resultado.numero_orden],
-        [''],
-        ['CREDENCIALES DE ACCESO'],
-        ['CI:', resultado.paciente_ci],
-        ['CÓDIGO DE ACCESO:', resultado.codigo_acceso],
-        [''],
-        ['INSTRUCCIONES'],
-        ['1. Ingrese a: http://localhost:5000', ''],
-        ['2. Click en "Ver mis Resultados"', ''],
-        ['3. Ingrese su CI y código de acceso', ''],
-        ['4. Descargue su resultado en PDF', ''],
-        [''],
-        [f'Fecha de Emisión: {resultado.fecha_creacion.strftime("%d/%m/%Y %H:%M")}', '']
+        ['Fecha de Emisión:', resultado.fecha_creacion.strftime("%d/%m/%Y %H:%M")]
     ]
-    
-    table = Table(data, colWidths=[2.5*inch, 3.5*inch])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#1ABC9C')),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+
+    patient_table = Table(patient_data, colWidths=[2.5*inch, 4*inch])
+    patient_table.setStyle(TableStyle([
+        # Header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#34495e')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0, 0), (-1, 0), 14),
+        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('ALIGN', (0, 0), (-1, 0), 'LEFT'),
+        ('SPAN', (0, 0), (-1, 0)),  # Merge header cells
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
         ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-        ('BACKGROUND', (0, 2), (-1, 2), colors.HexColor('#F39C12')),
-        ('TEXTCOLOR', (0, 2), (-1, 2), colors.whitesmoke),
-        ('BACKGROUND', (0, 7), (-1, 7), colors.HexColor('#F39C12')),
-        ('TEXTCOLOR', (0, 7), (-1, 7), colors.whitesmoke),
-        ('BACKGROUND', (0, 11), (-1, 11), colors.HexColor('#3498DB')),
-        ('TEXTCOLOR', (0, 11), (-1, 11), colors.whitesmoke),
-        ('GRID', (0, 0), (-1, -1), 1, colors.grey),
-        ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+
+        # Data rows
+        ('BACKGROUND', (0, 1), (0, -1), colors.HexColor('#ecf0f1')),
+        ('FONTNAME', (0, 1), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 1), (1, -1), 'Helvetica'),
         ('FONTSIZE', (0, 1), (-1, -1), 11),
-        ('PADDING', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 1), (-1, -1), colors.HexColor('#2c3e50')),
+        ('ALIGN', (0, 1), (0, -1), 'LEFT'),
+        ('ALIGN', (1, 1), (1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
+        ('LEFTPADDING', (0, 1), (-1, -1), 15),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+
+        # Borders
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#34495e')),
+        ('INNERGRID', (0, 1), (-1, -1), 0.5, colors.HexColor('#bdc3c7')),
     ]))
-    
-    elements.append(table)
+
+    elements.append(patient_table)
+    elements.append(Spacer(1, 0.4*inch))
+
+    # ============ CREDENCIALES DE ACCESO ============
+    credentials_data = [
+        ['CREDENCIALES PARA CONSULTAR RESULTADOS'],
+        ['CÉDULA DE IDENTIDAD:', resultado.paciente_ci],
+        ['CÓDIGO DE ACCESO:', resultado.codigo_acceso]
+    ]
+
+    credentials_table = Table(credentials_data, colWidths=[2.5*inch, 4*inch])
+    credentials_table.setStyle(TableStyle([
+        # Header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#e67e22')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('SPAN', (0, 0), (-1, 0)),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+
+        # Data rows - CI
+        ('BACKGROUND', (0, 1), (0, 1), colors.HexColor('#ecf0f1')),
+        ('FONTNAME', (0, 1), (0, 1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 1), (1, 1), 'Helvetica'),
+        ('FONTSIZE', (0, 1), (-1, 1), 11),
+        ('TEXTCOLOR', (0, 1), (-1, 1), colors.HexColor('#2c3e50')),
+
+        # CÓDIGO - Destacado
+        ('BACKGROUND', (0, 2), (0, 2), colors.HexColor('#ecf0f1')),
+        ('BACKGROUND', (1, 2), (1, 2), colors.HexColor('#fff9e6')),
+        ('FONTNAME', (0, 2), (0, 2), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 2), (1, 2), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 2), (0, 2), 11),
+        ('FONTSIZE', (1, 2), (1, 2), 16),
+        ('TEXTCOLOR', (1, 2), (1, 2), colors.HexColor('#e74c3c')),
+
+        # General
+        ('ALIGN', (0, 1), (-1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
+        ('LEFTPADDING', (0, 1), (-1, -1), 15),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+
+        # Borders
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#e67e22')),
+        ('INNERGRID', (0, 1), (-1, -1), 0.5, colors.HexColor('#bdc3c7')),
+    ]))
+
+    elements.append(credentials_table)
+    elements.append(Spacer(1, 0.4*inch))
+
+    # ============ INSTRUCCIONES ============
+    instructions_data = [
+        ['INSTRUCCIONES PARA ACCEDER A SUS RESULTADOS'],
+        ['1', 'Ingrese a: www.laboratoriopérez.com o utilice el enlace proporcionado por el laboratorio'],
+        ['2', 'Click en el botón "Consultar mis Resultados" o "Ver Resultados"'],
+        ['3', 'Ingrese su Cédula de Identidad (CI) y el Código de Acceso proporcionado arriba'],
+        ['4', 'Podrá visualizar y descargar su resultado en formato PDF'],
+        ['', 'NOTA: Guarde este documento de forma segura. Su código de acceso es confidencial.']
+    ]
+
+    instructions_table = Table(instructions_data, colWidths=[0.4*inch, 6.1*inch])
+    instructions_table.setStyle(TableStyle([
+        # Header
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#3498db')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, 0), 13),
+        ('SPAN', (0, 0), (-1, 0)),
+        ('TOPPADDING', (0, 0), (-1, 0), 12),
+        ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ('LEFTPADDING', (0, 0), (-1, 0), 15),
+
+        # Steps
+        ('FONTNAME', (0, 1), (0, 4), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 1), (0, 4), 14),
+        ('TEXTCOLOR', (0, 1), (0, 4), colors.HexColor('#3498db')),
+        ('ALIGN', (0, 1), (0, 4), 'CENTER'),
+        ('FONTNAME', (1, 1), (1, 4), 'Helvetica'),
+        ('FONTSIZE', (1, 1), (1, 4), 10),
+        ('TEXTCOLOR', (1, 1), (1, 4), colors.HexColor('#2c3e50')),
+
+        # Note
+        ('BACKGROUND', (0, 5), (-1, 5), colors.HexColor('#fff3cd')),
+        ('SPAN', (0, 5), (-1, 5)),
+        ('FONTNAME', (0, 5), (-1, 5), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 5), (-1, 5), 9),
+        ('TEXTCOLOR', (0, 5), (-1, 5), colors.HexColor('#856404')),
+
+        # General
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 1), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 1), (-1, -1), 10),
+        ('LEFTPADDING', (0, 1), (-1, -1), 15),
+        ('RIGHTPADDING', (0, 1), (-1, -1), 15),
+
+        # Borders
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#bdc3c7')),
+        ('LINEBELOW', (0, 0), (-1, 0), 2, colors.HexColor('#3498db')),
+        ('INNERGRID', (0, 1), (-1, -1), 0.5, colors.HexColor('#bdc3c7')),
+    ]))
+
+    elements.append(instructions_table)
+    elements.append(Spacer(1, 0.5*inch))
+
+    # ============ FOOTER ============
+    footer_text = Paragraph(
+        '<i>Laboratorio Clínico Pérez - Potosí, Bolivia - Documento generado automáticamente</i>',
+        ParagraphStyle(
+            'Footer',
+            parent=styles['Normal'],
+            fontSize=8,
+            textColor=colors.HexColor('#95a5a6'),
+            alignment=1
+        )
+    )
+    elements.append(footer_text)
+
+    # ============ GENERAR PDF ============
     doc.build(elements)
-    
     buffer.seek(0)
-    filename = f"Credenciales_{resultado.paciente_nombre.replace(' ', '_')}.pdf"
-    
+
+    filename = f"Credenciales_{resultado.paciente_nombre.replace(' ', '_')}_{resultado.numero_orden}.pdf"
+
     return send_file(buffer, as_attachment=True, download_name=filename, mimetype='application/pdf')
 
 @main.route('/descargar-credenciales-word/<int:resultado_id>')
 @admin_required
 def descargar_credenciales_word(resultado_id):
+    """
+    Genera Word de credenciales PROFESIONAL y BONITO
+    Para que el paciente vea su código de acceso
+    """
     resultado = Resultado.query.get_or_404(resultado_id)
-    
+
     doc = Document()
-    
-    # Logo
-    try:
-        doc.add_picture('app/static/img/logo.jpg', width=Inches(1.5))
-    except:
-        pass
-    
-    # Título
+
+    # ============ CONFIGURACIÓN DE MÁRGENES ============
+    sections = doc.sections
+    for section in sections:
+        section.top_margin = Inches(0.8)
+        section.bottom_margin = Inches(0.8)
+        section.left_margin = Inches(1)
+        section.right_margin = Inches(1)
+
+    # ============ ENCABEZADO DEL DOCUMENTO ============
     titulo = doc.add_heading('LABORATORIO CLÍNICO PÉREZ', 0)
     titulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    titulo.runs[0].font.color.rgb = RGBColor(26, 188, 156)
-    
+    titulo_run = titulo.runs[0]
+    titulo_run.font.color.rgb = RGBColor(17, 153, 142)  # Verde Pérez
+    titulo_run.font.size = Pt(26)
+    titulo_run.font.name = 'Arial'
+
     subtitulo = doc.add_paragraph('Potosí, Bolivia')
     subtitulo.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    
-    doc.add_paragraph()
-    
-    # Tabla de credenciales
-    table = doc.add_table(rows=13, cols=2)
-    table.style = 'Light Grid Accent 1'
-    
-    # Encabezado
-    header_cell = table.rows[0].cells[0]
-    header_cell.merge(table.rows[0].cells[1])
-    header_cell.text = 'CREDENCIALES DE ACCESO A RESULTADOS'
-    header_cell.paragraphs[0].runs[0].font.bold = True
-    header_cell.paragraphs[0].runs[0].font.size = Pt(14)
-    header_cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.CENTER
-    
-    # Información del paciente
-    table.rows[1].cells[0].merge(table.rows[1].cells[1])
-    table.rows[1].cells[0].text = 'INFORMACIÓN DEL PACIENTE'
-    table.rows[1].cells[0].paragraphs[0].runs[0].font.bold = True
-    
-    table.rows[2].cells[0].text = 'Nombre Completo:'
-    table.rows[2].cells[1].text = resultado.paciente_nombre
-    
-    table.rows[3].cells[0].text = 'Cédula de Identidad:'
-    table.rows[3].cells[1].text = resultado.paciente_ci
-    
-    table.rows[4].cells[0].text = 'Número de Orden:'
-    table.rows[4].cells[1].text = resultado.numero_orden
-    
-    # Credenciales
-    table.rows[5].cells[0].merge(table.rows[5].cells[1])
-    table.rows[5].cells[0].text = 'CREDENCIALES DE ACCESO'
-    table.rows[5].cells[0].paragraphs[0].runs[0].font.bold = True
-    
-    table.rows[6].cells[0].text = 'CI:'
-    table.rows[6].cells[1].text = resultado.paciente_ci
-    
-    table.rows[7].cells[0].text = 'CÓDIGO DE ACCESO:'
-    table.rows[7].cells[1].text = resultado.codigo_acceso
-    table.rows[7].cells[1].paragraphs[0].runs[0].font.bold = True
-    table.rows[7].cells[1].paragraphs[0].runs[0].font.color.rgb = RGBColor(231, 76, 60)
-    
-    # Instrucciones
-    table.rows[8].cells[0].merge(table.rows[8].cells[1])
-    table.rows[8].cells[0].text = 'INSTRUCCIONES'
-    table.rows[8].cells[0].paragraphs[0].runs[0].font.bold = True
-    
-    table.rows[9].cells[0].merge(table.rows[9].cells[1])
-    table.rows[9].cells[0].text = '1. Ingrese a: http://localhost:5000'
-    
-    table.rows[10].cells[0].merge(table.rows[10].cells[1])
-    table.rows[10].cells[0].text = '2. Click en "Ver mis Resultados"'
-    
-    table.rows[11].cells[0].merge(table.rows[11].cells[1])
-    table.rows[11].cells[0].text = '3. Ingrese su CI y código de acceso'
-    
-    table.rows[12].cells[0].merge(table.rows[12].cells[1])
-    table.rows[12].cells[0].text = f'Fecha de Emisión: {resultado.fecha_creacion.strftime("%d/%m/%Y %H:%M")}'
-    
+    subtitulo_run = subtitulo.runs[0]
+    subtitulo_run.font.size = Pt(12)
+    subtitulo_run.font.color.rgb = RGBColor(127, 140, 141)
+    subtitulo_run.font.italic = True
+
+    doc.add_paragraph()  # Espacio
+
+    # ============ TÍTULO PRINCIPAL ============
+    header_para = doc.add_paragraph()
+    header_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    header_run = header_para.add_run('CREDENCIALES DE ACCESO A RESULTADOS')
+    header_run.font.bold = True
+    header_run.font.size = Pt(16)
+    header_run.font.color.rgb = RGBColor(255, 255, 255)
+
+    # Fondo verde para el título
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), '11998e')
+    header_para._element.get_or_add_pPr().append(shading_elm)
+
+    # Padding del párrafo
+    pPr = header_para._element.get_or_add_pPr()
+    spacing = OxmlElement('w:spacing')
+    spacing.set(qn('w:before'), '200')
+    spacing.set(qn('w:after'), '200')
+    pPr.append(spacing)
+
+    doc.add_paragraph()  # Espacio
+
+    # ============ TABLA: INFORMACIÓN DEL PACIENTE ============
+    table1 = doc.add_table(rows=5, cols=2)
+    table1.style = 'Light Grid Accent 1'
+
+    # Header de sección
+    header_cell = table1.rows[0].cells[0]
+    header_cell.merge(table1.rows[0].cells[1])
+    header_cell.text = 'INFORMACIÓN DEL PACIENTE'
+    header_run = header_cell.paragraphs[0].runs[0]
+    header_run.font.bold = True
+    header_run.font.size = Pt(13)
+    header_run.font.color.rgb = RGBColor(255, 255, 255)
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), '34495e')
+    header_cell.paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+    # Datos del paciente
+    datos_paciente = [
+        ['Nombre Completo:', resultado.paciente_nombre],
+        ['Cédula de Identidad:', resultado.paciente_ci],
+        ['Número de Orden:', resultado.numero_orden],
+        ['Fecha de Emisión:', resultado.fecha_creacion.strftime("%d/%m/%Y %H:%M")]
+    ]
+
+    for i, (label, value) in enumerate(datos_paciente, start=1):
+        # Columna izquierda (labels)
+        cell_label = table1.rows[i].cells[0]
+        cell_label.text = label
+        cell_label.paragraphs[0].runs[0].font.bold = True
+        cell_label.paragraphs[0].runs[0].font.size = Pt(11)
+        shading_elm = OxmlElement('w:shd')
+        shading_elm.set(qn('w:fill'), 'ecf0f1')
+        cell_label.paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+        # Columna derecha (valores)
+        cell_value = table1.rows[i].cells[1]
+        cell_value.text = value
+        cell_value.paragraphs[0].runs[0].font.size = Pt(11)
+
+    doc.add_paragraph()  # Espacio
+
+    # ============ TABLA: CREDENCIALES DE ACCESO ============
+    table2 = doc.add_table(rows=3, cols=2)
+    table2.style = 'Light Grid Accent 1'
+
+    # Header de sección
+    header_cell2 = table2.rows[0].cells[0]
+    header_cell2.merge(table2.rows[0].cells[1])
+    header_cell2.text = 'CREDENCIALES PARA CONSULTAR RESULTADOS'
+    header_run2 = header_cell2.paragraphs[0].runs[0]
+    header_run2.font.bold = True
+    header_run2.font.size = Pt(13)
+    header_run2.font.color.rgb = RGBColor(255, 255, 255)
+    shading_elm2 = OxmlElement('w:shd')
+    shading_elm2.set(qn('w:fill'), 'e67e22')
+    header_cell2.paragraphs[0]._element.get_or_add_pPr().append(shading_elm2)
+
+    # CI
+    table2.rows[1].cells[0].text = 'CÉDULA DE IDENTIDAD:'
+    table2.rows[1].cells[0].paragraphs[0].runs[0].font.bold = True
+    table2.rows[1].cells[0].paragraphs[0].runs[0].font.size = Pt(11)
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), 'ecf0f1')
+    table2.rows[1].cells[0].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+    table2.rows[1].cells[1].text = resultado.paciente_ci
+    table2.rows[1].cells[1].paragraphs[0].runs[0].font.size = Pt(11)
+
+    # CÓDIGO DE ACCESO (destacado)
+    table2.rows[2].cells[0].text = 'CÓDIGO DE ACCESO:'
+    table2.rows[2].cells[0].paragraphs[0].runs[0].font.bold = True
+    table2.rows[2].cells[0].paragraphs[0].runs[0].font.size = Pt(11)
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), 'ecf0f1')
+    table2.rows[2].cells[0].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+    table2.rows[2].cells[1].text = resultado.codigo_acceso
+    codigo_run = table2.rows[2].cells[1].paragraphs[0].runs[0]
+    codigo_run.font.bold = True
+    codigo_run.font.size = Pt(18)
+    codigo_run.font.color.rgb = RGBColor(231, 76, 60)  # Rojo para destacar
+    shading_elm = OxmlElement('w:shd')
+    shading_elm.set(qn('w:fill'), 'fff9e6')  # Amarillo claro
+    table2.rows[2].cells[1].paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+    doc.add_paragraph()  # Espacio
+
+    # ============ TABLA: INSTRUCCIONES ============
+    table3 = doc.add_table(rows=6, cols=1)
+    table3.style = 'Light Grid Accent 1'
+
+    # Header de sección
+    header_cell3 = table3.rows[0].cells[0]
+    header_cell3.text = 'INSTRUCCIONES PARA ACCEDER A SUS RESULTADOS'
+    header_run3 = header_cell3.paragraphs[0].runs[0]
+    header_run3.font.bold = True
+    header_run3.font.size = Pt(13)
+    header_run3.font.color.rgb = RGBColor(255, 255, 255)
+    shading_elm3 = OxmlElement('w:shd')
+    shading_elm3.set(qn('w:fill'), '3498db')
+    header_cell3.paragraphs[0]._element.get_or_add_pPr().append(shading_elm3)
+
+    # Instrucciones paso a paso
+    instrucciones = [
+        '1. Ingrese a: www.laboratoriopérez.com o utilice el enlace proporcionado por el laboratorio',
+        '2. Click en el botón "Consultar mis Resultados" o "Ver Resultados"',
+        '3. Ingrese su Cédula de Identidad (CI) y el Código de Acceso proporcionado arriba',
+        '4. Podrá visualizar y descargar su resultado en formato PDF',
+        'NOTA: Guarde este documento de forma segura. Su código de acceso es confidencial.'
+    ]
+
+    for i, instruccion in enumerate(instrucciones, start=1):
+        cell = table3.rows[i].cells[0]
+        cell.text = instruccion
+        cell_run = cell.paragraphs[0].runs[0]
+        cell_run.font.size = Pt(10)
+
+        # Última fila (nota) con fondo especial
+        if i == 5:
+            cell_run.font.bold = True
+            cell_run.font.color.rgb = RGBColor(133, 100, 4)
+            shading_elm = OxmlElement('w:shd')
+            shading_elm.set(qn('w:fill'), 'fff3cd')
+            cell.paragraphs[0]._element.get_or_add_pPr().append(shading_elm)
+
+    doc.add_paragraph()  # Espacio
+
+    # ============ FOOTER ============
+    footer_para = doc.add_paragraph()
+    footer_para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    footer_run = footer_para.add_run('Laboratorio Clínico Pérez - Potosí, Bolivia')
+    footer_run.font.size = Pt(9)
+    footer_run.font.italic = True
+    footer_run.font.color.rgb = RGBColor(149, 165, 166)
+
+    footer_para2 = doc.add_paragraph()
+    footer_para2.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    footer_run2 = footer_para2.add_run('Documento generado automáticamente')
+    footer_run2.font.size = Pt(8)
+    footer_run2.font.italic = True
+    footer_run2.font.color.rgb = RGBColor(149, 165, 166)
+
+    # ============ GUARDAR DOCUMENTO ============
     buffer = BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    
-    filename = f"Credenciales_{resultado.paciente_nombre.replace(' ', '_')}.docx"
-    
+
+    filename = f"Credenciales_{resultado.paciente_nombre.replace(' ', '_')}_{resultado.numero_orden}.docx"
+
     return send_file(buffer, as_attachment=True, download_name=filename, mimetype='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
 
 @main.route('/pruebas', methods=['GET', 'POST'])
