@@ -399,13 +399,13 @@
                         Resultado de Laboratorio
                     </h3>
                     {% if resultado.archivo_pdf %}
-                        <a href="{{ url_for('static', filename='uploads/' + resultado.archivo_pdf) }}"
-                           class="btn-download-brutal" download>
+                        <a href="{{ url_for('main.descargar_resultado_publico', resultado_id=resultado.id) }}"
+                           class="btn-download-brutal">
                             <i class="fas fa-download"></i>
                             Descargar Mi Resultado en PDF
                         </a>
                         <p style="margin-top: 20px; color: #6c757d;">
-                            <i class="fas fa-info-circle"></i> El archivo se descargará automáticamente
+                            <i class="fas fa-info-circle"></i> Siempre obtendrás la versión más reciente
                         </p>
                     {% else %}
                         <div class="alert alert-warning" style="max-width: 500px; margin: 0 auto;">
