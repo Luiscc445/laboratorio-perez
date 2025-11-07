@@ -27,6 +27,37 @@ UPLOAD_DIR = os.path.join(BASE_DIR, 'app', 'static', 'uploads')
 PRUEBAS_UPLOAD_DIR = os.path.join(UPLOAD_DIR, 'pruebas')
 BACKUP_DIR = os.path.join(UPLOAD_DIR, 'backups')  # Carpeta de backups
 
+# ============ HEALTH CHECK PARA RENDER ============
+@main.route('/health')
+def health_check():
+    """
+    Health check endpoint para Render
+    - Verifica que la app está viva
+    - Verifica conexión a la base de datos
+    - Retorna 200 OK si todo está bien
+    """
+    try:
+        # Intentar hacer una query simple a la BD
+        db.session.execute(db.text('SELECT 1'))
+        return jsonify({
+            'status': 'healthy',
+            'database': 'connected',
+            'timestamp': datetime.now().isoformat()
+        }), 200
+    except Exception as e:
+        # Si falla la BD, aún responder pero con status unhealthy
+        return jsonify({
+            'status': 'unhealthy',
+            'database': 'disconnected',
+            'error': str(e),
+            'timestamp': datetime.now().isoformat()
+        }), 503  # Service Unavailable
+
+@main.route('/ping')
+def ping():
+    """Endpoint simple para verificar que la app responde"""
+    return jsonify({'status': 'ok', 'message': 'pong'}), 200
+
 def generar_codigo_acceso():
     """Genera un código aleatorio de 8 caracteres ÚNICO"""
     while True:
