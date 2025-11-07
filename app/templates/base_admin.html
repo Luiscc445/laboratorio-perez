@@ -7,147 +7,232 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/laboratorio_perez.css') }}">
-
     <style>
-        /* ============================================
-          TÉCNICA ULTRA FUERTE: NAVBAR FIXED ARRIBA
-          ============================================
-        */
+        :root {
+            --verde-admin: #1ABC9C;
+            --verde-oscuro: #16A085;
+            --azul-admin: #3498DB;
+            --naranja: #F39C12;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        html {
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 100%;
-            overflow-x: hidden;
-        }
-
         body {
-            margin: 0 !important;
-            padding: 0 !important;
-            padding-top: 0 !important;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
             min-height: 100vh;
-            overflow-x: hidden;
+            padding: 0;
+            margin: 0;
         }
 
-        /* NAVBAR PEGADO AL TOPE - MÁXIMA PRIORIDAD */
-        nav.navbar,
-        nav.navbar-custom,
-        .navbar.navbar-custom {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            width: 100% !important;
-            z-index: 9999 !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
+        /* ========== NAVBAR BRUTAL VERDE ADMIN ========== */
+        .navbar-brutal-admin {
+            background: linear-gradient(135deg, var(--verde-admin), var(--verde-oscuro));
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid rgba(255, 255, 255, 0.3);
+            padding: 12px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        /* Container del navbar compacto */
-        .navbar-custom .container-fluid {
-            padding: 6px 20px !important;
-        }
-
-        /* Items del navbar */
-        .navbar-nav {
+        .navbar-brutal-admin .logo-container {
+            display: flex;
             align-items: center;
-            gap: 5px;
+            gap: 15px;
         }
 
-        .nav-link {
-            padding: 6px 12px !important;
-            border-radius: 8px;
+        .navbar-brutal-admin .logo-img {
+            height: 45px;
+            width: 45px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brutal-admin .logo-img:hover {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .navbar-brutal-admin .brand-text {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: white;
+        }
+
+        .nav-links-admin {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .nav-link-brutal-admin {
+            padding: 10px 18px;
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link-brutal-admin:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .nav-link-brutal-admin.active {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-logout-brutal {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white !important;
+            padding: 10px 20px !important;
+            border-radius: 25px;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+            border: none;
+            font-weight: 700;
+        }
+
+        .btn-logout-brutal:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.5);
+            color: white !important;
+        }
+
+        /* Hamburguesa móvil */
+        .hamburger-admin {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px;
+        }
+
+        .hamburger-admin span {
+            width: 30px;
+            height: 3px;
+            background: white;
+            border-radius: 10px;
             transition: all 0.3s ease;
         }
 
-        .btn-logout {
-            margin-left: 10px !important;
-            padding: 6px 16px !important;
+        @media (max-width: 992px) {
+            .nav-links-admin {
+                position: fixed;
+                top: 69px;
+                left: -100%;
+                width: 100%;
+                background: linear-gradient(135deg, var(--verde-admin), var(--verde-oscuro));
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+                transition: left 0.3s ease;
+                max-height: calc(100vh - 69px);
+                overflow-y: auto;
+            }
+
+            .nav-links-admin.active {
+                left: 0;
+            }
+
+            .hamburger-admin {
+                display: flex;
+            }
+
+            .nav-link-brutal-admin {
+                width: 100%;
+                justify-content: center;
+                padding: 15px;
+            }
+
+            .btn-logout-brutal {
+                width: 100%;
+                justify-content: center;
+            }
         }
 
-        /* Logo compacto */
-        .navbar-brand {
-            display: flex;
-            align-items: center;
-            padding: 0 !important;
+        /* ========== CONTENIDO ADMIN ========== */
+        .admin-wrapper {
+            padding: 0;
+            min-height: calc(100vh - 69px);
         }
 
-        .navbar-brand img {
-            height: 32px !important;
-            width: auto !important;
-            border-radius: 8px !important;
-            margin-right: 10px !important;
+        .admin-content {
+            background: white;
+            min-height: calc(100vh - 69px);
         }
 
-        /* CONTENEDOR PRINCIPAL CON MARGEN PARA COMPENSAR NAVBAR FIXED */
-        .main-container {
-            margin-top: 50px !important;
-            margin-left: 0 !important;
-            margin-right: 0 !important;
-            margin-bottom: 0 !important;
-            padding: 0 !important;
+        /* Mensajes flash */
+        .flash-messages {
+            padding: 20px 30px 0 30px;
         }
 
-        /* Sin padding extra en container-fluid */
-        .main-container > .container-fluid {
-            padding: 0 !important;
-            margin: 0 !important;
-        }
+        /* Estilos para que el contenido respire */
+        {% block extra_styles %}{% endblock %}
     </style>
 </head>
 <body>
-    <nav class="navbar navbar-expand-lg navbar-custom">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="{{ url_for('main.dashboard') }}">
-                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo">
-                Laboratorio Pérez - Admin
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.dashboard' %}active{% endif %}" href="{{ url_for('main.dashboard') }}">
-                            <i class="fas fa-chart-line"></i> Dashboard
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.admin_pacientes' %}active{% endif %}" href="{{ url_for('main.admin_pacientes') }}">
-                            <i class="fas fa-users"></i> Pacientes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.admin_resultados' %}active{% endif %}" href="{{ url_for('main.admin_resultados') }}">
-                            <i class="fas fa-clipboard-list"></i> Resultados
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.admin_pruebas' %}active{% endif %}" href="{{ url_for('main.admin_pruebas') }}">
-                            <i class="fas fa-vial"></i> Pruebas
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="{{ url_for('auth.logout') }}" class="btn btn-logout">
-                            <i class="fas fa-sign-out-alt"></i> Salir
-                        </a>
-                    </li>
-                </ul>
+
+    <!-- NAVBAR BRUTAL ADMIN -->
+    <nav class="navbar-brutal-admin">
+        <div class="container-fluid" style="padding: 0 30px;">
+            <div class="d-flex justify-content-between align-items-center w-100">
+                <a href="{{ url_for('main.dashboard') }}" class="logo-container text-decoration-none">
+                    <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo" class="logo-img">
+                    <span class="brand-text">Lab Pérez - Admin</span>
+                </a>
+
+                <div class="hamburger-admin" onclick="toggleMenuAdmin()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+
+                <div class="nav-links-admin" id="navLinksAdmin">
+                    <a href="{{ url_for('main.dashboard') }}"
+                       class="nav-link-brutal-admin {% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                        <i class="fas fa-chart-line"></i> Dashboard
+                    </a>
+                    <a href="{{ url_for('main.admin_pacientes') }}"
+                       class="nav-link-brutal-admin {% if request.endpoint == 'main.admin_pacientes' %}active{% endif %}">
+                        <i class="fas fa-users"></i> Pacientes
+                    </a>
+                    <a href="{{ url_for('main.admin_resultados') }}"
+                       class="nav-link-brutal-admin {% if request.endpoint == 'main.admin_resultados' %}active{% endif %}">
+                        <i class="fas fa-clipboard-list"></i> Resultados
+                    </a>
+                    <a href="{{ url_for('main.admin_pruebas') }}"
+                       class="nav-link-brutal-admin {% if request.endpoint == 'main.admin_pruebas' %}active{% endif %}">
+                        <i class="fas fa-vial"></i> Pruebas
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" class="nav-link-brutal-admin btn-logout-brutal">
+                        <i class="fas fa-sign-out-alt"></i> Salir
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
 
-    <div class="main-container">
-        <div class="container-fluid" style="padding: 15px 0 0 0 !important;">
+    <!-- CONTENIDO ADMIN -->
+    <div class="admin-wrapper">
+        <div class="admin-content">
+            <!-- Mensajes Flash -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    <div style="padding: 0 15px;">
+                    <div class="flash-messages">
                         {% for category, message in messages %}
                         <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                             {{ message }}
@@ -157,12 +242,36 @@
                     </div>
                 {% endif %}
             {% endwith %}
-        </div>
 
-        {% block content %}{% endblock %}
+            <!-- Contenido específico de cada página -->
+            {% block content %}{% endblock %}
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ url_for('static', filename='js/menu-movil.js') }}"></script>
+    <script>
+        function toggleMenuAdmin() {
+            const navLinks = document.getElementById('navLinksAdmin');
+            navLinks.classList.toggle('active');
+        }
+
+        // Cerrar menú al hacer click en un link
+        document.querySelectorAll('.nav-link-brutal-admin').forEach(link => {
+            link.addEventListener('click', () => {
+                document.getElementById('navLinksAdmin').classList.remove('active');
+            });
+        });
+
+        // Cerrar menú al hacer click fuera
+        document.addEventListener('click', (e) => {
+            const navLinks = document.getElementById('navLinksAdmin');
+            const hamburger = document.querySelector('.hamburger-admin');
+            if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
