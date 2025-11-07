@@ -1,220 +1,173 @@
-﻿<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultar Resultados - Laboratorio Pérez</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/laboratorio_perez.css') }}">
-    <style>
-        body {
-            margin: 0 !important;
-            padding: 0 !important;
-        }
+{% extends "base.html" %}
+{% block title %}Consultar Resultados - Laboratorio Pérez{% endblock %}
+{% block content %}
 
-        /*
-        ============================================
-        ESTILOS PARA PÁGINA DE CONSULTA DE RESULTADOS
-        ============================================
-        */
-        .consulta-page-wrapper {
-            /* Ocupa toda la altura visible menos el navbar (aprox 72px) */
-            min-height: calc(100vh - 72px); 
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 15px;
-            position: relative;
-            overflow: hidden;
-            /* Fondo con la imagen de la Casa de la Moneda */
-            background: url("{{ url_for('static', filename='img/casamoneda.jpg') }}") center center/cover no-repeat;
-        }
+<style>
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
-        /* Overlay transparente verde */
-        .consulta-page-wrapper::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            /* Degradado verde usando los colores de tu marca */
-            background: linear-gradient(135deg, rgba(26, 188, 156, 0.85), rgba(22, 160, 133, 0.9));
-            z-index: 1;
-        }
+    /*
+    ============================================
+    ESTILOS PARA PÁGINA DE CONSULTA DE RESULTADOS
+    ============================================
+    */
+    .consulta-page-wrapper {
+        /* Ocupa toda la altura visible menos el navbar (aprox 72px) */
+        min-height: calc(100vh - 72px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 15px;
+        position: relative;
+        overflow: hidden;
+        /* Fondo con la imagen de la Casa de la Moneda */
+        background: url("{{ url_for('static', filename='img/casamoneda.jpg') }}") center center/cover no-repeat;
+    }
 
-        /* Tarjeta de consulta moderna */
-        .consulta-card {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            max-width: 550px;
-            /* Efecto de "vidrio esmerilado" */
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            animation: fadeInUp 0.6s ease-out;
-        }
+    /* Overlay transparente verde */
+    .consulta-page-wrapper::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        /* Degradado verde usando los colores de tu marca */
+        background: linear-gradient(135deg, rgba(26, 188, 156, 0.85), rgba(22, 160, 133, 0.9));
+        z-index: 1;
+    }
 
-        /* Animación de entrada */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
+    /* Tarjeta de consulta moderna */
+    .consulta-card {
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        max-width: 550px;
+        /* Efecto de "vidrio esmerilado" */
+        background: rgba(255, 255, 255, 0.98);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        animation: fadeInUp 0.6s ease-out;
+    }
 
-        .consulta-card-header {
-            /* Header verde que pediste */
-            background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
-            color: white;
-            text-align: center;
-            padding: 30px 20px;
+    /* Animación de entrada */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-        .consulta-card-header i {
-            font-size: 3rem;
-            margin-bottom: 15px;
-        }
+    .consulta-card-header {
+        /* Header verde que pediste */
+        background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+        color: white;
+        text-align: center;
+        padding: 30px 20px;
+    }
 
-        .consulta-card-header h4 {
-            font-weight: 700;
-            margin-bottom: 5px;
-            font-size: 1.75rem;
-        }
+    .consulta-card-header i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+    }
 
-        .consulta-card-body {
-            padding: 30px;
-        }
+    .consulta-card-header h4 {
+        font-weight: 700;
+        margin-bottom: 5px;
+        font-size: 1.75rem;
+    }
 
-        .form-label {
-            font-weight: 600;
-        }
+    .consulta-card-body {
+        padding: 30px;
+    }
 
-        .form-label i {
-            color: var(--color-verde-oscuro);
-            margin-right: 8px;
-        }
+    .form-label {
+        font-weight: 600;
+    }
 
-        .form-control-lg {
-            border-radius: 10px;
-            padding: 14px 18px;
-            border: 2px solid #e0e0e0;
-        }
-        .form-control-lg:focus {
-            border-color: var(--color-verde);
-            box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
-        }
+    .form-label i {
+        color: var(--color-verde-oscuro);
+        margin-right: 8px;
+    }
 
-        .btn-consultar {
-            background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
-            border: none;
-            padding: 15px;
-            font-size: 1.1rem;
-            font-weight: 700;
-            border-radius: 10px;
-            box-shadow: 0 8px 25px rgba(26, 188, 156, 0.4);
-            transition: all 0.3s ease;
-        }
+    .form-control-lg {
+        border-radius: 10px;
+        padding: 14px 18px;
+        border: 2px solid #e0e0e0;
+    }
+    .form-control-lg:focus {
+        border-color: var(--color-verde);
+        box-shadow: 0 0 0 0.2rem rgba(26, 188, 156, 0.25);
+    }
 
-        .btn-consultar:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(26, 188, 156, 0.5);
-        }
-    </style>
-</head>
-<body style="margin: 0; padding: 0;">
+    .btn-consultar {
+        background: linear-gradient(135deg, var(--color-verde), var(--color-verde-oscuro));
+        border: none;
+        padding: 15px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(26, 188, 156, 0.4);
+        transition: all 0.3s ease;
+    }
 
-    <nav class="navbar navbar-expand-lg navbar-custom" style="margin: 0;">
-        <div class="container">
-            <a class="navbar-brand" href="{{ url_for('main.index') }}">
-                <img src="{{ url_for('static', filename='img/logo.jpg') }}" alt="Logo" style="height: 40px; width: auto; border-radius: 8px; margin-right: 10px;">
-                Laboratorio Pérez
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}" href="{{ url_for('main.index') }}">
-                            <i class="fas fa-home"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="{{ url_for('main.portal_resultados') }}">
-                            <i class="fas fa-file-medical"></i> Ver mis Resultados
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'main.catalogo_pruebas' %}active{% endif %}" href="{{ url_for('main.catalogo_pruebas') }}">
-                            <i class="fas fa-microscope"></i> Pruebas Disponibles
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="https://www.google.com/maps/dir/?api=1&destination=-19.588398057678,-65.750749111176" target="_blank" style="background: linear-gradient(135deg, #F39C12, #E67E22); color: white !important; border-radius: 25px; padding: 8px 20px !important; margin-left: 10px;">
-                            <i class="fas fa-map-marker-alt"></i> Encuéntranos
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    .btn-consultar:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(26, 188, 156, 0.5);
+    }
+</style>
+
+<div class="consulta-page-wrapper">
+    <div class="consulta-card">
+
+        <div class="consulta-card-header">
+            <i class="fas fa-file-medical-alt"></i>
+            <h4>Consultar mis Resultados</h4>
+            <p class="mb-0">Ingrese sus credenciales de acceso</p>
         </div>
-    </nav>
 
-    <div class="consulta-page-wrapper">
-        <div class="consulta-card">
-            
-            <div class="consulta-card-header">
-                <i class="fas fa-file-medical-alt"></i>
-                <h4>Consultar mis Resultados</h4>
-                <p class="mb-0">Ingrese sus credenciales de acceso</p>
-            </div>
-    
-            <div class="consulta-card-body">
-                
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-                            {{ message }}
-                            <button typebutton" class="btn-close" data-bs-dismiss="alert"></button>
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                {% endwith %}
-    
-                <form method="POST" action="{{ url_for('main.consultar_resultado') }}">
-                    <div class="mb-4">
-                        <label class="form-label"><i class="fas fa-id-card"></i> Cédula de Identidad (CI)</label>
-                        <input type="text" class="form-control form-control-lg" name="ci" required placeholder="Ingrese su CI">
+        <div class="consulta-card-body">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <div class="mb-4">
-                        <label class="form-label"><i class="fas fa-key"></i> Código de Acceso</label>
-                        <input type="text" class="form-control form-control-lg" name="codigo" required placeholder="Ingrese su código" style="text-transform: uppercase;">
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-consultar w-100">
-                        <i class="fas fa-search"></i> Consultar Resultado
-                    </button>
-                </form>
-    
-                <div class="alert alert-info mt-4">
-                    <i class="fas fa-info-circle"></i> <strong>¿No tienes tus credenciales?</strong><br>
-                    Solicítalas en el laboratorio o revisa el documento que te entregamos.
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="{{ url_for('main.consultar_resultado') }}">
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-id-card"></i> Cédula de Identidad (CI)</label>
+                    <input type="text" class="form-control form-control-lg" name="ci" required placeholder="Ingrese su CI">
                 </div>
-            </div>
-    
-        </div>
-    </div>
+                <div class="mb-4">
+                    <label class="form-label"><i class="fas fa-key"></i> Código de Acceso</label>
+                    <input type="text" class="form-control form-control-lg" name="codigo" required placeholder="Ingrese su código" style="text-transform: uppercase;">
+                </div>
+                <button type="submit" class="btn btn-primary btn-consultar w-100">
+                    <i class="fas fa-search"></i> Consultar Resultado
+                </button>
+            </form>
 
-    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+            <div class="alert alert-info mt-4">
+                <i class="fas fa-info-circle"></i> <strong>¿No tienes tus credenciales?</strong><br>
+                Solicítalas en el laboratorio o revisa el documento que te entregamos.
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
