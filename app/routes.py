@@ -1051,34 +1051,59 @@ def descargar_resultado_publico(resultado_id):
     """
     from flask import make_response
 
+    # LOGGING DETALLADO
+    print("=" * 80)
+    print("🔍 DESCARGA PÚBLICA DE PDF")
+    print(f"   Resultado ID: {resultado_id}")
+
     resultado = Resultado.query.get_or_404(resultado_id)
 
+    print(f"   Paciente: {resultado.paciente_nombre}")
+    print(f"   CI: {resultado.paciente_ci}")
+    print(f"   Archivo en BD: {resultado.archivo_pdf}")
+
     if not resultado.archivo_pdf:
+        print("   ❌ ERROR: No hay archivo PDF en la BD")
         flash('No hay archivo PDF disponible', 'warning')
         return redirect(url_for('main.portal_resultados'))
 
     # Construir ruta del archivo más reciente desde BD
     pdf_path = os.path.join(UPLOAD_DIR, resultado.archivo_pdf)
+    print(f"   Ruta completa: {pdf_path}")
+    print(f"   Archivo existe? {os.path.exists(pdf_path)}")
 
     # Verificar que existe
     if not os.path.exists(pdf_path):
         # Si no existe el principal, buscar en backup
         backup_path = os.path.join(BACKUP_DIR, resultado.archivo_pdf)
+        print(f"   Buscando en backup: {backup_path}")
+        print(f"   Backup existe? {os.path.exists(backup_path)}")
         if os.path.exists(backup_path):
             pdf_path = backup_path
+            print("   ✓ Usando archivo desde backup")
         else:
+            print("   ❌ ERROR: Archivo no encontrado ni en principal ni en backup")
             flash(f'El archivo PDF no se encuentra disponible', 'danger')
             return redirect(url_for('main.portal_resultados'))
 
-    # Enviar archivo con headers anti-cache
-    response = make_response(send_file(pdf_path, as_attachment=True))
-    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-    response.headers['Pragma'] = 'no-cache'
-    response.headers['Expires'] = '0'
+    # Nombre de descarga único basado en timestamp para romper cache
+    from datetime import datetime
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    download_name = f"Resultado_{resultado.numero_orden}_{timestamp}.pdf"
 
-    print(f"📥 Descarga pública: Paciente {resultado.paciente_nombre}, Archivo: {resultado.archivo_pdf}")
+    print(f"   Nombre descarga: {download_name}")
+    print("   ✅ ENVIANDO ARCHIVO AL PACIENTE")
+    print("=" * 80)
 
-    return response
+    # Enviar archivo con headers anti-cache FUERTES
+    return send_file(
+        pdf_path,
+        as_attachment=True,
+        download_name=download_name,
+        mimetype='application/pdf',
+        max_age=0,  # No cache
+        last_modified=datetime.now()
+    )
 
 @main.route('/resultado/eliminar/<int:resultado_id>', methods=['POST'])
 @admin_required
